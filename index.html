@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body data-page="home">
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <div class="page-shell">
     <header class="site-header">
       <a href="index.html" class="brand" aria-label="Go to home">
@@ -31,7 +32,13 @@
       </button>
     </header>
 
-    <main>
+    <main id="main-content" tabindex="-1">
+      <noscript>
+        <section class="empty-state">
+          <h2>JavaScript is turned off</h2>
+          <p class="note-text">The project cards and About preview on this page are rendered with JavaScript. Please enable JavaScript to see the full portfolio overview.</p>
+        </section>
+      </noscript>
       <section class="hero section reveal">
         <h1>Hello, I’m <span class="name-accent">Jimin</span></h1>
         <p class="hero-role">Curiosity, effort, and growth at the heart of playful design.</p>

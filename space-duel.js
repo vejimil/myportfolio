@@ -13,7 +13,9 @@
   }
 
   const canvas = document.getElementById('space-canvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  if (!ctx) return;
   const resetBtn = document.getElementById('space-reset');
 
   const W = 1200;

@@ -13,7 +13,9 @@
   }
 
   const canvas = document.getElementById('pong-canvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d');
+  if (!ctx) return;
   const resetBtn = document.getElementById('pong-reset');
 
   const WIDTH = 1200;
