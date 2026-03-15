@@ -10,103 +10,65 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
   <style>
-    .demo-page {
-      padding: 2rem 0 4rem;
+    .triends-demo-page .game-layout {
+      grid-template-columns: minmax(0, 1.5fr) minmax(300px, 0.55fr);
     }
-    .demo-shell {
-      width: min(1180px, 100%);
-      margin: 0 auto;
-      display: grid;
-      gap: 1.2rem;
+
+    .triends-demo-page .game-topbar p {
+      max-width: 760px;
     }
-    .demo-card {
-      background: rgba(10, 18, 28, 0.88);
-      border: 1px solid rgba(157, 227, 255, 0.16);
-      border-radius: 24px;
-      padding: 1.25rem;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+
+    .triends-canvas-wrap {
+      min-height: 760px;
+      padding: 0;
+      background: linear-gradient(180deg, rgba(248, 244, 236, 0.88) 0%, rgba(255, 255, 255, 0.96) 100%);
+      border: 1px solid rgba(72, 55, 31, 0.08);
     }
-    .demo-header {
-      display: grid;
-      gap: 0.8rem;
-    }
-    .demo-header h1 {
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      margin: 0;
-    }
-    .demo-header p {
-      margin: 0;
-      color: rgba(236, 242, 255, 0.8);
-      max-width: 70ch;
-    }
-    .demo-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.8rem;
-    }
-    .demo-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 290px;
-      gap: 1rem;
-      align-items: start;
-    }
-    .game-stage {
-      background: #05080d;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid rgba(157, 227, 255, 0.14);
-    }
+
     #triends-demo-game {
       width: 100%;
       aspect-ratio: 5 / 4;
-      min-height: 520px;
+      min-height: 760px;
     }
+
     #triends-demo-game canvas {
       display: block;
       width: 100% !important;
       height: 100% !important;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
-    .demo-sidebar {
-      display: grid;
-      gap: 1rem;
+
+    .triends-demo-page .control-card p + p {
+      margin-top: 8px;
     }
-    .demo-panel h2,
-    .demo-panel h3 {
-      margin: 0 0 0.75rem;
-      font-size: 1rem;
+
+    .triends-demo-page .game-note {
+      margin-top: 18px;
     }
-    .demo-panel p,
-    .demo-panel li {
-      color: rgba(236, 242, 255, 0.78);
-      font-size: 0.96rem;
-      line-height: 1.55;
+
+    @media (max-width: 1080px) {
+      .triends-canvas-wrap,
+      #triends-demo-game {
+        min-height: 640px;
+      }
     }
-    .demo-panel ul {
-      margin: 0;
-      padding-left: 1.1rem;
-      display: grid;
-      gap: 0.48rem;
-    }
-    .demo-note {
-      font-size: 0.9rem;
-      color: rgba(236, 242, 255, 0.62);
-    }
+
     @media (max-width: 980px) {
-      .demo-layout {
+      .triends-demo-page .game-layout {
         grid-template-columns: 1fr;
       }
+    }
+
+    @media (max-width: 720px) {
+      .triends-canvas-wrap,
       #triends-demo-game {
         min-height: 420px;
       }
     }
-    @media (max-width: 640px) {
-      #triends-demo-game {
-        min-height: 320px;
-      }
-    }
   </style>
 </head>
-<body data-page="triends-demo">
+<body>
   <div class="page-shell">
     <header class="site-header">
       <a href="index.html" class="brand" aria-label="Go to home">
@@ -124,53 +86,58 @@
       </button>
     </header>
 
-    <main class="demo-page">
-      <section class="demo-shell">
-        <div class="demo-card demo-header">
-          <a class="back-link" href="triends.html">← Back to Triends</a>
-          <h1>Triends — Light Village 2 Demo</h1>
-          <p>
-            A trimmed playable slice of the original light puzzle section. It starts from the <strong>light-village-2</strong> spawn,
-            keeps the original collision, transformation, animation, mirror reflection, laser splitting, and light-network puzzle flow,
-            and restarts automatically when you reach Visigi or lose all HP.
-          </p>
-          <div class="demo-actions">
-            <a class="btn btn-primary" href="triends.html">Back to Project Page</a>
-            <a class="btn btn-secondary" href="index.html#projects">Back to Projects</a>
+    <main class="game-page triends-demo-page">
+      <div class="game-page-shell">
+        <section class="game-topbar">
+          <div>
+            <span class="game-kicker">Playable Game</span>
+            <h1>Triends — Light Village 2</h1>
+            <p>
+              A browser-playable slice of the original light-village-2 section. It keeps the core collision, transformation,
+              animation, mirror reflection, and light puzzle flow, then restarts from the spawn when you reach Visigi or HP reaches 0.
+            </p>
           </div>
-        </div>
-
-        <div class="demo-layout">
-          <div class="demo-card game-stage">
-            <div id="triends-demo-game" aria-label="Triends Light Village 2 playable demo"></div>
+          <div class="game-actions">
+            <a class="btn btn-secondary" href="triends.html">Back to Triends</a>
           </div>
+        </section>
 
-          <aside class="demo-sidebar">
-            <section class="demo-card demo-panel">
-              <h2>Controls</h2>
-              <ul>
-                <li><strong>Astronaut:</strong> Arrow keys</li>
-                <li><strong>Ginseng:</strong> WASD</li>
-                <li><strong>Transform:</strong> R</li>
-                <li><strong>Mirror equip:</strong> Right Ctrl / Right ⌘</li>
-                <li><strong>Mirror reflect pose:</strong> 0</li>
-                <li><strong>Sunflower fire:</strong> While transformed, tap WASD</li>
-              </ul>
-            </section>
+        <div class="game-layout">
+          <section class="game-canvas-card">
+            <h2>Play</h2>
+            <p class="game-subtitle">Playable in browser · light-village-2 only</p>
+            <div class="game-canvas-wrap triends-canvas-wrap">
+              <div id="triends-demo-game" aria-label="Triends Light Village 2 playable demo"></div>
+            </div>
+          </section>
 
-            <section class="demo-card demo-panel">
-              <h3>Goal</h3>
-              <p>Clear the light puzzle path and reach <strong>Visigi</strong>. The stage resets when you succeed or when HP reaches 0.</p>
-            </section>
+          <aside class="game-info-card">
+            <h2>Controls</h2>
+            <div class="control-grid">
+              <div class="control-card">
+                <strong>Astronaut</strong>
+                <p><span class="inline-key">↑</span> <span class="inline-key">↓</span> <span class="inline-key">←</span> <span class="inline-key">→</span> move</p>
+                <p><span class="inline-key">Right Ctrl</span> equip mirror</p>
+                <p><span class="inline-key">0</span> reflect pose</p>
+              </div>
+              <div class="control-card">
+                <strong>Insam</strong>
+                <p><span class="inline-key">W</span> <span class="inline-key">A</span> <span class="inline-key">S</span> <span class="inline-key">D</span> move / fire as sunflower</p>
+                <p><span class="inline-key">R</span> transform</p>
+              </div>
+            </div>
 
-            <section class="demo-card demo-panel">
-              <h3>What is included</h3>
-              <p>Only the files and systems needed for this section are loaded: the <code>light-village-2</code> map, the required character sprites, laser/thunder effects, and Visigi.</p>
-              <p class="demo-note">Everything else from the larger Triends project was intentionally left out of this demo.</p>
-            </section>
+            <h3>Goal</h3>
+            <ul>
+              <li>Use Insam’s light and the astronaut’s mirror to solve the light puzzle.</li>
+              <li>Reach Visigi to clear the demo.</li>
+              <li>The run automatically restarts from the spawn after success or at 0 HP.</li>
+            </ul>
+
+            <p class="game-note">Only the files and systems needed for this section are loaded, so the demo stays focused on the original Light Village 2 gimmick.</p>
           </aside>
         </div>
-      </section>
+      </div>
     </main>
 
     <footer class="site-footer">
