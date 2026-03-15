@@ -1,7 +1,17 @@
-
 (function () {
-  const GAME_WIDTH = 1600;
-  const GAME_HEIGHT = 1280;
+  function bootTriendsDemo() {
+    if (window.__triendsDemoBooted) return;
+    if (typeof window.Phaser === 'undefined') {
+      console.warn('Phaser is not ready yet for triends demo. Retrying...');
+      window.setTimeout(bootTriendsDemo, 50);
+      return;
+    }
+
+    const Phaser = window.Phaser;
+    window.__triendsDemoBooted = true;
+
+  const GAME_WIDTH = 1280;
+  const GAME_HEIGHT = 1024;
   const PLAYER_SPEED = 200;
   const PLAYER_DIAGONAL_SPEED = 141;
   const SPAWN_TILE = { x: 4, y: 84 };
@@ -907,14 +917,6 @@
   class LightVillageDemoScene extends Phaser.Scene {
     constructor() {
       super('LightVillageDemoScene');
-      this.resetRunState();
-    }
-
-    init() {
-      this.resetRunState();
-    }
-
-    resetRunState() {
       this.playerInvulUntil = 0;
       this.playerFlickerTween = null;
       this.resetQueued = false;
@@ -963,6 +965,7 @@
       const mapData = this.cache.json.get('map:light-village-2');
       if (!mapData) throw new Error('light-village-2 map did not load');
 
+      this.cameras.main.setBackgroundColor('#03070b');
       this.mapManager = new MapManager(this);
       this.mapManager.load('map:light-village-2');
       const tileSize = this.mapManager.getTileSize();
@@ -972,7 +975,6 @@
       this.player2 = new GinsengPlayer(this, spawn.x + tileSize * 2, spawn.y);
       this.mapManager.attachPlayer(this.player.sprite);
       this.mapManager.attachPlayer(this.player2.sprite);
-      this.cameras.main.roundPixels = true;
       this.cameras.main.startFollow(this.player.sprite, true, 0.15, 0.15);
 
       this.sunflowerLasers = this.physics.add.group({ classType: Phaser.Physics.Arcade.Sprite, maxSize: 24, runChildUpdate: false });
@@ -992,13 +994,11 @@
       this.visigi.setDepth(1000);
       this.visigiGlow = this.add.circle(goal.x, goal.y - 40, 48, 0xffffd5, 0.18).setDepth(980);
       this.tweens.add({ targets: this.visigiGlow, alpha: { from: 0.15, to: 0.35 }, duration: 900, yoyo: true, repeat: -1 });
-      this.add.text(goal.x, goal.y - 94, 'Visigi', {
-        fontSize: '22px',
-        fontFamily: 'Inter, sans-serif',
-        fontStyle: '700',
-        color: '#7d5d35',
-        backgroundColor: '#fffdfa',
-        padding: { x: 10, y: 4 }
+      this.add.text(goal.x, goal.y - 86, 'Visigi', {
+        fontSize: '14px',
+        fontFamily: 'monospace',
+        color: '#fff6ce',
+        backgroundColor: '#0a1118'
       }).setOrigin(0.5).setDepth(1001);
 
       this.cursors = this.input.keyboard.createCursorKeys();
@@ -1020,25 +1020,31 @@
         }
       });
 
-      this.heartsText = this.add.text(18, 16, '', {
-        fontSize: '28px',
-        fontFamily: 'Inter, sans-serif',
-        fontStyle: '700',
-        color: '#9a7444',
-        stroke: '#fffdfa',
-        strokeThickness: 6
+      this.heartsText = this.add.text(12, 12, '', {
+        fontSize: '18px',
+        fontFamily: 'monospace',
+        color: '#ffb5b5',
+        stroke: '#000000',
+        strokeThickness: 3
       }).setScrollFactor(0).setDepth(3000);
 
-      this.messageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 56, '', {
-        fontSize: '22px',
-        fontFamily: 'Inter, sans-serif',
-        fontStyle: '600',
-        color: '#1d1a16',
-        backgroundColor: '#fffdfa',
-        padding: { x: 16, y: 10 }
+      this.messageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 42, '', {
+        fontSize: '18px',
+        fontFamily: 'monospace',
+        color: '#eaf8ff',
+        backgroundColor: '#081119',
+        padding: { x: 12, y: 8 }
       }).setOrigin(0.5).setScrollFactor(0).setDepth(3000);
 
-      this.showMessage('Reach Visigi. The run restarts on success or at 0 HP.');
+      this.controlsText = this.add.text(GAME_WIDTH / 2, 26, 'Astronaut: Arrow Keys  |  Ginseng: WASD  |  R Transform  |  Right Ctrl equip mirror  |  0 reflect', {
+        fontSize: '14px',
+        fontFamily: 'monospace',
+        color: '#d8f4ff',
+        backgroundColor: '#081119',
+        padding: { x: 12, y: 6 }
+      }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(3000);
+
+      this.showMessage('Reach Visigi. The stage restarts on success or at 0 HP.');
       this.refreshHeartsUI();
     }
 
@@ -1239,7 +1245,7 @@
     }
 
     refreshHeartsUI() {
-      this.heartsText.setText(`Astronaut HP ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}   ·   Insam HP ${'♥'.repeat(this.hearts.p2)}${'♡'.repeat(3 - this.hearts.p2)}`);
+      this.heartsText.setText(`Astronaut HP: ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}   |   Ginseng HP: ${'♥'.repeat(this.hearts.p2)}${'♡'.repeat(3 - this.hearts.p2)}`);
     }
 
     showMessage(text) {
@@ -1252,7 +1258,7 @@
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     parent: 'triends-demo-game',
-    transparent: true,
+    backgroundColor: '#000000',
     pixelArt: true,
     physics: {
       default: 'arcade',
@@ -1268,11 +1274,21 @@
     }
   };
 
-  window.addEventListener('load', () => {
-    if (typeof Phaser === 'undefined') {
-      console.error('Phaser failed to load for triends demo.');
-      return;
+
+    if (window.triendsDemoGame) {
+      try {
+        window.triendsDemoGame.destroy(true);
+      } catch (error) {
+        console.warn('Failed to destroy previous triends demo instance.', error);
+      }
     }
+
     window.triendsDemoGame = new Phaser.Game(config);
-  });
+  }
+
+  if (document.readyState === 'complete') {
+    bootTriendsDemo();
+  } else {
+    window.addEventListener('load', bootTriendsDemo, { once: true });
+  }
 })();
