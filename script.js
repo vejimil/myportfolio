@@ -530,6 +530,14 @@ function renderListItems(items) {
   return items.map((item) => `<li>${item}</li>`).join('');
 }
 
+function isExternalHref(href) {
+  return /^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href);
+}
+
+function getLinkTargetAttrs(href, forceExternal = false) {
+  return forceExternal || isExternalHref(href) ? 'target="_blank" rel="noreferrer"' : '';
+}
+
 function renderLinks(links) {
   if (!links || !links.length) {
     return '<p class="note-text">Project links can be added here later.</p>';
@@ -537,7 +545,7 @@ function renderLinks(links) {
 
   return `
     <div class="link-row">
-      ${links.map((link) => `<a href="${link.href}" target="_blank" rel="noreferrer">${link.label}</a>`).join('')}
+      ${links.map((link) => `<a href="${link.href}" ${getLinkTargetAttrs(link.href, link.external)}>${link.label}</a>`).join('')}
     </div>
   `;
 }
@@ -602,7 +610,7 @@ function renderSectionActions(actions) {
             <a
               class="btn ${action.kind === 'primary' ? 'btn-primary' : 'btn-secondary'}"
               href="${action.href}"
-              ${action.external ? 'target="_blank" rel="noreferrer"' : ''}
+              ${getLinkTargetAttrs(action.href, action.external)}
             >
               ${action.label}
             </a>
@@ -703,7 +711,7 @@ function renderProjectDetail() {
         <div class="detail-actions">
           <a class="btn btn-secondary" href="index.html#projects">Back to Projects</a>
           ${project.detail.heroAction ? `<a class="btn ${project.detail.heroAction.kind === 'primary' ? 'btn-primary' : 'btn-secondary'}" href="${project.detail.heroAction.href}">${project.detail.heroAction.label}</a>` : ''}
-          ${!project.detail.heroAction && project.detail.links?.length === 1 ? `<a class="btn btn-primary" href="${project.detail.links[0].href}" target="_blank" rel="noreferrer">${project.detail.links[0].label}</a>` : ''}
+          ${!project.detail.heroAction && project.detail.links?.length === 1 ? `<a class="btn btn-primary" href="${project.detail.links[0].href}" ${getLinkTargetAttrs(project.detail.links[0].href, project.detail.links[0].external)}>${project.detail.links[0].label}</a>` : ''}
           <a class="btn btn-secondary" href="about.html">About Me</a>
         </div>
       </header>
