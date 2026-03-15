@@ -1,13 +1,3 @@
-/*
-  ============================
-  EASY CONTENT EDITING GUIDE
-  ============================
-  1) Add or remove project cards in portfolioData.projects.
-  2) Update the About Me page in portfolioData.about.
-  3) Main page cards and detail pages are rendered from the same data.
-  4) Each project opens its own HTML file, such as world-of-words.html.
-*/
-
 const portfolioData = {
   projects: [
     {
@@ -19,10 +9,9 @@ const portfolioData = {
         'A language-learning platform that turns vocabulary study into structured quizzes and replayable mini-games.',
       caption:
         'Planned, designed, and built solo, from content logic and interface flow to interaction design and game systems.',
-      meta: ['Language Learning', 'Content Logic', 'Frontend Development'],
       tags: ['Language Learning', 'Content Logic', 'Frontend Development'],
       detail: {
-        kicker: 'Case Study',
+        kicker: 'Solo Project',
         subtitle: 'A beginner-friendly vocabulary platform designed to make word study feel clearer, more active, and easier to return to.',
         summary:
           'World of Words is a language-learning platform for beginners who want vocabulary study to feel more engaging and less repetitive. It supports early-stage learners across Japanese, French, and Spanish through structured quizzes, review flows, and lightweight game modes built around vocabulary up to roughly A2 level.',
@@ -181,7 +170,6 @@ const portfolioData = {
         'A two-player 2D adventure game built around complementary abilities: human tools, plant powers, and cooperative light-based puzzles.',
       caption:
         'Built as a two-person project during military service. I focused on planning, character and animation work, light-puzzle design, and implementation.',
-      meta: ['Co-op Adventure', 'Pixel Character Design', 'Puzzle Level Design'],
       tags: ['Co-op Adventure', 'Pixel Character Design', 'Puzzle Level Design'],
       detail: {
         kicker: 'Team Project',
@@ -311,10 +299,9 @@ const portfolioData = {
         'A two-player arcade game collection built for quick, satisfying play in a limited offline environment.',
       caption:
         'Made for short local sessions, then tuned through direct feedback from the people actually playing them.',
-      meta: ['Arcade Design', 'Feedback-Driven Tuning', 'Game Development'],
       tags: ['Arcade Design', 'Feedback-Driven Tuning', 'Game Development'],
       detail: {
-        kicker: 'Project Group',
+        kicker: 'Project Collection',
         subtitle: 'Two-player arcade games shaped by simple rules, fast iteration, and real player feedback.',
         summary:
           'Arcade Games is a grouped project page for small two-player games I built in a restricted offline environment during military service. With limited phone use and network access, I focused on lightweight local games that colleagues could understand quickly and enjoy together on a single screen.',
@@ -474,14 +461,6 @@ const portfolioData = {
           'Fashion, languages, music, and games are not separate interests to me. Together, they are part of the energy that keeps me moving. I care a lot about happiness in everyday life and try to be kind to the people around me. If one thoughtful word can make someone feel lighter, I think that matters. I want both the things I create and the way I work with others to carry that kind of warmth.'
       }
     ],
-    quickKeywords: [
-      'Interactive Design',
-      'Game Thinking',
-      'Experience Design',
-      'Cross-Disciplinary Curiosity',
-      'Responsibility',
-      'Warm Collaboration'
-    ],
     sidebarPanels: [
       {
         heading: 'Currently Studying',
@@ -530,12 +509,9 @@ function renderListItems(items) {
   return items.map((item) => `<li>${item}</li>`).join('');
 }
 
-function isExternalHref(href) {
-  return /^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href);
-}
 
 function getLinkTargetAttrs(href, forceExternal = false) {
-  return forceExternal || isExternalHref(href) ? 'target="_blank" rel="noreferrer"' : '';
+  return forceExternal || /^(https?:)?\/\//i.test(href) ? 'target="_blank" rel="noopener noreferrer"' : '';
 }
 
 function renderLinks(links) {
@@ -563,7 +539,7 @@ function renderProjectMedia(media) {
           .map(
             (item) => `
               <figure class="media-card${item.orientation === 'portrait' ? ' is-portrait' : ''}">
-                <img src="${item.src}" alt="${item.alt}" loading="lazy" />
+                <img src="${item.src}" alt="${item.alt}" loading="lazy" decoding="async" />
                 <figcaption class="media-copy">
                   <h4>${item.title}</h4>
                   <p>${item.caption}</p>
@@ -628,7 +604,7 @@ function renderHomeProjects() {
   grid.innerHTML = portfolioData.projects
     .map(
       (project) => `
-        <a class="project-card reveal" href="${project.page}">
+        <a class="project-card reveal" href="${project.page}" aria-label="View project: ${project.title}">
           <div class="card-top">
             <div class="card-heading">
               <span class="card-label">${project.label}</span>
@@ -654,7 +630,7 @@ function renderAboutPreview() {
   preview.innerHTML = portfolioData.about.previewCards
     .map(
       (item) => `
-        <a class="project-card about-card reveal" href="about.html">
+        <a class="project-card about-card reveal" href="about.html" aria-label="Read more about Jimin">
           <div class="card-top">
             <div class="card-heading">
               <span class="card-label">${item.label}</span>
@@ -710,7 +686,7 @@ function renderProjectDetail() {
         </div>
         <div class="detail-actions">
           <a class="btn btn-secondary" href="index.html#projects">Back to Projects</a>
-          ${project.detail.heroAction ? `<a class="btn ${project.detail.heroAction.kind === 'primary' ? 'btn-primary' : 'btn-secondary'}" href="${project.detail.heroAction.href}">${project.detail.heroAction.label}</a>` : ''}
+          ${project.detail.heroAction ? `<a class="btn ${project.detail.heroAction.kind === 'primary' ? 'btn-primary' : 'btn-secondary'}" href="${project.detail.heroAction.href}" ${getLinkTargetAttrs(project.detail.heroAction.href, project.detail.heroAction.external)}>${project.detail.heroAction.label}</a>` : ''}
           ${!project.detail.heroAction && project.detail.links?.length === 1 ? `<a class="btn btn-primary" href="${project.detail.links[0].href}" ${getLinkTargetAttrs(project.detail.links[0].href, project.detail.links[0].external)}>${project.detail.links[0].label}</a>` : ''}
           <a class="btn btn-secondary" href="about.html">About Me</a>
         </div>
@@ -854,6 +830,13 @@ function renderAboutDetail() {
 
 function initReveal() {
   const revealItems = document.querySelectorAll('.reveal');
+  const prefersReducedMotion = typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (prefersReducedMotion) {
+    revealItems.forEach((item) => item.classList.add('is-visible'));
+    return;
+  }
+
   if (!revealItems.length || typeof IntersectionObserver === 'undefined') {
     revealItems.forEach((item) => item.classList.add('is-visible'));
     return;
