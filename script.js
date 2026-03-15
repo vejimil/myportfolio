@@ -10,6 +10,11 @@ const portfolioData = {
       caption:
         'Planned, designed, and built solo, from content logic and interface flow to interaction design and game systems.',
       tags: ['Language Learning', 'Content Logic', 'Frontend Development'],
+      thumbnail: {
+        src: 'worldofwordsmain.png',
+        alt: 'World of Words main screen with the site interface and quiz entry point.',
+        objectPosition: 'center top'
+      },
       detail: {
         kicker: 'Solo Project',
         subtitle: 'A beginner-friendly vocabulary platform designed to make word study feel clearer, more active, and easier to return to.',
@@ -171,6 +176,11 @@ const portfolioData = {
       caption:
         'Built as a two-person project during military service. I focused on planning, character and animation work, light-puzzle design, and implementation.',
       tags: ['Co-op Adventure', 'Pixel Character Design', 'Puzzle Level Design'],
+      thumbnail: {
+        src: 'triendsmain.webp',
+        alt: 'Triends key art showing the fantasy world, the astronaut, and companion characters.',
+        objectPosition: 'center center'
+      },
       detail: {
         kicker: 'Team Project',
         subtitle: 'A cooperative 2D adventure where contrasting abilities—technology and plant-based transformation—drive puzzle solving, animation, and level flow.',
@@ -300,6 +310,11 @@ const portfolioData = {
       caption:
         'Made for short local sessions, then tuned through direct feedback from the people actually playing them.',
       tags: ['Arcade Design', 'Feedback-Driven Tuning', 'Game Development'],
+      thumbnail: {
+        src: 'arcadegamesmain.jpg',
+        alt: 'Arcade Games collection thumbnail showing a match from Space Duel.',
+        objectPosition: 'center top'
+      },
       detail: {
         kicker: 'Project Collection',
         subtitle: 'Two-player arcade games shaped by simple rules, fast iteration, and real player feedback.',
@@ -605,6 +620,21 @@ function renderHomeProjects() {
     .map(
       (project) => `
         <a class="project-card reveal" href="${project.page}" aria-label="View project: ${project.title}">
+          ${
+            project.thumbnail
+              ? `
+                <div class="project-thumb">
+                  <img
+                    src="${project.thumbnail.src}"
+                    alt="${project.thumbnail.alt}"
+                    loading="lazy"
+                    decoding="async"
+                    style="${project.thumbnail.objectPosition ? `object-position: ${project.thumbnail.objectPosition};` : ''}"
+                  />
+                </div>
+              `
+              : ''
+          }
           <div class="card-top">
             <div class="card-heading">
               <span class="card-label">${project.label}</span>
