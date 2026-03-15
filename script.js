@@ -178,19 +178,19 @@ const portfolioData = {
       label: 'Co-op Adventure Game',
       title: 'Triends',
       blurb:
-        'A two-player 2D adventure game where human technology and plant powers combine to solve environmental puzzles.',
+        'A two-player 2D adventure game built around complementary abilities: human tools, plant powers, and cooperative light-based puzzles.',
       caption:
-        'Built as a team project during military service, with my role spanning planning, character design, light-puzzle level design, and development.',
+        'Built as a two-person project during military service. I focused on planning, character and animation work, light-puzzle design, and implementation.',
       meta: ['Co-op Adventure', 'Pixel Character Design', 'Puzzle Level Design'],
       tags: ['Co-op Adventure', 'Pixel Character Design', 'Puzzle Level Design'],
       detail: {
         kicker: 'Team Project',
-        subtitle: 'A cooperative 2D adventure shaped by constraint, teamwork, AI-assisted asset making, and light-based puzzle design.',
+        subtitle: 'A cooperative 2D adventure where contrasting abilities—technology and plant-based transformation—drive puzzle solving, animation, and level flow.',
         summary:
-          'Triends is a two-player 2D adventure game about an astronaut stranded on a plant planet and the local character Insam journeying together through puzzles and obstacles. The astronaut uses human technology while Insam uses plant-based abilities, so the game was designed around cooperation, contrast, and complementary actions.',
+          'Triends is a two-player adventure game about an astronaut and Insam, a plant-like companion, crossing a hostile planet together. The core design idea was contrast: one character uses technology, the other uses plant abilities, and progress depends on coordination rather than duplicated actions.',
         overview: [
-          'This was a team project built with one teammate during military service. We joined a contest connected to the AI asset-making tool GameAIfy, while working under clear limitations: a restricted environment, no access to a full professional production setup, and little prior experience with this kind of direct game-art workflow.',
-          'Because of those constraints, the project became an experiment in making something expressive with the tools we could access. We used Phaser for development, mixed AI-assisted asset generation with manual editing, and kept refining the project until the characters, movement, and puzzle ideas felt intentional rather than merely generated.'
+          'This was a two-person team project created during military service for a contest related to the AI asset tool GameAIfy. Because our production conditions were limited, we had to be selective about what to build and where to spend polish.',
+          'We used Phaser as the development base, combined AI-generated assets with manual pixel editing, and focused on building a small but coherent prototype where character identity, puzzle logic, and gameplay readability all supported one another.'
         ],
         media: [
           {
@@ -198,28 +198,28 @@ const portfolioData = {
             alt: 'Pixel-art editing process image showing direct manual dot work on the character design.',
             title: 'Manual Pixel Editing',
             caption:
-              'Because AI could not fully produce the exact look, motion, and readability I wanted, I treated the generated result as a base and then edited the sprite work by hand. I added, removed, and cleaned individual pixels until the character felt much closer to the intended style.'
+              'AI gave speed, but not a finished result. I refined the sprite pixel by pixel until the silhouette, motion, and readability matched the style I wanted.'
           },
           {
             src: 'triends-reference.jpg',
             alt: 'Reference image used to study readable four-direction pixel character movement for the astronaut.',
             title: 'Reference Study for the Astronaut Sprite',
             caption:
-              'I collected reference images, including Pokémon-style four-direction sprite work, because I wanted to study how a very small character could still read clearly from the front, back, and sides before I built the astronaut sprite.'
+              'Before building the astronaut sprite, I studied readable four-direction pixel characters to understand how a very small figure could still stay clear from the front, back, and sides.'
           },
           {
             src: 'triends-character-sheet.png',
             alt: 'Astronaut pixel character sheet including front, side, back, and mirror-carrying poses.',
             title: 'Astronaut Sheet Built from That Study',
             caption:
-              'That study directly shaped the astronaut’s proportions, direction changes, and mirror-carrying poses. I used AI-assisted generation as a base, then refined the sprite sheet by hand so the movement felt clearer, more controlled, and more believable in play.'
+              'Using AI output as a base, I refined poses, proportions, and mirror-carrying frames by hand so the astronaut would feel clearer and more controlled in motion.'
           },
           {
             src: 'triendssunflower.png',
             alt: 'Sunflower animation sheet showing multiple plant animation frames created for Triends.',
-            title: 'Plant Animation for the Light Gimmick',
+            title: 'Plant Animation for the Light Mechanic',
             caption:
-              'I also made plant animation, not just human animation. For the sunflower-like light form, I spent a lot of time thinking about how a plant could move naturally in pixel art: how much the petals should open, how the stem and leaves should sway, and how the motion could feel alive without becoming too busy or hard to read during gameplay.'
+              'I also worked on plant animation, not just human animation. For the sunflower-like light form, I focused on how the petals, stem, and leaves could move naturally enough to feel alive while staying readable during play.'
           }
         ],
         sections: [
@@ -227,17 +227,17 @@ const portfolioData = {
             heading: 'Project setup',
             type: 'list',
             content: [
-              'Built as a two-person team project during military service',
-              'Created for a contest related to the AI asset tool GameAIfy',
-              'Developed in Phaser under practical production constraints',
-              'Designed as a cooperative 2D adventure rather than a single-character puzzle game'
+              'Two-person team project',
+              'Built in Phaser',
+              'Created for an AI-assisted asset contest',
+              'Focused on cooperative puzzle solving, readable pixel animation, and contrasting character roles'
             ]
           },
           {
             heading: 'My role',
             type: 'paragraph',
             content:
-              'I worked across planning, character design, level design, and development. That meant helping define the game concept, shaping the visual direction of the characters, building the light-puzzle section, and contributing directly to implementation rather than staying only at the concept stage.'
+              'I worked across planning, character direction, pixel refinement, light-puzzle design, and gameplay implementation. In practice, that meant helping define the core concept, shaping how the two characters felt mechanically distinct, building the light-puzzle section, and translating those ideas into a playable prototype.'
           },
           {
             heading: 'Prototype and direction',
@@ -247,13 +247,13 @@ const portfolioData = {
               src: 'triends-prototype.mp4'
             },
             content:
-              'The early prototype helped us test whether the world, characters, and cooperative structure could feel coherent. More than just proving that the game worked, it let us check whether the contrast between technology and plant power could create a distinctive identity.'
+              'The prototype was where we tested whether the game’s core contrast actually worked in play. More than proving that two characters could coexist, it helped us check whether their abilities created meaningful cooperation, readable interactions, and a world that felt mechanically consistent.'
           },
           {
             heading: 'Sprite and animation process',
             type: 'paragraph',
             content:
-              'I began by defining the character concept and repeatedly prompting AI tools to push toward the look I wanted. But the generated output never fully matched my intent. To close that gap, I manually edited the sprites, added pixel details myself, and adjusted motion frames on top of the generated base. I also worked on the plant animation for the light gimmick, and I spent a long time thinking about how to make it feel natural rather than decorative. I paid attention to the rhythm of the petals, the bend of the stem, and the amount of motion in each frame so the plant could feel alive while still staying readable in gameplay. That process taught me how to use AI as a starting point rather than a final answer.'
+              'AI tools helped us generate starting points quickly, but the results were not usable as final assets on their own. I treated them as rough material, then refined sprites frame by frame through manual pixel editing and animation adjustment until the characters felt readable, intentional, and consistent in motion. I also worked on the plant animation for the light mechanic. That required a different kind of judgment from human animation: I had to think about how petals, stem, and leaves could move enough to feel alive without becoming noisy or distracting in gameplay.'
           },
           {
             heading: 'Light-based puzzle level design',
@@ -270,23 +270,23 @@ const portfolioData = {
               }
             ],
             content:
-              'I designed the light section of the game. It was inspired by the image of a sunflower-like light plant: in this part, Insam can transform into a sunflower and fire light, while the astronaut can hold a mirror and split the beam. I designed the level flow so players first learn the simplest version of the mechanic, then gradually rely on beam-splitting and more deliberate coordination to reach the goal. The puzzle logic was not just “harder over time.” I wanted the layout to teach the gimmick, deepen it, and finally require both characters to use their own roles well for the stage to feel fair and satisfying.'
+              'I designed the light-puzzle section around a simple fantasy: Insam transforms into a sunflower form and emits light, while the astronaut redirects and splits that light with a mirror. From there, the level teaches the mechanic in stages—first basic light routing, then beam splitting, then tighter coordination where both characters have to understand their own role. The goal was not just to make the puzzle harder. It was to build a learning curve that felt fair, readable, and satisfying as the mechanic deepened.'
           },
           {
             heading: 'What I learned',
             type: 'paragraph',
             content:
-              'This project taught me several things at once: how to collaborate with a teammate for the first time, how to establish shared coding rules and working habits, how to turn AI output into something more intentional through editing, and how to think about level design as player experience rather than just obstacle placement. It also gave me the satisfaction of seeing a character move naturally after hands-on sprite and animation work.'
+              'This project strengthened several skills at once: collaborating closely with a teammate, turning rough AI output into production-worthy visual material, thinking about animation as gameplay readability, and designing levels as guided player learning rather than simple obstacle placement. More than anything, it showed me how much I enjoy projects where concept, interaction, and implementation all have to support one another.'
           }
         ],
         sidebar: {
-          role: 'Planning, Character Design, Light-Puzzle Level Design, Development',
+          role: 'Planning, Character Direction, Light-Puzzle Design, Implementation',
           stack: ['Phaser', 'Co-op Puzzle Design', 'Pixel Art Editing', 'AI-Assisted Asset Workflow', 'Team Collaboration'],
           notes: [
-            'Built with one teammate during military service',
-            'Created for a GameAIfy-related contest under production constraints',
-            'Combined AI-generated starting points with manual pixel editing and animation adjustment',
-            'Designed so both player characters needed to use their own abilities to progress'
+            'Two-person team project during military service',
+            'Built for an AI-assisted asset contest under production constraints',
+            'Combined AI-generated starting points with manual pixel editing and animation refinement',
+            'Built around complementary abilities rather than duplicated actions'
           ]
         },
         heroAction: {
