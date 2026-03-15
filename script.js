@@ -11,7 +11,7 @@ const portfolioData = {
         'Planned, designed, and built solo, from content logic and interface flow to interaction design and game systems.',
       tags: ['Language Learning', 'Content Logic', 'Frontend Development'],
       thumbnail: {
-        src: 'worldofwordsmain.png',
+        src: 'worldofwordsthumbnail.png',
         alt: 'World of Words main screen with the site interface and quiz entry point.',
         objectPosition: 'center top'
       },
@@ -177,7 +177,7 @@ const portfolioData = {
         'Built as a two-person project during military service. I focused on planning, character and animation work, light-puzzle design, and implementation.',
       tags: ['Co-op Adventure', 'Pixel Character Design', 'Puzzle Level Design'],
       thumbnail: {
-        src: 'triendsmain.webp',
+        src: 'triendsmain.png',
         alt: 'Triends key art showing the fantasy world, the astronaut, and companion characters.',
         objectPosition: 'center center'
       },
