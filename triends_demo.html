@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Triends Light Village Demo — Jimin</title>
-  <meta name="description" content="Playable light-village-2 demo from Triends in Jimin's portfolio." />
+  <title>Triends Demo — Jimin</title>
+  <meta name="description" content="Playable Triends demo from Jimin's portfolio." />
   <link rel="icon" href="data:," />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,6 +32,7 @@
     }
 
     .triends-canvas-wrap {
+      position: relative;
       padding: 0;
       background: #000;
       border: 0;
@@ -41,6 +42,28 @@
       justify-content: center;
       align-items: flex-start;
       box-shadow: 0 28px 64px rgba(12, 10, 8, 0.2);
+    }
+
+    .triends-demo-hud {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 6;
+      padding: 12px 16px;
+      border-radius: 14px;
+      background: rgba(11, 10, 9, 0.82);
+      border: 1px solid rgba(243, 227, 197, 0.25);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+      pointer-events: none;
+    }
+
+    .triends-demo-hud span {
+      display: block;
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #fff4d8;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.6);
     }
 
     #triends-demo-game {
@@ -104,10 +127,10 @@
         <section class="game-topbar">
           <div>
             <span class="game-kicker">Playable Game</span>
-            <h1>Triends — Light Village 2</h1>
+            <h1>Triends — Demo</h1>
             <p>
-              A browser-playable slice of the original light-village-2 section. It keeps the core collision, transformation,
-              animation, mirror reflection, and light puzzle flow, then restarts from the spawn when you reach Visigi or HP reaches 0.
+              A browser-playable slice of Triends focused on the original light puzzle gimmick. It keeps the core collision,
+              transformation, animation, mirror reflection, and restart flow so the demo stays easy to jump into.
             </p>
           </div>
           <div class="game-actions">
@@ -118,9 +141,10 @@
         <div class="game-layout">
           <section class="game-canvas-card">
             <h2>Play</h2>
-            <p class="game-subtitle">Playable in browser · light-village-2 only</p>
+            <p class="game-subtitle">Playable in browser · focused demo build</p>
             <div class="game-canvas-wrap triends-canvas-wrap">
-              <div id="triends-demo-game" aria-label="Triends Light Village 2 playable demo"></div>
+              <div class="triends-demo-hud" aria-hidden="true"><span id="triends-demo-health">HP 3/3  ♥♥♥</span></div>
+              <div id="triends-demo-game" aria-label="Triends playable demo"></div>
             </div>
           </section>
 
@@ -131,7 +155,7 @@
                 <strong>Astronaut</strong>
                 <p><span class="inline-key">↑</span> <span class="inline-key">↓</span> <span class="inline-key">←</span> <span class="inline-key">→</span> move</p>
                 <p><span class="inline-key">Right Ctrl</span> equip mirror</p>
-                <p><span class="inline-key">0</span> reflect pose</p>
+                <p><span class="inline-key">Right Shift</span> raise mirror</p>
               </div>
               <div class="control-card">
                 <strong>Insam</strong>
@@ -143,11 +167,9 @@
             <h3>Goal</h3>
             <ul>
               <li>Use Insam’s light and the astronaut’s mirror to solve the light puzzle.</li>
-              <li>Reach Visigi to clear the demo.</li>
+              <li>Reach the goal point to clear the demo.</li>
               <li>The run automatically restarts from the spawn after success or at 0 HP.</li>
             </ul>
-
-            <p class="game-note">Only the files and systems needed for this section are loaded, so the demo stays focused on the original Light Village 2 gimmick.</p>
           </aside>
         </div>
       </div>

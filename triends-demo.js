@@ -8,6 +8,8 @@
   const SPAWN_TILE = { x: 4, y: 84 };
   const VISIGI_TILE = { x: 66, y: 32 };
   const LASER_SPEED = 700;
+  const MIRROR_POSE_MS = 260;
+  const SUNFLOWER_LASER_COOLDOWN_MS = 220;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -363,7 +365,7 @@
       this.haltMovementAndIdle();
     }
 
-    startMirroringPose(durationMs = 100) {
+    startMirroringPose(durationMs = MIRROR_POSE_MS) {
       if (!this.isMirrorEquipped) return;
       this.isMirroringPose = true;
       this.sprite.body.stop();
@@ -543,10 +545,12 @@
 
       this.sprite.once(`animationcomplete-${keyOnce}`, () => {
         this.isAttackingSunflower = false;
-        this.attackOnCooldown = false;
         const idle = { down: 0, left: 4, right: 8, up: 12 };
         this.sprite.anims.stop();
         this.sprite.setFrame(idle[this.lastDir]);
+        this.scene.time.delayedCall(SUNFLOWER_LASER_COOLDOWN_MS, () => {
+          this.attackOnCooldown = false;
+        });
       });
     }
 
@@ -1056,25 +1060,34 @@
         if (evt.code === 'ControlRight' || evt.code === 'MetaRight') {
           if (evt.repeat) return;
           this.player.setMirrorEquipped(!this.player.isMirrorEquipped);
-        } else if (evt.code === 'Digit0' || evt.code === 'Numpad0') {
+        } else if (evt.code === 'ShiftRight') {
           if (evt.repeat) return;
-          this.player.startMirroringPose(100);
+          this.player.startMirroringPose(MIRROR_POSE_MS);
         }
       });
 
-      this.heartsPanel = this.add.rectangle(18, 16, 260, 56, 0x0b0a09, 0.74)
+      this.heartsPanel = this.add.rectangle(20, 20, 240, 62, 0x0b0a09, 0.84)
         .setOrigin(0, 0)
         .setScrollFactor(0)
-        .setDepth(2990);
+        .setDepth(5000)
+        .setStrokeStyle(2, 0xf3e3c5, 0.28);
 
-      this.heartsText = this.add.text(34, 28, '', {
-        fontSize: '24px',
+      this.heartsText = this.add.text(38, 34, '', {
+        fontSize: '26px',
         fontFamily: 'Inter, sans-serif',
         fontStyle: '800',
-        color: '#f3e3c5',
+        color: '#fff4d8',
         stroke: '#000000',
-        strokeThickness: 5
-      }).setScrollFactor(0).setDepth(3000);
+        strokeThickness: 6,
+        shadow: {
+          offsetX: 0,
+          offsetY: 2,
+          color: '#000000',
+          blur: 0,
+          stroke: false,
+          fill: true
+        }
+      }).setScrollFactor(0).setDepth(5010);
 
       this.refreshHeartsUI();
     }
@@ -1273,10 +1286,15 @@
     }
 
     refreshHeartsUI() {
-      this.heartsText.setText(`HP ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}`);
+      const hpText = `HP ${this.hearts.p1}/3  ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}`;
+      this.heartsText.setText(hpText);
       if (this.heartsPanel) {
         const textBounds = this.heartsText.getBounds();
-        this.heartsPanel.setSize(Math.max(172, textBounds.width + 32), Math.max(48, textBounds.height + 24));
+        this.heartsPanel.setSize(Math.max(190, textBounds.width + 36), Math.max(54, textBounds.height + 26));
+      }
+      const hudText = document.getElementById('triends-demo-health');
+      if (hudText) {
+        hudText.textContent = hpText;
       }
     }
 

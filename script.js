@@ -195,17 +195,17 @@ const portfolioData = {
         media: [
           {
             src: 'triends-reference.jpg',
-            alt: 'Reference sheet showing top-down four-direction pixel character movement inspiration.',
-            title: 'Movement Reference and Direction Study',
+            alt: 'Reference image used to study readable four-direction pixel character movement for the astronaut.',
+            title: 'Reference Study for the Astronaut Sprite',
             caption:
-              'Before settling the final character work, I studied readable four-direction sprite language and how movement could stay clear in a small top-down pixel scale.'
+              'I collected reference images, including Pokémon-style four-direction sprite work, to study how a tiny character could stay readable from the front, back, and sides before building the astronaut.'
           },
           {
             src: 'triends-character-sheet.png',
-            alt: 'Astronaut pixel character sheet including front, side, and back views and a mirror-carrying walking pose.',
-            title: 'Astronaut Character Sheet',
+            alt: 'Astronaut pixel character sheet including front, side, back, and mirror-carrying poses.',
+            title: 'Astronaut Sheet Built from That Study',
             caption:
-              'The final astronaut sprite grew from AI-assisted concept generation into a manually adjusted pixel character sheet, including custom edits for poses and interaction states.'
+              'That reference directly informed the astronaut’s proportions, direction changes, and mirror-carrying poses. I used AI-assisted generation as a base, then edited the sprite sheet by hand so the final movement felt clearer and more intentional.'
           },
           {
             src: 'triends-pixel-edit.jpg',
@@ -257,7 +257,7 @@ const portfolioData = {
             },
             actions: [
               {
-                label: 'Play Light Village Demo',
+                label: 'Play Demo',
                 href: 'triends_demo.html',
                 kind: 'primary'
               }
@@ -282,18 +282,15 @@ const portfolioData = {
             'Designed so both player characters needed to use their own abilities to progress'
           ]
         },
+        heroAction: {
+          label: 'Play Demo',
+          href: 'triends_demo.html',
+          kind: 'primary'
+        },
         links: [
           {
-            label: 'Play Light Village Demo',
+            label: 'Play Demo',
             href: 'triends_demo.html'
-          },
-          {
-            label: 'Watch Prototype Clip',
-            href: 'triends-prototype.mp4'
-          },
-          {
-            label: 'Watch Light Puzzle Clip',
-            href: 'triends-light-gimmick.mp4'
           }
         ]
       }
@@ -698,7 +695,8 @@ function renderProjectDetail() {
         </div>
         <div class="detail-actions">
           <a class="btn btn-secondary" href="index.html#projects">Back to Projects</a>
-          ${project.detail.links?.length === 1 ? `<a class="btn btn-primary" href="${project.detail.links[0].href}" target="_blank" rel="noreferrer">${project.detail.links[0].label}</a>` : ''}
+          ${project.detail.heroAction ? `<a class="btn ${project.detail.heroAction.kind === 'primary' ? 'btn-primary' : 'btn-secondary'}" href="${project.detail.heroAction.href}">${project.detail.heroAction.label}</a>` : ''}
+          ${!project.detail.heroAction && project.detail.links?.length === 1 ? `<a class="btn btn-primary" href="${project.detail.links[0].href}" target="_blank" rel="noreferrer">${project.detail.links[0].label}</a>` : ''}
           <a class="btn btn-secondary" href="about.html">About Me</a>
         </div>
       </header>
