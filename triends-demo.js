@@ -2,6 +2,7 @@
 (function () {
   const GAME_WIDTH = 1600;
   const GAME_HEIGHT = 1280;
+  const CAMERA_ZOOM = 1.65;
   const PLAYER_SPEED = 200;
   const PLAYER_DIAGONAL_SPEED = 141;
   const SPAWN_TILE = { x: 4, y: 84 };
@@ -973,7 +974,9 @@
       this.mapManager.attachPlayer(this.player.sprite);
       this.mapManager.attachPlayer(this.player2.sprite);
       this.cameras.main.roundPixels = true;
-      this.cameras.main.startFollow(this.player.sprite, true, 0.15, 0.15);
+      this.cameras.main.setBackgroundColor('#000000');
+      this.cameras.main.setZoom(CAMERA_ZOOM);
+      this.cameras.main.startFollow(this.player.sprite, true, 0.14, 0.14);
 
       this.sunflowerLasers = this.physics.add.group({ classType: Phaser.Physics.Arcade.Sprite, maxSize: 24, runChildUpdate: false });
       this.player2.sprite.on('sunflower-shoot', (payload) => {
@@ -992,14 +995,6 @@
       this.visigi.setDepth(1000);
       this.visigiGlow = this.add.circle(goal.x, goal.y - 40, 48, 0xffffd5, 0.18).setDepth(980);
       this.tweens.add({ targets: this.visigiGlow, alpha: { from: 0.15, to: 0.35 }, duration: 900, yoyo: true, repeat: -1 });
-      this.add.text(goal.x, goal.y - 94, 'Visigi', {
-        fontSize: '22px',
-        fontFamily: 'Inter, sans-serif',
-        fontStyle: '700',
-        color: '#7d5d35',
-        backgroundColor: '#fffdfa',
-        padding: { x: 10, y: 4 }
-      }).setOrigin(0.5).setDepth(1001);
 
       this.cursors = this.input.keyboard.createCursorKeys();
       this.keysWASD = this.input.keyboard.addKeys({
@@ -1029,16 +1024,6 @@
         strokeThickness: 6
       }).setScrollFactor(0).setDepth(3000);
 
-      this.messageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 56, '', {
-        fontSize: '22px',
-        fontFamily: 'Inter, sans-serif',
-        fontStyle: '600',
-        color: '#1d1a16',
-        backgroundColor: '#fffdfa',
-        padding: { x: 16, y: 10 }
-      }).setOrigin(0.5).setScrollFactor(0).setDepth(3000);
-
-      this.showMessage('Reach Visigi. The run restarts on success or at 0 HP.');
       this.refreshHeartsUI();
     }
 
@@ -1184,9 +1169,7 @@
         this.playerInvulUntil = this.time.now + 1000;
         this.startPlayerFlicker(1000);
         if (this.hearts.p1 <= 0) {
-          this.queueReset('HP 0 — restarting from the spawn.');
-        } else {
-          this.showMessage('The astronaut was hit. Mirror the beam to survive.');
+          this.queueReset();
         }
         return;
       }
@@ -1216,35 +1199,31 @@
       const reachedByP2 = Phaser.Math.Distance.Between(this.player2.sprite.x, this.player2.sprite.y, this.visigi.x, this.visigi.y) < 54;
       if (reachedByP1 || reachedByP2) {
         this.goalTriggered = true;
-        this.queueReset('Reached Visigi! Restarting the demo...');
+        this.queueReset();
       }
     }
 
     checkLoseCondition() {
       if (this.resetQueued) return;
       if (this.hearts.p1 <= 0) {
-        this.queueReset('HP 0 — restarting from the spawn.');
+        this.queueReset();
       }
     }
 
-    queueReset(message) {
+    queueReset() {
       if (this.resetQueued) return;
       this.resetQueued = true;
       this.player.sprite.body.stop();
       this.player2.sprite.body.stop();
       this.player.sprite.setVelocity(0, 0);
       this.player2.sprite.setVelocity(0, 0);
-      this.showMessage(message);
-      this.time.delayedCall(1200, () => this.scene.restart());
+      this.time.delayedCall(900, () => this.scene.restart());
     }
 
     refreshHeartsUI() {
       this.heartsText.setText(`Astronaut HP ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}   ·   Insam HP ${'♥'.repeat(this.hearts.p2)}${'♡'.repeat(3 - this.hearts.p2)}`);
     }
 
-    showMessage(text) {
-      this.messageText.setText(text);
-    }
   }
 
   const config = {
@@ -1252,7 +1231,7 @@
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     parent: 'triends-demo-game',
-    transparent: true,
+    backgroundColor: '#000000',
     pixelArt: true,
     physics: {
       default: 'arcade',
