@@ -255,6 +255,13 @@ const portfolioData = {
               type: 'video',
               src: 'triends-light-gimmick.mp4'
             },
+            actions: [
+              {
+                label: 'Play Light Village Demo',
+                href: 'triends_demo.html',
+                kind: 'primary'
+              }
+            ],
             content:
               'I designed the light section of the game. It was inspired by the image of a sunflower-like light plant: in this part, Insam can transform into a sunflower and fire light, while the astronaut can hold a mirror and split the beam. I designed the level flow so players first learn the simplest version of the mechanic, then gradually rely on beam-splitting and more deliberate coordination to reach the goal. The puzzle logic was not just “harder over time.” I wanted the layout to teach the gimmick, deepen it, and finally require both characters to use their own roles well for the stage to feel fair and satisfying.'
           },
@@ -276,6 +283,10 @@ const portfolioData = {
           ]
         },
         links: [
+          {
+            label: 'Play Light Village Demo',
+            href: 'triends_demo.html'
+          },
           {
             label: 'Watch Prototype Clip',
             href: 'triends-prototype.mp4'
