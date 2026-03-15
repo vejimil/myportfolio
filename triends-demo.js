@@ -2,7 +2,7 @@
 (function () {
   const GAME_WIDTH = 1600;
   const GAME_HEIGHT = 1280;
-  const CAMERA_ZOOM = 1.65;
+  const CAMERA_ZOOM = 1.6;
   const PLAYER_SPEED = 200;
   const PLAYER_DIAGONAL_SPEED = 141;
   const SPAWN_TILE = { x: 4, y: 84 };
@@ -156,6 +156,49 @@
       this.renderer.render(data, this.currentTilesTextureKey);
       this.collision.build(data, this.currentTilesTextureKey);
       return true;
+    }
+
+    getCameraBounds() {
+      if (!this.currentMapData) return null;
+
+      const tileSize = this.currentMapData.tileSize || 16;
+      const mapWidthPx = tileSize * this.currentMapData.mapWidth;
+      const mapHeightPx = tileSize * this.currentMapData.mapHeight;
+      const preferredLayers = ['background', 'walls'];
+
+      const collectBounds = (layers) => {
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+
+        layers.forEach((layer) => {
+          (layer.tiles || []).forEach((tile) => {
+            minX = Math.min(minX, tile.x * tileSize);
+            minY = Math.min(minY, tile.y * tileSize);
+            maxX = Math.max(maxX, (tile.x + 1) * tileSize);
+            maxY = Math.max(maxY, (tile.y + 1) * tileSize);
+          });
+        });
+
+        if (!Number.isFinite(minX) || !Number.isFinite(minY)) return null;
+        return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+      };
+
+      for (const layerName of preferredLayers) {
+        const layers = this.currentMapData.layers.filter((layer) => String(layer.name || '').toLowerCase() === layerName);
+        const bounds = collectBounds(layers);
+        if (bounds) {
+          return {
+            x: clamp(bounds.x, 0, mapWidthPx),
+            y: clamp(bounds.y, 0, mapHeightPx),
+            width: clamp(bounds.width, tileSize, mapWidthPx - clamp(bounds.x, 0, mapWidthPx)),
+            height: clamp(bounds.height, tileSize, mapHeightPx - clamp(bounds.y, 0, mapHeightPx))
+          };
+        }
+      }
+
+      return { x: 0, y: 0, width: mapWidthPx, height: mapHeightPx };
     }
 
     attachPlayer(playerSprite) {
@@ -557,7 +600,7 @@
       this.deviceTiles = new Map();
       this.lampTiles = new Set();
       this.reachableWireSet = new Set();
-      this.simultaneousWindowMs = 500;
+      this.simultaneousWindowMs = 240;
       this.lampClusters = [];
       this.lampActivatedAt = new Map();
       this.flowerGroups = [];
@@ -976,6 +1019,10 @@
       this.cameras.main.roundPixels = true;
       this.cameras.main.setBackgroundColor('#000000');
       this.cameras.main.setZoom(CAMERA_ZOOM);
+      const cameraBounds = this.mapManager.getCameraBounds();
+      if (cameraBounds) {
+        this.cameras.main.setBounds(cameraBounds.x, cameraBounds.y, cameraBounds.width, cameraBounds.height);
+      }
       this.cameras.main.startFollow(this.player.sprite, true, 0.14, 0.14);
 
       this.sunflowerLasers = this.physics.add.group({ classType: Phaser.Physics.Arcade.Sprite, maxSize: 24, runChildUpdate: false });
@@ -1015,13 +1062,18 @@
         }
       });
 
-      this.heartsText = this.add.text(18, 16, '', {
-        fontSize: '28px',
+      this.heartsPanel = this.add.rectangle(18, 16, 260, 56, 0x0b0a09, 0.74)
+        .setOrigin(0, 0)
+        .setScrollFactor(0)
+        .setDepth(2990);
+
+      this.heartsText = this.add.text(34, 28, '', {
+        fontSize: '24px',
         fontFamily: 'Inter, sans-serif',
-        fontStyle: '700',
-        color: '#9a7444',
-        stroke: '#fffdfa',
-        strokeThickness: 6
+        fontStyle: '800',
+        color: '#f3e3c5',
+        stroke: '#000000',
+        strokeThickness: 5
       }).setScrollFactor(0).setDepth(3000);
 
       this.refreshHeartsUI();
@@ -1221,7 +1273,11 @@
     }
 
     refreshHeartsUI() {
-      this.heartsText.setText(`Astronaut HP ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}   ·   Insam HP ${'♥'.repeat(this.hearts.p2)}${'♡'.repeat(3 - this.hearts.p2)}`);
+      this.heartsText.setText(`HP ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}`);
+      if (this.heartsPanel) {
+        const textBounds = this.heartsText.getBounds();
+        this.heartsPanel.setSize(Math.max(172, textBounds.width + 32), Math.max(48, textBounds.height + 24));
+      }
     }
 
   }
