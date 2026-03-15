@@ -37,25 +37,6 @@ body.menu-open {
   overflow: hidden;
 }
 
-.skip-link {
-  position: absolute;
-  left: 16px;
-  top: -56px;
-  z-index: 100;
-  padding: 12px 16px;
-  border-radius: 14px;
-  background: #fff;
-  color: var(--text);
-  border: 1px solid var(--line-strong);
-  box-shadow: var(--shadow);
-  text-decoration: none;
-  font-weight: 700;
-}
-
-.skip-link:focus {
-  top: 16px;
-}
-
 img {
   max-width: 100%;
   display: block;
@@ -974,25 +955,5 @@ a {
 
   .game-actions .btn {
     flex: 1 1 180px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .reveal {
-    opacity: 1;
-    transform: none;
   }
 }

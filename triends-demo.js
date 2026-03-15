@@ -1297,7 +1297,6 @@
   };
 
   function bootTriendsDemo(attemptsLeft = 60) {
-    if (!document.getElementById('triends-demo-game')) return;
     if (window.triendsDemoGame) return;
     if (typeof window.Phaser !== 'undefined') {
       window.triendsDemoGame = new window.Phaser.Game(config);
