@@ -10,6 +10,8 @@
   const LASER_SPEED = 700;
   const MIRROR_POSE_MS = 300;
   const SUNFLOWER_LASER_COOLDOWN_MS = 320;
+  const HEART_UI_SCALE = 3;
+  const HEART_UI_GAP = 38;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -1066,29 +1068,7 @@
         }
       });
 
-      this.heartsPanel = this.add.rectangle(20, 20, 240, 62, 0x0b0a09, 0.84)
-        .setOrigin(0, 0)
-        .setScrollFactor(0)
-        .setDepth(5000)
-        .setStrokeStyle(2, 0xf3e3c5, 0.28);
-
-      this.heartsText = this.add.text(38, 34, '', {
-        fontSize: '26px',
-        fontFamily: 'Inter, sans-serif',
-        fontStyle: '800',
-        color: '#fff4d8',
-        stroke: '#000000',
-        strokeThickness: 6,
-        shadow: {
-          offsetX: 0,
-          offsetY: 2,
-          color: '#000000',
-          blur: 0,
-          stroke: false,
-          fill: true
-        }
-      }).setScrollFactor(0).setDepth(5010);
-
+      this.createHeartHUD();
       this.refreshHeartsUI();
     }
 
@@ -1285,16 +1265,58 @@
       this.time.delayedCall(900, () => this.scene.restart());
     }
 
-    refreshHeartsUI() {
-      const hpText = `HP ${this.hearts.p1}/3  ${'♥'.repeat(this.hearts.p1)}${'♡'.repeat(3 - this.hearts.p1)}`;
-      this.heartsText.setText(hpText);
-      if (this.heartsPanel) {
-        const textBounds = this.heartsText.getBounds();
-        this.heartsPanel.setSize(Math.max(190, textBounds.width + 36), Math.max(54, textBounds.height + 26));
+    createHeartHUD() {
+      this.heartIcons = [];
+      const startX = 22;
+      const startY = 20;
+
+      for (let i = 0; i < 3; i += 1) {
+        const heart = this.add.graphics();
+        heart.setScrollFactor(0);
+        heart.setDepth(5010);
+        heart.setPosition(startX + i * HEART_UI_GAP, startY);
+        this.heartIcons.push(heart);
       }
-      const hudText = document.getElementById('triends-demo-health');
-      if (hudText) {
-        hudText.textContent = hpText;
+    }
+
+    drawPixelHeart(graphics, filled) {
+      if (!graphics) return;
+      graphics.clear();
+
+      const pixels = [
+        '01100110',
+        '11111111',
+        '11111111',
+        '01111110',
+        '00111100',
+        '00011000'
+      ];
+
+      const scale = HEART_UI_SCALE;
+      const shadowColor = filled ? 0x35111c : 0x171212;
+      const mainColor = filled ? 0xf05b78 : 0x4e3b41;
+      const highlightColor = filled ? 0xffd7df : 0x7b656d;
+
+      const drawLayer = (color, offsetX, offsetY, limitRows = pixels.length) => {
+        graphics.fillStyle(color, 1);
+        for (let row = 0; row < pixels.length; row += 1) {
+          if (row >= limitRows) continue;
+          for (let col = 0; col < pixels[row].length; col += 1) {
+            if (pixels[row][col] !== '1') continue;
+            graphics.fillRect(offsetX + col * scale, offsetY + row * scale, scale, scale);
+          }
+        }
+      };
+
+      drawLayer(shadowColor, scale, scale);
+      drawLayer(mainColor, 0, 0);
+      drawLayer(highlightColor, 0, 0, 2);
+    }
+
+    refreshHeartsUI() {
+      if (!this.heartIcons) return;
+      for (let i = 0; i < this.heartIcons.length; i += 1) {
+        this.drawPixelHeart(this.heartIcons[i], i < this.hearts.p1);
       }
     }
 
