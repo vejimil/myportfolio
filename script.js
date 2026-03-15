@@ -548,13 +548,23 @@ function renderProjectMedia(media) {
 
   return `
     <section class="detail-block">
-      <h2>Selected Screens</h2>
+      <h2>Project Gallery</h2>
       <div class="media-grid">
         ${media
           .map(
             (item) => `
               <figure class="media-card${item.orientation === 'portrait' ? ' is-portrait' : ''}">
-                <img src="${item.src}" alt="${item.alt}" loading="lazy" decoding="async" />
+                <button
+                  class="media-trigger"
+                  type="button"
+                  data-media-src="${item.src}"
+                  data-media-alt="${item.alt}"
+                  data-media-title="${item.title}"
+                  data-media-caption="${item.caption}"
+                  aria-label="Open image: ${item.title}"
+                >
+                  <img src="${item.src}" alt="${item.alt}" loading="lazy" decoding="async" />
+                </button>
                 <figcaption class="media-copy">
                   <h4>${item.title}</h4>
                   <p>${item.caption}</p>
@@ -858,6 +868,91 @@ function renderAboutDetail() {
   `;
 }
 
+function ensureMediaLightbox() {
+  if (document.getElementById('media-lightbox')) {
+    return document.getElementById('media-lightbox');
+  }
+
+  const lightbox = document.createElement('div');
+  lightbox.className = 'media-lightbox';
+  lightbox.id = 'media-lightbox';
+  lightbox.hidden = true;
+  lightbox.innerHTML = `
+    <div class="media-lightbox-backdrop" data-close-lightbox="true"></div>
+    <div class="media-lightbox-dialog" role="dialog" aria-modal="true" aria-labelledby="media-lightbox-title">
+      <button class="media-lightbox-close" type="button" aria-label="Close image viewer">×</button>
+      <div class="media-lightbox-content">
+        <img class="media-lightbox-image" src="" alt="" />
+        <div class="media-lightbox-copy">
+          <h3 id="media-lightbox-title"></h3>
+          <p class="media-lightbox-caption"></p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(lightbox);
+  return lightbox;
+}
+
+function openMediaLightbox({ src, alt, title, caption }) {
+  const lightbox = ensureMediaLightbox();
+  const image = lightbox.querySelector('.media-lightbox-image');
+  const titleEl = lightbox.querySelector('#media-lightbox-title');
+  const captionEl = lightbox.querySelector('.media-lightbox-caption');
+
+  image.src = src;
+  image.alt = alt || title || 'Expanded project image';
+  titleEl.textContent = title || 'Project image';
+  captionEl.textContent = caption || '';
+
+  lightbox.hidden = false;
+  document.body.classList.add('lightbox-open');
+  lightbox.querySelector('.media-lightbox-close').focus();
+}
+
+function closeMediaLightbox() {
+  const lightbox = document.getElementById('media-lightbox');
+  if (!lightbox || lightbox.hidden) {
+    return;
+  }
+
+  lightbox.hidden = true;
+  document.body.classList.remove('lightbox-open');
+}
+
+function initProjectMediaViewer() {
+  const mediaButtons = document.querySelectorAll('.media-trigger');
+  if (!mediaButtons.length) {
+    return;
+  }
+
+  const lightbox = ensureMediaLightbox();
+
+  mediaButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      openMediaLightbox({
+        src: button.dataset.mediaSrc,
+        alt: button.dataset.mediaAlt,
+        title: button.dataset.mediaTitle,
+        caption: button.dataset.mediaCaption
+      });
+    });
+  });
+
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox || event.target.dataset.closeLightbox === 'true' || event.target.classList.contains('media-lightbox-close')) {
+      closeMediaLightbox();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeMediaLightbox();
+    }
+  });
+}
+
 function initReveal() {
   const revealItems = document.querySelectorAll('.reveal');
   const prefersReducedMotion = typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -896,6 +991,7 @@ if (pageType === 'home') {
 
 if (pageType === 'project-detail') {
   renderProjectDetail();
+  initProjectMediaViewer();
 }
 
 if (pageType === 'about-detail') {

@@ -632,14 +632,29 @@ a {
   background: rgba(255, 255, 255, 0.95);
 }
 
-.media-card img {
+.media-trigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.media-trigger img {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
+  transition: transform 0.28s ease;
 }
 
-.media-card.is-portrait img {
+.media-trigger:hover img,
+.media-trigger:focus-visible img {
+  transform: scale(1.02);
+}
+
+.media-card.is-portrait .media-trigger img {
   aspect-ratio: auto;
   height: auto;
   object-fit: cover;
@@ -657,6 +672,85 @@ a {
 }
 
 .media-copy p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
+.media-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.media-lightbox[hidden] {
+  display: none;
+}
+
+.media-lightbox-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 10, 8, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.media-lightbox-dialog {
+  position: relative;
+  width: min(100%, 1100px);
+  max-height: min(92vh, 980px);
+  overflow: auto;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 252, 247, 0.98);
+  box-shadow: 0 28px 80px rgba(15, 10, 6, 0.3);
+}
+
+.media-lightbox-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(33, 26, 18, 0.82);
+  color: #fff;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.media-lightbox-content {
+  display: grid;
+  gap: 0;
+}
+
+.media-lightbox-image {
+  display: block;
+  width: 100%;
+  max-height: 74vh;
+  object-fit: contain;
+  background: linear-gradient(180deg, rgba(252, 246, 237, 0.8), rgba(247, 238, 224, 0.95));
+}
+
+.media-lightbox-copy {
+  padding: 18px 22px 22px;
+}
+
+.media-lightbox-copy h3 {
+  margin: 0;
+  font-size: 1.08rem;
+}
+
+.media-lightbox-caption {
   margin: 8px 0 0;
   color: var(--muted);
   line-height: 1.7;
@@ -697,6 +791,18 @@ a {
 }
 
 @media (max-width: 760px) {
+  .media-lightbox {
+    padding: 12px;
+  }
+
+  .media-lightbox-dialog {
+    border-radius: 22px;
+  }
+
+  .media-lightbox-image {
+    max-height: 62vh;
+  }
+
   .page-shell {
     width: min(calc(100% - 20px), var(--max-width));
   }
