@@ -8,8 +8,8 @@
   const SPAWN_TILE = { x: 4, y: 84 };
   const VISIGI_TILE = { x: 66, y: 32 };
   const LASER_SPEED = 700;
-  const MIRROR_POSE_MS = 260;
-  const SUNFLOWER_LASER_COOLDOWN_MS = 220;
+  const MIRROR_POSE_MS = 300;
+  const SUNFLOWER_LASER_COOLDOWN_MS = 320;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
