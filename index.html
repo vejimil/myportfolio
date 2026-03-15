@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jimin — Portfolio</title>
+  <meta
+    name="description"
+    content="Jimin's portfolio — interactive projects, arcade games, and thoughtful digital experiences."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-page="home">
+  <div class="page-shell">
+    <header class="site-header">
+      <a href="index.html" class="brand" aria-label="Go to home">
+        <span class="brand-word">JIMIN</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="#projects">Projects</a>
+        <a href="#about">About Me</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <main>
+      <section class="hero section reveal">
+        <h1>Hello, I’m <span class="name-accent">Jimin</span></h1>
+        <p class="hero-role">Curiosity, effort, and growth at the heart of playful design.</p>
+        <p class="hero-script">Drawn to learning, refining, and creating better experiences <span class="no-break">over time</span>.</p>
+
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#projects">Projects</a>
+          <a class="btn btn-secondary" href="about.html">About Me</a>
+        </div>
+      </section>
+
+      <section id="projects" class="section reveal">
+        <div class="section-head compact-head">
+          <div>
+            <p class="section-label">PROJECTS</p>
+            <h2>What I’ve Built</h2>
+          </div>
+        </div>
+
+        <div id="projects-grid" class="projects-grid" aria-live="polite"></div>
+      </section>
+
+      <section id="about" class="section reveal">
+        <div class="section-head compact-head">
+          <div>
+            <p class="section-label">ABOUT ME</p>
+            <h2>The Person Behind the Projects</h2>
+          </div>
+        </div>
+
+        <div id="about-preview" class="about-preview" aria-live="polite"></div>
+
+      </section>
+
+      <section id="contact" class="section contact-section reveal">
+        <div class="section-head compact-head">
+          <div>
+            <p class="section-label">CONTACT</p>
+            <h2>Open to collaboration, internships, and good conversations.</h2>
+          </div>
+        </div>
+
+        <div class="contact-grid">
+          <article class="project-card contact-panel contact-single-card">
+            <div class="card-top">
+              <div class="card-heading">
+                <span class="card-label">REACH OUT</span>
+                <h3>Games, learning tools, fashion, music, or new ideas.</h3>
+              </div>
+            </div>
+            <p class="project-copy">
+              I’d love to hear from people working on interactive products, playful systems, or thoughtful digital experiences. I’m also always happy to talk about games, fashion, music, and ideas that connect different fields.
+            </p>
+            <div class="contact-links">
+              <a class="contact-chip" href="mailto:vejimil@snu.ac.kr" aria-label="Email Jimin">Email</a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Jimin.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

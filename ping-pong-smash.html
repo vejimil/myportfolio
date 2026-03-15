@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ping-Pong Smash — Jimin</title>
+  <meta name="description" content="Play Ping-Pong Smash in the browser." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a href="index.html" class="brand" aria-label="Go to home">
+        <span class="brand-word">JIMIN</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="index.html#projects">Projects</a>
+        <a href="about.html">About Me</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <main class="game-page">
+      <div class="game-page-shell">
+        <section class="game-topbar">
+          <div>
+            <span class="game-kicker">Playable Game</span>
+            <h1>Ping-Pong Smash</h1>
+            <p>A browser port of my local two-player Pong variant with a timed smash mechanic, fast rallies, countdown serves, and deuce rules.</p>
+          </div>
+          <div class="game-actions">
+            <a class="btn btn-secondary" href="arcade-games.html">Back to Arcade Games</a>
+          </div>
+        </section>
+
+        <div class="game-layout">
+          <section class="game-canvas-card">
+            <h2>Play</h2>
+            <p class="game-subtitle">Keyboard only · local two-player</p>
+            <div class="game-canvas-wrap">
+              <canvas id="pong-canvas" class="game-canvas" width="1200" height="700" aria-label="Ping-Pong Smash game canvas"></canvas>
+            </div>
+          </section>
+
+          <aside class="game-info-card">
+            <h2>Controls</h2>
+            <div class="control-grid">
+              <div class="control-card">
+                <strong>Left Player</strong>
+                <p><span class="inline-key">W</span> / <span class="inline-key">S</span> move</p>
+                <p><span class="inline-key">D</span> smash</p>
+              </div>
+              <div class="control-card">
+                <strong>Right Player</strong>
+                <p><span class="inline-key">↑</span> / <span class="inline-key">↓</span> move</p>
+                <p><span class="inline-key">←</span> smash</p>
+              </div>
+            </div>
+
+            <h3>Match Rules</h3>
+            <ul>
+              <li>First to 7 points wins, but you need a 2-point lead.</li>
+              <li>If both players reach 6 and tie, the game enters deuce.</li>
+              <li>The ball restarts from the center after every point.</li>
+            </ul>
+
+            <h3>Extra Keys</h3>
+            <ul>
+              <li><span class="inline-key">P</span> pause</li>
+              <li><span class="inline-key">R</span> reset</li>
+            </ul>
+
+            <p class="game-note">The smash only works if the ball is approaching your paddle and you hit the timing window correctly, just like in the original Python version.</p>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Jimin.</p>
+    </footer>
+  </div>
+
+  <script src="ping-pong-smash.js"></script>
+</body>
+</html>

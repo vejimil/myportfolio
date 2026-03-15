@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Space Duel — Jimin</title>
+  <meta name="description" content="Play Space Duel in the browser." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a href="index.html" class="brand" aria-label="Go to home">
+        <span class="brand-word">JIMIN</span>
+      </a>
+
+      <nav class="main-nav" aria-label="Primary navigation">
+        <a href="index.html#projects">Projects</a>
+        <a href="about.html">About Me</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <main class="game-page">
+      <div class="game-page-shell">
+        <section class="game-topbar">
+          <div>
+            <span class="game-kicker">Playable Game</span>
+            <h1>Space Duel</h1>
+            <p>A browser port of my two-player arena shooter with item pickups, stun, level-based bullet spread, and quick local-versus tension.</p>
+          </div>
+          <div class="game-actions">
+            <a class="btn btn-secondary" href="arcade-games.html">Back to Arcade Games</a>
+          </div>
+        </section>
+
+        <div class="game-layout">
+          <section class="game-canvas-card">
+            <h2>Play</h2>
+            <p class="game-subtitle">Keyboard only · local two-player</p>
+            <div class="game-canvas-wrap">
+              <canvas id="space-canvas" class="game-canvas" width="1200" height="780" aria-label="Space Duel game canvas"></canvas>
+            </div>
+          </section>
+
+          <aside class="game-info-card">
+            <h2>Controls</h2>
+            <div class="control-grid">
+              <div class="control-card">
+                <strong>Player 1</strong>
+                <p><span class="inline-key">W</span><span class="inline-key">A</span><span class="inline-key">S</span><span class="inline-key">D</span> move</p>
+                <p><span class="inline-key">Space</span> fire</p>
+              </div>
+              <div class="control-card">
+                <strong>Player 2</strong>
+                <p><span class="inline-key">↑</span><span class="inline-key">←</span><span class="inline-key">↓</span><span class="inline-key">→</span> move</p>
+                <p><span class="inline-key">Enter</span> fire</p>
+              </div>
+            </div>
+
+            <h3>Pickups</h3>
+            <ul>
+              <li>Green = heal</li>
+              <li>Gold = attack boost</li>
+              <li>Blue = speed boost</li>
+              <li>Red = stun your opponent</li>
+              <li>Purple = level up and add more bullets</li>
+              <li>White = radial nova burst</li>
+            </ul>
+
+            <h3>Extra Keys</h3>
+            <ul>
+              <li><span class="inline-key">R</span> restart</li>
+            </ul>
+
+            <p class="game-note">For the web version, I remapped Player 2 to arrow keys and Enter so the game works better on normal keyboards and laptops.</p>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <p>© <span id="year"></span> Jimin.</p>
+    </footer>
+  </div>
+
+  <script src="space-duel.js"></script>
+</body>
+</html>
