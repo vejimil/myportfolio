@@ -194,25 +194,32 @@ const portfolioData = {
         ],
         media: [
           {
+            src: 'triends-pixel-edit.jpg',
+            alt: 'Pixel-art editing process image showing direct manual dot work on the character design.',
+            title: 'Manual Pixel Editing',
+            caption:
+              'Because AI could not fully produce the exact look, motion, and readability I wanted, I treated the generated result as a base and then edited the sprite work by hand. I added, removed, and cleaned individual pixels until the character felt much closer to the intended style.'
+          },
+          {
             src: 'triends-reference.jpg',
             alt: 'Reference image used to study readable four-direction pixel character movement for the astronaut.',
             title: 'Reference Study for the Astronaut Sprite',
             caption:
-              'I collected reference images, including Pokémon-style four-direction sprite work, to study how a tiny character could stay readable from the front, back, and sides before building the astronaut.'
+              'I collected reference images, including Pokémon-style four-direction sprite work, because I wanted to study how a very small character could still read clearly from the front, back, and sides before I built the astronaut sprite.'
           },
           {
             src: 'triends-character-sheet.png',
             alt: 'Astronaut pixel character sheet including front, side, back, and mirror-carrying poses.',
             title: 'Astronaut Sheet Built from That Study',
             caption:
-              'That reference directly informed the astronaut’s proportions, direction changes, and mirror-carrying poses. I used AI-assisted generation as a base, then edited the sprite sheet by hand so the final movement felt clearer and more intentional.'
+              'That study directly shaped the astronaut’s proportions, direction changes, and mirror-carrying poses. I used AI-assisted generation as a base, then refined the sprite sheet by hand so the movement felt clearer, more controlled, and more believable in play.'
           },
           {
-            src: 'triends-pixel-edit.jpg',
-            alt: 'Pixel-art editing process image showing direct manual dot work on the character design.',
-            title: 'Manual Pixel Editing',
+            src: 'triendssunflower.png',
+            alt: 'Sunflower animation sheet showing multiple plant animation frames created for Triends.',
+            title: 'Plant Animation for the Light Gimmick',
             caption:
-              'Because AI could not fully produce the exact style or motion I wanted, I edited the sprite work by hand, adding and cleaning pixels until the result felt closer to the intended character.'
+              'I also made plant animation, not just human animation. For the sunflower-like light form, I spent a lot of time thinking about how a plant could move naturally in pixel art: how much the petals should open, how the stem and leaves should sway, and how the motion could feel alive without becoming too busy or hard to read during gameplay.'
           }
         ],
         sections: [
@@ -243,10 +250,10 @@ const portfolioData = {
               'The early prototype helped us test whether the world, characters, and cooperative structure could feel coherent. More than just proving that the game worked, it let us check whether the contrast between technology and plant power could create a distinctive identity.'
           },
           {
-            heading: 'Character design process',
+            heading: 'Sprite and animation process',
             type: 'paragraph',
             content:
-              'I began by defining the character concept and repeatedly prompting AI tools to push toward the look I wanted. But the generated output never fully matched my intent. To close that gap, I manually edited the sprites, added pixel details myself, and adjusted motion frames on top of the generated base. That process taught me how to use AI as a starting point rather than a final answer.'
+              'I began by defining the character concept and repeatedly prompting AI tools to push toward the look I wanted. But the generated output never fully matched my intent. To close that gap, I manually edited the sprites, added pixel details myself, and adjusted motion frames on top of the generated base. I also worked on the plant animation for the light gimmick, and I spent a long time thinking about how to make it feel natural rather than decorative. I paid attention to the rhythm of the petals, the bend of the stem, and the amount of motion in each frame so the plant could feel alive while still staying readable in gameplay. That process taught me how to use AI as a starting point rather than a final answer.'
           },
           {
             heading: 'Light-based puzzle level design',
