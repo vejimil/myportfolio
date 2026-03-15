@@ -10,8 +10,6 @@
   const LASER_SPEED = 700;
   const MIRROR_POSE_MS = 300;
   const SUNFLOWER_LASER_COOLDOWN_MS = 320;
-  const HEART_PIXEL_SCALE = 4;
-  const HEART_UI_GAP = 42;
 
   function clamp(value, min, max) {
     return Math.max(min, Math.min(max, value));
@@ -1265,100 +1263,16 @@
       this.time.delayedCall(900, () => this.scene.restart());
     }
 
-    ensureHeartTexture(key, palette) {
-      if (this.textures.exists(key)) return;
-
-      const pixels = [
-        '01100110',
-        '11111111',
-        '11111111',
-        '01111110',
-        '00111100',
-        '00011000'
-      ];
-      const scale = HEART_PIXEL_SCALE;
-      const width = (pixels[0].length + 1) * scale;
-      const height = (pixels.length + 1) * scale;
-      const texture = this.textures.createCanvas(key, width, height);
-      const ctx = texture.getContext();
-      ctx.clearRect(0, 0, width, height);
-      ctx.imageSmoothingEnabled = false;
-
-      const fillCells = (color, offsetX, offsetY, limitRows = pixels.length) => {
-        ctx.fillStyle = color;
-        for (let row = 0; row < pixels.length; row += 1) {
-          if (row >= limitRows) continue;
-          for (let col = 0; col < pixels[row].length; col += 1) {
-            if (pixels[row][col] !== '1') continue;
-            ctx.fillRect(offsetX + col * scale, offsetY + row * scale, scale, scale);
-          }
-        }
-      };
-
-      fillCells(palette.shadow, scale, scale);
-      fillCells(palette.main, 0, 0);
-      fillCells(palette.highlight, 0, 0, 2);
-      texture.refresh();
-    }
-
-    ensureHeartPanelTexture() {
-      const key = 'hud-heart-panel';
-      if (this.textures.exists(key)) return key;
-
-      const width = 152;
-      const height = 40;
-      const texture = this.textures.createCanvas(key, width, height);
-      const ctx = texture.getContext();
-      ctx.clearRect(0, 0, width, height);
-      ctx.imageSmoothingEnabled = false;
-      ctx.fillStyle = '#100c0f';
-      ctx.fillRect(4, 4, width - 8, height - 8);
-      ctx.fillStyle = '#24191d';
-      ctx.fillRect(0, 0, width - 4, height - 4);
-      ctx.fillStyle = '#3b2a31';
-      ctx.fillRect(4, 4, width - 12, 6);
-      texture.refresh();
-      return key;
-    }
-
     createHeartHUD() {
-      this.ensureHeartTexture('hud-heart-full', {
-        shadow: '#35111c',
-        main: '#f05b78',
-        highlight: '#ffd7df'
-      });
-      this.ensureHeartTexture('hud-heart-empty', {
-        shadow: '#171212',
-        main: '#4e3b41',
-        highlight: '#7b656d'
-      });
-
-      const panelKey = this.ensureHeartPanelTexture();
-      this.heartIcons = [];
-      const startX = 22;
-      const startY = 20;
-
-      this.heartPanel = this.add.image(16, 14, panelKey)
-        .setOrigin(0, 0)
-        .setScrollFactor(0)
-        .setDepth(5000);
-
-      for (let i = 0; i < 3; i += 1) {
-        const heart = this.add.image(startX + i * HEART_UI_GAP, startY, 'hud-heart-full');
-        heart.setOrigin(0, 0);
-        heart.setScrollFactor(0);
-        heart.setDepth(5010);
-        this.heartIcons.push(heart);
-      }
+      this.heartIcons = Array.from(document.querySelectorAll('[data-triends-heart]'));
     }
 
     refreshHeartsUI() {
-      if (!this.heartIcons) return;
+      if (!this.heartIcons || !this.heartIcons.length) return;
       for (let i = 0; i < this.heartIcons.length; i += 1) {
-        this.heartIcons[i].setTexture(i < this.hearts.p1 ? 'hud-heart-full' : 'hud-heart-empty');
+        this.heartIcons[i].classList.toggle('is-empty', i >= this.hearts.p1);
       }
     }
-
   }
 
   const config = {

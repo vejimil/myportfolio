@@ -69,6 +69,40 @@
       margin-top: 18px;
     }
 
+    .triends-hud {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      z-index: 8;
+      display: flex;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .triends-heart {
+      width: 30px;
+      height: 26px;
+      display: block;
+      color: #ff6f8e;
+      filter: drop-shadow(2px 2px 0 #3c1320);
+    }
+
+    .triends-heart svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      shape-rendering: crispEdges;
+    }
+
+    .triends-heart.is-empty {
+      color: #655159;
+      filter: drop-shadow(2px 2px 0 #171013);
+    }
+
+    .triends-heart.is-empty .heart-highlight {
+      opacity: 0.18;
+    }
+
     @media (max-width: 980px) {
       .triends-demo-page .game-layout {
         grid-template-columns: 1fr;
@@ -121,6 +155,56 @@
             <h2>Play</h2>
             <p class="game-subtitle">Playable in browser · focused demo build</p>
             <div class="game-canvas-wrap triends-canvas-wrap">
+              <div class="triends-hud" id="triends-hud" aria-label="HP">
+                <span class="triends-heart" data-triends-heart="0">
+                  <svg viewBox="0 0 8 6" aria-hidden="true">
+                    <rect x="1" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="2" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="5" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="6" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="0" y="1" width="8" height="1" fill="currentColor" />
+                    <rect x="0" y="2" width="8" height="1" fill="currentColor" />
+                    <rect x="1" y="3" width="6" height="1" fill="currentColor" />
+                    <rect x="2" y="4" width="4" height="1" fill="currentColor" />
+                    <rect x="3" y="5" width="2" height="1" fill="currentColor" />
+                    <rect class="heart-highlight" x="2" y="0" width="1" height="1" fill="#ffd8e3" />
+                    <rect class="heart-highlight" x="5" y="0" width="1" height="1" fill="#ffd8e3" />
+                    <rect class="heart-highlight" x="1" y="1" width="2" height="1" fill="#ffd8e3" />
+                  </svg>
+                </span>
+                <span class="triends-heart" data-triends-heart="1">
+                  <svg viewBox="0 0 8 6" aria-hidden="true">
+                    <rect x="1" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="2" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="5" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="6" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="0" y="1" width="8" height="1" fill="currentColor" />
+                    <rect x="0" y="2" width="8" height="1" fill="currentColor" />
+                    <rect x="1" y="3" width="6" height="1" fill="currentColor" />
+                    <rect x="2" y="4" width="4" height="1" fill="currentColor" />
+                    <rect x="3" y="5" width="2" height="1" fill="currentColor" />
+                    <rect class="heart-highlight" x="2" y="0" width="1" height="1" fill="#ffd8e3" />
+                    <rect class="heart-highlight" x="5" y="0" width="1" height="1" fill="#ffd8e3" />
+                    <rect class="heart-highlight" x="1" y="1" width="2" height="1" fill="#ffd8e3" />
+                  </svg>
+                </span>
+                <span class="triends-heart" data-triends-heart="2">
+                  <svg viewBox="0 0 8 6" aria-hidden="true">
+                    <rect x="1" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="2" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="5" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="6" y="0" width="1" height="1" fill="currentColor" />
+                    <rect x="0" y="1" width="8" height="1" fill="currentColor" />
+                    <rect x="0" y="2" width="8" height="1" fill="currentColor" />
+                    <rect x="1" y="3" width="6" height="1" fill="currentColor" />
+                    <rect x="2" y="4" width="4" height="1" fill="currentColor" />
+                    <rect x="3" y="5" width="2" height="1" fill="currentColor" />
+                    <rect class="heart-highlight" x="2" y="0" width="1" height="1" fill="#ffd8e3" />
+                    <rect class="heart-highlight" x="5" y="0" width="1" height="1" fill="#ffd8e3" />
+                    <rect class="heart-highlight" x="1" y="1" width="2" height="1" fill="#ffd8e3" />
+                  </svg>
+                </span>
+              </div>
               <div id="triends-demo-game" aria-label="Triends playable demo"></div>
             </div>
           </section>
