@@ -12,97 +12,145 @@
   <link rel="stylesheet" href="style.css" />
   <style>
     .demo-page {
-      padding: 2rem 0 4rem;
+      padding: 54px 0 112px;
     }
+
     .demo-shell {
-      width: min(1180px, 100%);
-      margin: 0 auto;
       display: grid;
-      gap: 1.2rem;
+      gap: 30px;
     }
-    .demo-card {
-      background: rgba(10, 18, 28, 0.88);
-      border: 1px solid rgba(157, 227, 255, 0.16);
-      border-radius: 24px;
-      padding: 1.25rem;
-      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.32);
+
+    .demo-card,
+    .demo-panel {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: var(--shadow);
     }
-    .demo-header {
+
+    .demo-hero {
       display: grid;
-      gap: 0.8rem;
+      gap: 16px;
+      padding: 28px;
     }
-    .demo-header h1 {
+
+    .demo-hero h1,
+    .demo-panel h2,
+    .demo-panel h3 {
+      margin: 0;
+    }
+
+    .demo-hero h1 {
       font-size: clamp(2rem, 4vw, 3.2rem);
-      margin: 0;
+      letter-spacing: -0.04em;
     }
-    .demo-header p {
-      margin: 0;
-      color: rgba(236, 242, 255, 0.8);
-      max-width: 70ch;
+
+    .demo-summary,
+    .demo-panel p,
+    .demo-panel li,
+    .demo-note {
+      color: var(--muted);
+      line-height: 1.8;
     }
+
+    .demo-summary,
+    .demo-panel p {
+      margin: 0;
+      max-width: 78ch;
+    }
+
     .demo-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.8rem;
+      gap: 14px;
+      margin-top: 10px;
     }
+
     .demo-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 290px;
-      gap: 1rem;
+      grid-template-columns: minmax(0, 1.24fr) minmax(280px, 0.76fr);
+      gap: 24px;
       align-items: start;
     }
+
     .game-stage {
-      background: #05080d;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid rgba(157, 227, 255, 0.14);
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(252, 249, 244, 0.96) 0%, rgba(246, 239, 228, 0.94) 100%);
     }
+
     #triends-demo-game {
       width: 100%;
       aspect-ratio: 5 / 4;
-      min-height: 520px;
+      min-height: 640px;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid rgba(154, 116, 68, 0.14);
+      background: rgba(255, 255, 255, 0.6);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
     }
+
     #triends-demo-game canvas {
       display: block;
       width: 100% !important;
       height: 100% !important;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
     }
+
     .demo-sidebar {
       display: grid;
-      gap: 1rem;
+      gap: 18px;
     }
+
+    .demo-panel {
+      padding: 28px;
+    }
+
     .demo-panel h2,
     .demo-panel h3 {
-      margin: 0 0 0.75rem;
-      font-size: 1rem;
+      font-size: 1.3rem;
+      letter-spacing: -0.03em;
+      margin-bottom: 14px;
     }
-    .demo-panel p,
-    .demo-panel li {
-      color: rgba(236, 242, 255, 0.78);
-      font-size: 0.96rem;
-      line-height: 1.55;
-    }
+
     .demo-panel ul {
       margin: 0;
-      padding-left: 1.1rem;
+      padding-left: 20px;
       display: grid;
-      gap: 0.48rem;
+      gap: 10px;
     }
+
     .demo-note {
-      font-size: 0.9rem;
-      color: rgba(236, 242, 255, 0.62);
+      font-size: 0.95rem;
     }
+
     @media (max-width: 980px) {
       .demo-layout {
         grid-template-columns: 1fr;
       }
+
       #triends-demo-game {
-        min-height: 420px;
+        min-height: 520px;
       }
     }
+
     @media (max-width: 640px) {
+      .demo-page {
+        padding: 42px 0 88px;
+      }
+
+      .demo-hero,
+      .demo-panel,
+      .game-stage {
+        padding: 22px;
+      }
+
       #triends-demo-game {
-        min-height: 320px;
+        min-height: 360px;
+      }
+
+      .demo-actions .btn {
+        width: 100%;
       }
     }
   </style>
@@ -127,10 +175,10 @@
 
     <main class="demo-page">
       <section class="demo-shell">
-        <div class="demo-card demo-header">
+        <div class="demo-card demo-hero">
           <a class="back-link" href="triends.html">← Back to Triends</a>
           <h1>Triends — Light Village 2 Demo</h1>
-          <p>
+          <p class="demo-summary">
             A trimmed playable slice of the original light puzzle section. It starts from the <strong>light-village-2</strong> spawn,
             keeps the original collision, transformation, animation, mirror reflection, laser splitting, and light-network puzzle flow,
             and restarts automatically when you reach Visigi or lose all HP.
@@ -147,27 +195,15 @@
           </div>
 
           <aside class="demo-sidebar">
-            <section class="demo-card demo-panel">
-              <h2>Controls</h2>
-              <ul>
-                <li><strong>Astronaut:</strong> Arrow keys</li>
-                <li><strong>Ginseng:</strong> WASD</li>
-                <li><strong>Transform:</strong> R</li>
-                <li><strong>Mirror equip:</strong> Right Ctrl / Right ⌘</li>
-                <li><strong>Mirror reflect pose:</strong> 0</li>
-                <li><strong>Sunflower fire:</strong> While transformed, tap WASD</li>
-              </ul>
+            <section class="demo-panel">
+              <h2>Goal</h2>
+              <p>Clear the light puzzle path and reach <strong>Visigi</strong>. The demo returns to the spawn when you succeed or when HP reaches 0.</p>
             </section>
 
-            <section class="demo-card demo-panel">
-              <h3>Goal</h3>
-              <p>Clear the light puzzle path and reach <strong>Visigi</strong>. The stage resets when you succeed or when HP reaches 0.</p>
-            </section>
-
-            <section class="demo-card demo-panel">
-              <h3>What is included</h3>
-              <p>Only the files and systems needed for this section are loaded: the <code>light-village-2</code> map, the required character sprites, laser/thunder effects, and Visigi.</p>
-              <p class="demo-note">Everything else from the larger Triends project was intentionally left out of this demo.</p>
+            <section class="demo-panel">
+              <h3>Included in this demo</h3>
+              <p>Only the files and systems needed for this section are loaded: the <code>light-village-2</code> map, the required character sprites, laser and thunder effects, and Visigi.</p>
+              <p class="demo-note">Everything else from the larger Triends project was intentionally left out.</p>
             </section>
           </aside>
         </div>

@@ -10,8 +10,8 @@
     const Phaser = window.Phaser;
     window.__triendsDemoBooted = true;
 
-  const GAME_WIDTH = 1280;
-  const GAME_HEIGHT = 1024;
+  const GAME_WIDTH = 1440;
+  const GAME_HEIGHT = 1152;
   const PLAYER_SPEED = 200;
   const PLAYER_DIAGONAL_SPEED = 141;
   const SPAWN_TILE = { x: 4, y: 84 };
@@ -924,6 +924,14 @@
       this.hearts = { p1: 3, p2: 3 };
     }
 
+    init() {
+      this.playerInvulUntil = 0;
+      this.playerFlickerTween = null;
+      this.resetQueued = false;
+      this.goalTriggered = false;
+      this.hearts = { p1: 3, p2: 3 };
+    }
+
     preload() {
       this.load.json('map:light-village-2', 'triends-demo-assets/maps/light-village-2/map.json');
       this.load.spritesheet('tiles:light-village-2', 'triends-demo-assets/maps/light-village-2/spritesheet.png', {
@@ -965,7 +973,7 @@
       const mapData = this.cache.json.get('map:light-village-2');
       if (!mapData) throw new Error('light-village-2 map did not load');
 
-      this.cameras.main.setBackgroundColor('#03070b');
+      this.cameras.main.setBackgroundColor('#f7f1e7');
       this.mapManager = new MapManager(this);
       this.mapManager.load('map:light-village-2');
       const tileSize = this.mapManager.getTileSize();
@@ -995,7 +1003,7 @@
       this.visigiGlow = this.add.circle(goal.x, goal.y - 40, 48, 0xffffd5, 0.18).setDepth(980);
       this.tweens.add({ targets: this.visigiGlow, alpha: { from: 0.15, to: 0.35 }, duration: 900, yoyo: true, repeat: -1 });
       this.add.text(goal.x, goal.y - 86, 'Visigi', {
-        fontSize: '14px',
+        fontSize: '18px',
         fontFamily: 'monospace',
         color: '#fff6ce',
         backgroundColor: '#0a1118'
@@ -1021,30 +1029,25 @@
       });
 
       this.heartsText = this.add.text(12, 12, '', {
-        fontSize: '18px',
+        fontSize: '28px',
         fontFamily: 'monospace',
-        color: '#ffb5b5',
+        color: '#ff8f8f',
         stroke: '#000000',
-        strokeThickness: 3
+        strokeThickness: 4
       }).setScrollFactor(0).setDepth(3000);
 
       this.messageText = this.add.text(GAME_WIDTH / 2, GAME_HEIGHT - 42, '', {
-        fontSize: '18px',
+        fontSize: '22px',
         fontFamily: 'monospace',
-        color: '#eaf8ff',
-        backgroundColor: '#081119',
+        color: '#fffdf8',
+        backgroundColor: '#8d6841',
         padding: { x: 12, y: 8 }
       }).setOrigin(0.5).setScrollFactor(0).setDepth(3000);
 
-      this.controlsText = this.add.text(GAME_WIDTH / 2, 26, 'Astronaut: Arrow Keys  |  Ginseng: WASD  |  R Transform  |  Right Ctrl equip mirror  |  0 reflect', {
-        fontSize: '14px',
-        fontFamily: 'monospace',
-        color: '#d8f4ff',
-        backgroundColor: '#081119',
-        padding: { x: 12, y: 6 }
-      }).setOrigin(0.5, 0).setScrollFactor(0).setDepth(3000);
 
-      this.showMessage('Reach Visigi. The stage restarts on success or at 0 HP.');
+
+
+      this.showMessage('Reach Visigi. The demo restarts on success or at 0 HP.');
       this.refreshHeartsUI();
     }
 
@@ -1258,7 +1261,7 @@
     width: GAME_WIDTH,
     height: GAME_HEIGHT,
     parent: 'triends-demo-game',
-    backgroundColor: '#000000',
+    backgroundColor: '#f7f1e7',
     pixelArt: true,
     physics: {
       default: 'arcade',
