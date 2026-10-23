@@ -757,25 +757,6 @@ strong {
   line-height: 1.55;
 }
 
-.chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 6px 0 0;
-  padding: 2px;
-  list-style: none;
-}
-
-.chips li {
-  padding: 2px 8px;
-  background: var(--paper);
-  box-shadow: var(--o2);
-  font-family: var(--font-title);
-  font-size: 12px;
-  font-weight: 400;
-  text-transform: uppercase;
-}
-
 .quest-log {
   display: grid;
   margin: 0;
