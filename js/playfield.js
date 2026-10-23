@@ -16,12 +16,12 @@
   const W = 480;
   const H = 300;
   const SPEED = 96;
-  const PIXEL_FONT = '"Silkscreen", ui-monospace, monospace';
+  const PIXEL_FONT = '"Galmuri7", ui-monospace, monospace';
 
   const portals = [
-    { label: 'TRIENDS', href: 'triends.html', color: '#4fe0b0', x: 96, y: 104 },
-    { label: 'WORLD OF WORDS', href: 'world-of-words.html', color: '#ff8a4c', x: 240, y: 84 },
-    { label: 'ARCADE', href: 'arcade-games.html', color: '#6fc3ff', x: 384, y: 104 }
+    { label: 'TRIENDS', href: 'triends.html', color: '#38b764', x: 96, y: 104 },
+    { label: 'WORLD OF WORDS', href: 'world-of-words.html', color: '#ef7d57', x: 240, y: 84 },
+    { label: 'ARCADE', href: 'arcade-games.html', color: '#41a6f6', x: 384, y: 104 }
   ];
 
   const DIR_ROW = { down: 0, left: 1, right: 2, up: 3 };

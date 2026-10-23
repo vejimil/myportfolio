@@ -11,14 +11,14 @@
   const PAD_H = 34;
   const PAD_W = 5;
   const BASE_SPEED = 150;
-  const FONT = '"Silkscreen", ui-monospace, monospace';
+  const FONT = '"Galmuri7", ui-monospace, monospace';
 
-  const left = { x: 14, y: H / 2, aim: 0, color: '#4fe0b0' };
-  const right = { x: W - 14 - PAD_W, y: H / 2, aim: 0, color: '#6fc3ff' };
+  const left = { x: 14, y: H / 2, aim: 0, color: '#38b764' };
+  const right = { x: W - 14 - PAD_W, y: H / 2, aim: 0, color: '#41a6f6' };
   const ball = { x: W / 2, y: H / 2, vx: BASE_SPEED, vy: 60 };
   const score = [0, 0];
   let smashText = 0;
-  let smashColor = '#ffcc33';
+  let smashColor = '#ffcd75';
   let rafId = null;
   let visible = false;
   let last = 0;
@@ -111,12 +111,12 @@
     ctx.fillStyle = right.color;
     ctx.fillRect(right.x, Math.round(right.y - PAD_H / 2), PAD_W, PAD_H);
 
-    ctx.fillStyle = smashText > 0 ? smashColor : '#ffcc33';
+    ctx.fillStyle = smashText > 0 ? smashColor : '#ffcd75';
     ctx.fillRect(Math.round(ball.x - 3), Math.round(ball.y - 3), 6, 6);
 
     if (smashText > 0) {
       ctx.globalAlpha = Math.min(1, smashText * 2.5);
-      ctx.font = `18px ${FONT}`;
+      ctx.font = `16px ${FONT}`;
       ctx.textBaseline = 'middle';
       ctx.fillStyle = smashColor;
       ctx.fillText('SMASH!', W / 2, H / 2 + 34);
