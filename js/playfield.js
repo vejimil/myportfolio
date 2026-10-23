@@ -19,9 +19,9 @@
   const PIXEL_FONT = '"Galmuri7", ui-monospace, monospace';
 
   const portals = [
-    { label: 'TRIENDS', href: 'triends.html', color: '#38b764', x: 96, y: 104 },
-    { label: 'WORLD OF WORDS', href: 'world-of-words.html', color: '#ef7d57', x: 240, y: 84 },
-    { label: 'ARCADE', href: 'arcade-games.html', color: '#41a6f6', x: 384, y: 104 }
+    { label: 'TRIENDS', href: 'triends.html', color: '#38b764', ink: '#fff6dc', x: 96, y: 104 },
+    { label: 'WORLD OF WORDS', href: 'world-of-words.html', color: '#ef7d57', ink: '#2b1d2e', x: 240, y: 84 },
+    { label: 'ARCADE', href: 'arcade-games.html', color: '#3b5dc9', ink: '#fff6dc', x: 384, y: 104 }
   ];
 
   const DIR_ROW = { down: 0, left: 1, right: 2, up: 3 };
@@ -65,101 +65,138 @@
   background.width = W;
   background.height = H;
 
+  // Palette shared with style.css so the map reads as part of the page.
+  const C = {
+    ink: '#2b1d2e',
+    soft: '#5d4858',
+    paper: '#f6ebcd',
+    speck: '#e6d09f',
+    cream: '#fff6dc',
+    bevel: '#e3c991',
+    green: '#38b764',
+    teal: '#257179',
+    red: '#b13e53',
+    blue: '#3b5dc9'
+  };
+
+  /* A parchment world map drawn in ink: dotted routes, trees, a pond,
+     mushrooms and a compass. Painted once into an offscreen canvas. */
   const paintBackground = () => {
     const g = background.getContext('2d');
     const rand = mulberry32(7);
+    const px = (x, y, w = 1, h = 1) => g.fillRect(Math.round(x), Math.round(y), w, h);
 
-    g.fillStyle = '#0f2326';
+    g.fillStyle = C.paper;
     g.fillRect(0, 0, W, H);
+    g.fillStyle = C.speck;
+    for (let i = 0; i < 900; i += 1) px(rand() * W, rand() * H);
 
-    for (let y = 0; y < H; y += 16) {
-      for (let x = 0; x < W; x += 16) {
-        if ((x / 16 + y / 16) % 2 === 0) {
-          g.fillStyle = '#11282b';
-          g.fillRect(x, y, 16, 16);
-        }
-      }
-    }
+    // Inner map border
+    g.fillStyle = C.bevel;
+    px(6, 6, W - 12, 1);
+    px(6, H - 7, W - 12, 1);
+    px(6, 6, 1, H - 12);
+    px(W - 7, 6, 1, H - 12);
 
-    // Dirt paths linking the start point to each portal.
-    g.fillStyle = '#28433f';
-    g.fillRect(96 - 10, 150, 384 - 96 + 20, 18);
-    g.fillRect(240 - 10, 96, 20, H - 96);
-    g.fillRect(96 - 10, 112, 20, 50);
-    g.fillRect(384 - 10, 112, 20, 50);
-    g.fillStyle = '#213a37';
-    for (let i = 0; i < 90; i += 1) {
-      const onH = rand() > 0.45;
-      const px = onH ? 90 + rand() * 300 : 232 + rand() * 16;
-      const py = onH ? 152 + rand() * 14 : 100 + rand() * 190;
-      g.fillRect(Math.round(px), Math.round(py), 2, 2);
-    }
-
-    const onPath = (x, y) =>
-      (y > 140 && y < 176 && x > 76 && x < 404) ||
-      (x > 220 && x < 260 && y > 86) ||
-      (Math.abs(x - 96) < 20 && y > 96 && y < 170) ||
-      (Math.abs(x - 384) < 20 && y > 96 && y < 170);
-
-    // Grass tufts
-    for (let i = 0; i < 110; i += 1) {
-      const x = Math.round(rand() * (W - 8) + 4);
-      const y = Math.round(rand() * (H - 8) + 4);
-      if (onPath(x, y)) continue;
-      g.fillStyle = rand() > 0.5 ? '#2c6a4f' : '#3a8762';
-      g.fillRect(x, y, 1, 3);
-      g.fillRect(x + 2, y - 1, 1, 4);
-      g.fillRect(x + 4, y + 1, 1, 2);
-    }
-
-    // Flowers
-    const petals = ['#ff8fb1', '#ffd36b', '#9fd8ff', '#c9a2ff'];
-    for (let i = 0; i < 26; i += 1) {
-      const x = Math.round(rand() * (W - 10) + 5);
-      const y = Math.round(rand() * (H - 10) + 5);
-      if (onPath(x, y)) continue;
-      g.fillStyle = petals[i % petals.length];
-      g.fillRect(x - 1, y, 3, 1);
-      g.fillRect(x, y - 1, 1, 3);
-      g.fillStyle = '#fff6d6';
-      g.fillRect(x, y, 1, 1);
-    }
-
-    // Glowing mushrooms in the corners, nodding to the Triends planet.
-    const mushroom = (x, y, cap) => {
-      g.fillStyle = '#d9cfe8';
-      g.fillRect(x - 1, y - 4, 3, 5);
-      g.fillStyle = cap;
-      g.fillRect(x - 4, y - 7, 9, 3);
-      g.fillRect(x - 3, y - 8, 7, 1);
-      g.fillStyle = 'rgba(255,255,255,0.7)';
-      g.fillRect(x - 2, y - 7, 1, 1);
-      g.fillRect(x + 2, y - 6, 1, 1);
+    // Dotted ink routes from the start point to each portal.
+    g.fillStyle = C.soft;
+    const dots = (x1, y1, x2, y2) => {
+      const len = Math.hypot(x2 - x1, y2 - y1);
+      for (let d = 0; d <= len; d += 6) px(x1 + ((x2 - x1) * d) / len - 1, y1 + ((y2 - y1) * d) / len - 1, 2, 2);
     };
-    [[22, 40, '#9b6bff'], [36, 52, '#5bc8ff'], [450, 36, '#9b6bff'], [462, 280, '#5bc8ff'], [24, 270, '#ff7aa8'], [440, 214, '#9b6bff'], [150, 260, '#5bc8ff'], [330, 274, '#ff7aa8']].forEach(
-      ([x, y, c]) => mushroom(x, y, c)
-    );
+    dots(96, 158, 384, 158);
+    dots(240, H - 10, 240, 96);
+    dots(96, 114, 96, 158);
+    dots(384, 114, 384, 158);
 
-    // Soft vignette
-    const vignette = g.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, W * 0.62);
-    vignette.addColorStop(0, 'rgba(0,0,0,0)');
-    vignette.addColorStop(1, 'rgba(0,0,0,0.45)');
-    g.fillStyle = vignette;
-    g.fillRect(0, 0, W, H);
+    const onRoute = (x, y) =>
+      (Math.abs(y - 158) < 10 && x > 80 && x < 400) ||
+      (Math.abs(x - 240) < 10 && y > 80) ||
+      (Math.abs(x - 96) < 12 && y > 70 && y < 166) ||
+      (Math.abs(x - 384) < 12 && y > 70 && y < 166);
+
+    // Pond
+    const pond = (cx, cy, rx, ry) => {
+      for (let y = -ry; y <= ry; y += 1) {
+        const half = Math.round(rx * Math.sqrt(1 - (y / ry) ** 2));
+        g.fillStyle = C.ink;
+        px(cx - half - 1, cy + y, half * 2 + 2, 1);
+      }
+      for (let y = -ry + 1; y <= ry - 1; y += 1) {
+        const half = Math.round((rx - 1) * Math.sqrt(1 - (y / (ry - 1)) ** 2));
+        g.fillStyle = C.blue;
+        px(cx - half, cy + y, half * 2, 1);
+      }
+      g.fillStyle = C.cream;
+      px(cx - 14, cy - 3, 8, 1);
+      px(cx + 4, cy + 2, 10, 1);
+      px(cx - 4, cy + 5, 6, 1);
+    };
+    pond(62, 246, 36, 14);
+
+    // Trees: round canopy drawn row by row, ink outline, two greens.
+    const CANOPY = [5, 9, 11, 13, 13, 13, 11, 7];
+    const tree = (x, y) => {
+      const top = y - 3 - CANOPY.length;
+      g.fillStyle = C.ink;
+      px(x - 1, y - 3, 3, 4);
+      CANOPY.forEach((w, r) => px(x - Math.floor(w / 2) - 1, top + r - 1, w + 2, 3));
+      CANOPY.forEach((w, r) => {
+        g.fillStyle = r >= CANOPY.length - 3 ? C.teal : C.green;
+        px(x - Math.floor(w / 2), top + r, w, 1);
+      });
+      g.fillStyle = C.cream;
+      px(x - 3, top + 2, 2, 1);
+    };
+    [[30, 40], [46, 52], [22, 64], [446, 40], [460, 58], [432, 196], [452, 210], [136, 282], [356, 280], [418, 268], [150, 214]].forEach(([x, y]) => tree(x, y));
+
+    // Triends-style mushrooms
+    const mushroom = (x, y) => {
+      g.fillStyle = C.ink;
+      px(x - 5, y - 8, 11, 4);
+      px(x - 4, y - 9, 9, 1);
+      px(x - 2, y - 4, 5, 5);
+      g.fillStyle = C.red;
+      px(x - 4, y - 8, 9, 3);
+      g.fillStyle = C.cream;
+      px(x - 2, y - 7, 1, 1);
+      px(x + 2, y - 6, 1, 1);
+      px(x - 1, y - 4, 3, 4);
+    };
+    [[178, 112], [306, 116], [330, 222], [118, 196], [470, 126]].forEach(([x, y]) => mushroom(x, y));
+
+    // Grass in soft ink
+    g.fillStyle = C.soft;
+    for (let i = 0; i < 90; i += 1) {
+      const x = Math.round(rand() * (W - 24) + 12);
+      const y = Math.round(rand() * (H - 24) + 12);
+      if (onRoute(x, y) || (Math.abs(x - 62) < 44 && Math.abs(y - 246) < 20)) continue;
+      px(x, y, 1, 2);
+      px(x + 2, y - 1, 1, 3);
+      px(x + 4, y, 1, 2);
+    }
+
+    // Compass rose, bottom right
+    const cx = 452;
+    const cy = 246;
+    g.fillStyle = C.ink;
+    px(cx, cy - 12, 1, 25);
+    px(cx - 12, cy, 25, 1);
+    px(cx - 1, cy - 8, 3, 5);
+    g.fillStyle = C.red;
+    px(cx - 1, cy - 11, 3, 3);
+    g.fillStyle = C.ink;
+    g.font = `8px ${PIXEL_FONT}`;
+    g.textAlign = 'center';
+    g.textBaseline = 'alphabetic';
+    g.fillText('N', cx, cy - 15);
   };
 
   /* ---------- Particles ---------- */
 
   const rand = mulberry32(42);
-  const fireflies = Array.from({ length: 14 }, () => ({
-    x: rand() * W,
-    y: rand() * H,
-    phase: rand() * Math.PI * 2,
-    speed: 0.4 + rand() * 0.6
-  }));
-
   const sparks = portals.map(() =>
-    Array.from({ length: 7 }, () => ({ ox: rand() * 30 - 15, t: rand(), speed: 0.35 + rand() * 0.4 }))
+    Array.from({ length: 6 }, () => ({ ox: rand() * 26 - 13, t: rand(), speed: 0.35 + rand() * 0.4 }))
   );
 
   /* ---------- Drawing helpers ---------- */
@@ -172,25 +209,22 @@
     }
   };
 
-  const withAlpha = (hex, alpha) => {
-    const n = parseInt(hex.slice(1), 16);
-    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
-  };
-
+  // Portals are map markers: an ink-outlined pad in the project's colour.
   const drawPortal = (portal, index) => {
     const isActive = portal === currentPortal;
-    const pulse = reduceMotion ? 0.5 : (Math.sin(clock * 3 + index) + 1) / 2;
+    const pulse = reduceMotion ? 0 : Math.round((Math.sin(clock * 3 + index) + 1) * 1.5);
 
-    pixelEllipse(portal.x, portal.y, 30, 11, withAlpha(portal.color, 0.12 + pulse * 0.1));
-    pixelEllipse(portal.x, portal.y, 24, 8, withAlpha(portal.color, 0.5));
-    pixelEllipse(portal.x, portal.y, 18, 5, '#071214');
-    pixelEllipse(portal.x, portal.y, 14, 3, withAlpha(portal.color, isActive ? 0.95 : 0.55));
+    if (isActive) pixelEllipse(portal.x, portal.y, 30 + pulse, 12 + Math.round(pulse / 2), C.cream);
+    pixelEllipse(portal.x, portal.y, 25, 10, C.ink);
+    pixelEllipse(portal.x, portal.y, 22, 8, portal.color);
+    pixelEllipse(portal.x, portal.y, 14, 4, C.ink);
+    pixelEllipse(portal.x, portal.y, 12, 3, isActive ? C.cream : portal.color);
 
-    // Rising sparks
     sparks[index].forEach((s) => {
       const t = (s.t + (reduceMotion ? 0 : clock * s.speed)) % 1;
-      ctx.fillStyle = withAlpha(portal.color, (1 - t) * (isActive ? 1 : 0.7));
-      ctx.fillRect(Math.round(portal.x + s.ox * (1 - t * 0.4)), Math.round(portal.y - t * 46), 2, 2);
+      if (t > (isActive ? 1 : 0.6)) return;
+      ctx.fillStyle = t < 0.3 ? portal.color : C.ink;
+      ctx.fillRect(Math.round(portal.x + s.ox * (1 - t * 0.4)), Math.round(portal.y - 4 - t * 40), 2, 2);
     });
   };
 
@@ -202,24 +236,27 @@
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     const bob = isActive && !reduceMotion ? Math.round(Math.sin(clock * 6) * 2) : 0;
-    const labelY = (isActive ? Math.max(12, Math.round(player.y) - 74) : portal.y - 34) - bob;
+    const labelY = (isActive ? Math.max(14, Math.round(player.y) - 74) : portal.y - 34) - bob;
     const width = Math.ceil(ctx.measureText(portal.label).width) + 10;
-    ctx.fillStyle = isActive ? portal.color : 'rgba(0,0,0,0.75)';
-    ctx.fillRect(Math.round(portal.x - width / 2), labelY - 7, width, 14);
-    ctx.fillStyle = isActive ? '#06080b' : portal.color;
+    const left = Math.round(portal.x - width / 2);
+    ctx.fillStyle = C.ink;
+    ctx.fillRect(left - 2, labelY - 9, width + 4, 18);
+    ctx.fillStyle = isActive ? portal.color : C.cream;
+    ctx.fillRect(left, labelY - 7, width, 14);
+    ctx.fillStyle = isActive ? portal.ink : C.ink;
     ctx.fillText(portal.label, portal.x, labelY + 1);
     if (isActive) {
-      ctx.fillStyle = portal.color;
-      ctx.fillRect(portal.x - 3, labelY + 8, 7, 1);
-      ctx.fillRect(portal.x - 2, labelY + 9, 5, 1);
-      ctx.fillRect(portal.x - 1, labelY + 10, 3, 1);
+      ctx.fillStyle = C.ink;
+      ctx.fillRect(portal.x - 3, labelY + 10, 7, 1);
+      ctx.fillRect(portal.x - 2, labelY + 11, 5, 1);
+      ctx.fillRect(portal.x - 1, labelY + 12, 3, 1);
     }
   };
 
   const drawCharacter = (who, img, frameSize, footOffset) => {
-    pixelEllipse(who.x, who.y, 10, 3, 'rgba(0,0,0,0.35)');
+    pixelEllipse(who.x, who.y, 9, 2, C.speck);
     if (!img) {
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = C.ink;
       ctx.fillRect(who.x - 6, who.y - 20, 12, 20);
       return;
     }
@@ -252,14 +289,6 @@
     actors.forEach((a) => drawCharacter(a.who, a.img, a.size, a.foot));
 
     portals.forEach(drawPortalLabel);
-
-    fireflies.forEach((f) => {
-      const glow = reduceMotion ? 0.6 : (Math.sin(clock * 2 * f.speed + f.phase) + 1) / 2;
-      const x = f.x + (reduceMotion ? 0 : Math.sin(clock * f.speed + f.phase) * 6);
-      const y = f.y + (reduceMotion ? 0 : Math.cos(clock * f.speed * 0.8 + f.phase) * 4);
-      ctx.fillStyle = `rgba(216, 255, 138, ${0.15 + glow * 0.75})`;
-      ctx.fillRect(Math.round(x), Math.round(y), 2, 2);
-    });
   };
 
   /* ---------- Simulation ---------- */
@@ -487,6 +516,7 @@
   ]).then(([astronaut, insamImg]) => {
     sprites.astronaut = astronaut;
     sprites.insam = insamImg;
+    paintBackground(); // repaint once the pixel font is ready (compass label)
     render();
   });
 

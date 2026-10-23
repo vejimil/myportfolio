@@ -1,6 +1,8 @@
 /* Desktop Follower demo: a web re-creation of the macOS app's behaviour
-   (conga-line follow, look at the cursor, tumble on fast flicks, jump on
-   click, wave on right-click, get bored when idle) using Triends sprites. */
+   (conga-line follow, look at the cursor, tumble on fast flicks, wave on
+   right-click, get bored when idle) using Triends sprites. Clicking the
+   window lets the pets hop out and follow the visitor around the site
+   (see follower.js). */
 (() => {
   const canvas = document.querySelector('[data-flock-demo]');
   if (!canvas) return;
@@ -43,6 +45,9 @@
   let last = 0;
   let clock = 0;
   let visible = true;
+  let out = false;
+  let leaving = false;
+  const recallBtn = document.querySelector('[data-pets-recall]');
 
   const toWorld = (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -68,6 +73,7 @@
   const update = (dt) => {
     clock += dt;
     flickSpeed *= Math.pow(0.02, dt);
+    if (out) return;
 
     pets.forEach((pet, i) => {
       pet.stateT += dt;
@@ -163,7 +169,7 @@
 
     ctx.textAlign = 'left';
     ctx.fillStyle = '#5d7a7b';
-    ctx.fillText('move · click: jump · right-click: wave · flick fast: tumble', 10, H - 10);
+    ctx.fillText(out ? 'they are out on the site — come back here to call them home' : 'move · right-click: wave · flick fast: tumble · click: take them along', 10, H - 10);
   };
 
   const drawPet = (pet) => {
@@ -241,7 +247,17 @@
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.imageSmoothingEnabled = false;
     drawDesktop();
-    [...pets].sort((a, b) => a.y - b.y).forEach(drawPet);
+    if (out) {
+      ctx.font = `16px ${FONT}`;
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#fff6dc';
+      ctx.fillText("They're out!", W / 2, H / 2 - 10);
+      ctx.font = `8px ${FONT}`;
+      ctx.fillStyle = '#9fb3b3';
+      ctx.fillText('Move your cursor anywhere on the site.', W / 2, H / 2 + 12);
+    } else {
+      [...pets].sort((a, b) => a.y - b.y).forEach(drawPet);
+    }
     drawCursor();
   };
 
@@ -289,13 +305,39 @@
     lastPointer = null;
   });
 
+  // Click: the pets jump, then hop out of the window onto the page.
   canvas.addEventListener('pointerdown', (event) => {
     pointer = toWorld(event);
-    if (event.button === 2) return;
-    pets.forEach((pet, i) => {
-      if (pet.state !== 'tumble') setTimeout(() => { pet.jumpT = 0; }, i * 90);
-    });
+    if (event.button === 2 || out || leaving || !window.JBPets) return;
+    leaving = true;
+    pets.forEach((pet, i) => setTimeout(() => { pet.jumpT = 0; }, i * 90));
+    setTimeout(() => {
+      const rect = canvas.getBoundingClientRect();
+      const starts = pets.map((pet) => ({
+        x: rect.left + (pet.x / W) * rect.width,
+        y: rect.top + (pet.y / H) * rect.height
+      }));
+      leaving = false;
+      window.JBPets.release(starts);
+    }, 320);
   });
+
+  const setOut = (value) => {
+    out = value;
+    if (recallBtn) recallBtn.hidden = !out;
+    if (!out) {
+      pets.forEach((pet, i) => {
+        pet.x = W / 2 - i * 34;
+        pet.y = 200;
+        pet.state = 'rest';
+        pet.jumpT = 0;
+      });
+    }
+    render();
+  };
+
+  document.addEventListener('jb:pets', (event) => setOut(event.detail.out));
+  if (recallBtn) recallBtn.addEventListener('click', () => window.JBPets && window.JBPets.recall());
 
   canvas.addEventListener('contextmenu', (event) => {
     event.preventDefault();
@@ -328,5 +370,6 @@
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(canvas);
   if (document.fonts) document.fonts.load(`8px ${FONT}`).then(render).catch(() => {});
   resize();
+  setOut(Boolean(window.JBPets && window.JBPets.isOut()));
   start();
 })();

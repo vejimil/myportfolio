@@ -24,7 +24,7 @@
 
   const SIDE = [
     { id: 'treasure', icon: '◉', title: 'Treasure Hunter', desc: `Found all ${COLLECTIBLES.length} hidden coins.`, hint: () => `${COLLECTIBLES.length} coins are hiding around the site — ${state.coins.length}/${COLLECTIBLES.length} found.` },
-    { id: 'best-friends', icon: '❀', title: 'Best Friends', desc: 'Gave Insam ten head pats.', hint: () => `Insam likes attention. (${Math.min(state.pets, 10)}/10)` },
+    { id: 'best-friends', icon: '❀', title: 'Best Friends', desc: 'Gave Insam ten head pats.', hint: () => `Take Insam out of the Desktop Follower window — it likes attention. (${Math.min(state.pets, 10)}/10)` },
     { id: 'patience', icon: '⧗', title: 'Patience', desc: 'Watched the countdown all the way to zero.', hint: 'Some countdowns are worth waiting for.' },
     { id: 'speedrun', icon: '»', title: 'Speedrunner', desc: 'Entered a portal within 5 seconds of pressing start.', hint: 'Gotta go fast — right after pressing start.' },
     { id: 'night-owl', icon: '☾', title: 'Night Owl', desc: 'Visited between midnight and 5 a.m.', hint: 'Come back when everyone else is asleep.' },
@@ -176,7 +176,10 @@
       .join('');
 
   const renderPanel = () => {
-    const followerOn = getPref('follower', !reduceMotion);
+    const petsOut = Boolean(window.JBPets && window.JBPets.isOut());
+    const petControl = petsOut
+      ? '<button type="button" class="ach-toggle" data-pets-home>Send pets home</button>'
+      : '<a class="ach-toggle" href="desktop-follower.html">Pets: meet them →</a>';
     panel.innerHTML = `
       <div class="ach-head">
         <h2 id="ach-title">Quest log</h2>
@@ -187,15 +190,14 @@
       <h3 class="ach-group ach-group-side pixel"><span>Side quests</span><span>${countDone(SIDE)}/${SIDE.length}</span></h3>
       <ul class="ach-list">${questRows(SIDE)}</ul>
       <div class="ach-foot">
-        <button type="button" class="ach-toggle" data-follower-toggle aria-pressed="${followerOn}">Insam follower: ${followerOn ? 'On' : 'Off'}</button>
+        ${petControl}
         <button type="button" data-reset>Reset progress</button>
       </div>`;
 
     panel.querySelector('[data-close]').addEventListener('click', () => panel.close());
-    panel.querySelector('[data-follower-toggle]').addEventListener('click', () => {
-      setPref('follower', !getPref('follower', !reduceMotion));
+    panel.querySelector('[data-pets-home]')?.addEventListener('click', () => {
+      window.JBPets.recall();
       renderPanel();
-      panel.querySelector('[data-follower-toggle]').focus();
     });
     panel.querySelector('[data-reset]').addEventListener('click', () => {
       state.unlocked = {};

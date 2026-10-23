@@ -477,7 +477,7 @@ strong {
 .playfield-screen {
   position: relative;
   aspect-ratio: 16 / 10;
-  background: var(--night);
+  background: #f6ebcd;
   box-shadow: 0 0 0 4px var(--ink);
 }
 
@@ -506,8 +506,8 @@ strong {
   gap: 16px;
   width: 100%;
   border: 0;
-  background: repeating-conic-gradient(var(--night) 0 25%, transparent 0 50%) 0 0 / 4px 4px;
-  color: var(--win);
+  background: none;
+  color: var(--ink);
   text-align: center;
   cursor: pointer;
 }
@@ -530,7 +530,8 @@ strong {
 
 .playfield-start-sub {
   padding: 2px 8px;
-  background: var(--night);
+  background: var(--win);
+  box-shadow: var(--o2);
 }
 
 .playfield-prompt {
@@ -991,8 +992,17 @@ strong {
 }
 
 .cover-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin: 16px 4px 0;
   color: var(--ink-soft);
+}
+
+.cover-note .btn[hidden] {
+  display: none;
 }
 
 .case-body {
@@ -1481,16 +1491,15 @@ strong {
   background: var(--paper);
   box-shadow: var(--o2);
   color: var(--ink);
+  font-family: var(--font-title);
+  font-size: 12px;
   text-decoration: none;
+  text-transform: uppercase;
 }
 
 .ach-foot .ach-toggle:hover {
   background: var(--yellow);
   color: var(--ink);
-}
-
-.ach-foot .ach-toggle[aria-pressed="false"] {
-  color: var(--ink-soft);
 }
 
 /* ---------- Toasts ---------- */
@@ -1648,6 +1657,32 @@ strong {
 
 .follower-zzz span + span {
   top: -0.6em;
+}
+
+.follower.is-tumbling .follower-sprite {
+  transform: rotate(90deg);
+  transform-origin: 50% 85%;
+}
+
+.follower-bubble {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  display: none;
+  padding: 0 4px;
+  background: var(--win);
+  box-shadow: var(--o2);
+  color: var(--red);
+  font-family: var(--font-title);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.follower.is-waving .follower-bubble {
+  display: block;
 }
 
 .follower.is-sleeping .follower-zzz {

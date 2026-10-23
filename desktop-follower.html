@@ -57,10 +57,13 @@
           <div><dt class="pixel">Year</dt><dd>2026</dd></div>
         </dl>
 
-        <figure class="case-cover case-cover-canvas" data-hide-follower>
-          <canvas data-flock-demo width="480" height="270" aria-label="Interactive demo: two pixel characters follow your cursor in a line. Click to make them jump, right-click to wave, and flick the cursor fast to make them tumble."></canvas>
+        <figure class="case-cover case-cover-canvas">
+          <canvas data-flock-demo width="480" height="270" aria-label="Interactive demo: two pixel characters follow your cursor in a line. Right-click to wave, flick the cursor fast to make them tumble, and click to let them out to follow you around the site."></canvas>
         </figure>
-        <p class="cover-note pixel">↑ Try it: move, click, right-click, or flick your cursor fast.</p>
+        <div class="cover-note">
+          <p class="pixel">↑ Try it: move, right-click, or flick fast. Click the window to take them along — they'll follow you around the whole site.</p>
+          <button class="btn btn-sm" type="button" data-pets-recall hidden>↩ Call them back</button>
+        </div>
       </div>
     </header>
 
@@ -79,7 +82,7 @@
             <li><strong>Cursor moves away:</strong> the characters follow in a line, each one trailing the one in front.</li>
             <li><strong>Cursor moves nearby:</strong> they turn to look at it, in 16 directions in the app.</li>
             <li><strong>Cursor flicks very fast:</strong> a moving character can trip and fall over, then gets back up. A 4-second cooldown keeps it funny instead of constant.</li>
-            <li><strong>Left click / right click:</strong> jump / wave.</li>
+            <li><strong>Left click / right click:</strong> jump / wave. (On this page, a click lets them out instead.)</li>
             <li><strong>Nothing happens for a while:</strong> each character drifts into its own idle habits.</li>
           </ul>
         </section>
@@ -101,8 +104,8 @@
         </section>
 
         <aside class="callout">
-          <p class="pixel">Where else you've seen it</p>
-          <p>The Insam that's been following your cursor around this site is a web cousin of this app — same idea, rebuilt for the browser.</p>
+          <p class="pixel">Take them with you</p>
+          <p>Click the window at the top and both characters hop out and follow your cursor around the rest of this site — the web cousin of the app. You can send them home here or from the quest log.</p>
           <button class="collectible collectible-corner" type="button" data-collectible="follower" aria-label="Hidden coin"></button>
         </aside>
       </article>
