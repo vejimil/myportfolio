@@ -1,7 +1,7 @@
-/* Home hero playfield: a side-on stage with three hand-placed entrances —
-   Triends' mushroom house, World of Words' hanok gate, and an arcade
-   cabinet. Walk the astronaut (Insam follows) to a door and press ↑ / E,
-   or tap a door twice. */
+/* Home hero playfield: a side-on gallery wall with three pixel frames
+   holding real work — Triends key art, World of Words' Acid Rain game and a
+   live Pong match. Walk the astronaut (Insam follows) to a frame and press
+   ↑ / E, or tap a frame twice. */
 (() => {
   const root = document.querySelector('[data-playfield]');
   if (!root) return;
@@ -41,11 +41,13 @@
     sky: '#41a6f6'
   };
 
+  // Frames hang on the wall; box = [x, y, w, h] of the picture area.
+  const FRAME = { w: 92, h: 58, top: 108 };
   const doors = [
-    { label: 'TRIENDS', href: 'triends.html', x: 100, color: C.green, text: C.cream, box: [78, 150, 46, 82] },
-    { label: 'WORLD OF WORDS', href: 'world-of-words.html', x: 240, color: C.orange, text: C.ink, box: [196, 146, 88, 86] },
-    { label: 'ARCADE', href: 'arcade-games.html', x: 380, color: C.blue, text: C.cream, box: [350, 136, 60, 96] }
-  ];
+    { label: 'TRIENDS', href: 'triends.html', x: 100, color: C.green, text: C.cream, art: 'assets/img/triends-cover.jpg' },
+    { label: 'WORLD OF WORDS', href: 'world-of-words.html', x: 240, color: C.orange, text: C.ink, art: 'assets/img/wow-acid-rain-ja.jpg' },
+    { label: 'ARCADE', href: 'arcade-games.html', x: 380, color: C.blue, text: C.cream, art: null }
+  ].map((d) => ({ ...d, box: [d.x - FRAME.w / 2, FRAME.top, FRAME.w, FRAME.h] }));
 
   const DIR_ROW = { down: 0, left: 1, right: 2, up: 3 };
 
@@ -80,140 +82,114 @@
   stage.width = W;
   stage.height = H;
 
+  // Artwork is resampled to 2 samples per stage pixel, then drawn without
+  // smoothing: detailed enough to read, still crisp like the rest of the scene.
+  const ART_RES = 2;
+  const pixelate = (img) => {
+    const c = document.createElement('canvas');
+    c.width = FRAME.w * ART_RES;
+    c.height = FRAME.h * ART_RES;
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = 'high';
+    // cover-fit
+    const s = Math.max(c.width / img.naturalWidth, c.height / img.naturalHeight);
+    const w = img.naturalWidth * s;
+    const h = img.naturalHeight * s;
+    g.drawImage(img, (c.width - w) / 2, (c.height - h) / 2, w, h);
+    return c;
+  };
+
   const paintStage = () => {
     const g = stage.getContext('2d');
+    g.imageSmoothingEnabled = false;
     const R = (x, y, w, h, c) => {
       g.fillStyle = c;
       g.fillRect(Math.round(x), Math.round(y), w, h);
     };
-    const outlined = (x, y, w, h, fill) => {
-      R(x - 1, y - 1, w + 2, h + 2, C.ink);
-      R(x, y, w, h, fill);
-    };
-    // A shape described as row widths, centred on cx, with a cream outline.
-    const blob = (cx, top, widths, fill) => {
-      widths.forEach((w, i) => R(cx - Math.floor(w / 2) - 1, top + i - 1, w + 2, 3, C.ink));
-      widths.forEach((w, i) => R(cx - Math.floor(w / 2), top + i, w, 1, fill));
-    };
 
     R(0, 0, W, H, C.cream);
+    // Wainscot line and floor
+    R(0, 196, W, 1, C.bevel);
     R(0, GROUND, W, 2, C.ink);
 
-    /* Triends — mushroom house */
-    outlined(80, 194, 40, 38, C.bevel);
-    R(112, 194, 8, 38, C.shadow);
-    outlined(93, 208, 14, 24, C.teal);
-    R(103, 220, 2, 2, C.cream);
-    outlined(84, 200, 6, 6, C.yellow);
-    R(86, 200, 1, 6, C.ink);
-    R(84, 202, 6, 1, C.ink);
-    const cap = Array.from({ length: 30 }, (_, i) => 2 * Math.round(12 + 26 * Math.sqrt(i / 29)));
-    blob(100, 164, cap, C.red);
-    R(62, 193, 76, 2, C.soft);
-    const spot = (x, y) => {
-      R(x - 1, y, 3, 1, C.cream);
-      R(x - 2, y + 1, 5, 2, C.cream);
-      R(x - 1, y + 3, 3, 1, C.cream);
-    };
-    [[86, 180], [101, 169], [116, 182], [96, 186], [74, 188]].forEach(([x, y]) => spot(x, y));
-
-    /* World of Words — hanok gate */
-    const roof = Array.from({ length: 22 }, (_, i) => 2 * Math.round(20 + 28 * (i / 21) ** 0.8));
-    blob(240, 152, roof, C.soft);
-    for (let x = 204; x <= 276; x += 6) R(x, 158, 1, 14, C.ink);
-    R(222, 150, 36, 2, C.ink);
-    R(190, 170, 3, 2, C.ink); // upturned eaves
-    R(287, 170, 3, 2, C.ink);
-    outlined(204, 176, 72, 8, C.teal);
-    for (let x = 208; x < 274; x += 6) R(x, 179, 2, 2, C.yellow);
-    outlined(212, 185, 7, 47, C.orange);
-    outlined(261, 185, 7, 47, C.orange);
-    outlined(226, 187, 28, 11, C.cream);
-    g.font = `8px ${PIXEL_FONT}`;
-    g.textAlign = 'center';
-    g.textBaseline = 'middle';
-    g.fillStyle = C.ink;
-    g.fillText('단어', 240, 193);
-
-    /* Arcade — cabinet */
-    outlined(350, 138, 60, 14, C.yellow);
-    g.fillStyle = C.ink;
-    g.fillText('ARCADE', 380, 146);
-    outlined(354, 153, 52, 79, C.blue);
-    R(356, 155, 1, 75, C.sky);
-    outlined(360, 158, 40, 30, C.deep);
-    outlined(356, 193, 48, 10, C.bevel);
-    R(366, 187, 2, 7, C.ink);
-    R(364, 185, 6, 4, C.red);
-    R(381, 196, 4, 3, C.red);
-    R(389, 196, 4, 3, C.yellow);
-    outlined(372, 209, 16, 20, C.ink);
-    R(378, 215, 4, 1, C.yellow);
-    R(378, 221, 4, 1, C.yellow);
+    doors.forEach((door) => {
+      const [x, y, w, h] = door.box;
+      // String and nail
+      for (let i = 0; i < 14; i += 1) {
+        R(door.x - 14 + i, y - 8 - Math.min(i, 14 - i) * 0.6, 1, 1, C.soft);
+        R(door.x + i, y - 8 - Math.min(i + 14, 14 - i) * 0.6 + 8.4, 1, 1, C.soft);
+      }
+      R(door.x - 1, y - 18, 3, 3, C.ink);
+      // Frame: ink outline, wooden moulding, cream mat
+      R(x - 7, y - 7, w + 14, h + 14, C.ink);
+      R(x - 6, y - 6, w + 12, h + 12, C.yellow);
+      R(x - 6, y + h + 3, w + 12, 3, C.shadow);
+      R(x - 3, y - 3, w + 6, h + 6, C.ink);
+      R(x - 2, y - 2, w + 4, h + 4, C.cream);
+      R(x - 1, y - 1, w + 2, h + 2, C.ink);
+      // Drop shadow on the wall
+      R(x - 5, y + h + 7, w + 14, 2, C.bevel);
+      R(x + w + 7, y - 5, 2, h + 14, C.bevel);
+      if (door.pic) g.drawImage(door.pic, x, y, w, h);
+      else R(x, y, w, h, C.deep);
+    });
   };
 
   /* ---------- Animated details ---------- */
 
-  const GLYPHS = ['あ', 'é', 'ñ', '가'];
-  const cards = GLYPHS.map((glyph, i) => ({ glyph, x: 216 + i * 14, t: i / GLYPHS.length, speed: 0.22 + (i % 2) * 0.06 }));
-  const pong = { bx: 380, by: 172, vx: 34, vy: 22, l: 172, r: 172 };
+  const arcade = doors[2];
+  const pong = { bx: 0, by: 0, vx: 46, vy: 30, l: 0, r: 0 };
+  {
+    const [x, y, w, h] = arcade.box;
+    pong.bx = x + w / 2;
+    pong.by = y + h / 2;
+    pong.l = pong.r = pong.by;
+  }
 
   const drawDetails = (dt) => {
-    // Sprout on the mushroom roof
-    const sway = reduceMotion ? 0 : Math.round(Math.sin(clock * 2.2));
-    ctx.fillStyle = C.green;
-    ctx.fillRect(100, 156, 1, 8);
-    ctx.fillRect(95 + sway, 154, 5, 3);
-    ctx.fillRect(101 + sway, 152, 5, 3);
-
-    // Word cards falling like the Acid Rain game, above the gate
-    ctx.font = `8px ${PIXEL_FONT}`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    cards.forEach((card) => {
-      const t = reduceMotion ? card.t : (card.t + clock * card.speed) % 1;
-      const y = Math.round(100 + t * 40);
-      if (t > 0.92) return;
-      ctx.fillStyle = C.ink;
-      ctx.fillRect(card.x - 7, y - 5, 14, 11);
-      ctx.fillStyle = C.cream;
-      ctx.fillRect(card.x - 6, y - 4, 12, 9);
-      ctx.fillStyle = C.ink;
-      ctx.fillText(card.glyph, card.x, y + 1);
-    });
-
-    // A tiny Pong match on the cabinet screen
+    // A Pong match running inside the Arcade frame
+    const [x, y, w, h] = arcade.box;
     if (!reduceMotion) {
       pong.bx += pong.vx * dt;
       pong.by += pong.vy * dt;
-      if (pong.by < 161 || pong.by > 184) pong.vy *= -1;
-      if (pong.bx < 364 || pong.bx > 395) pong.vx *= -1;
+      if (pong.by < y + 3 || pong.by > y + h - 5) pong.vy *= -1;
+      if (pong.bx < x + 8 || pong.bx > x + w - 10) pong.vx *= -1;
       pong.l += (pong.by - pong.l) * Math.min(1, dt * 6);
       pong.r += (pong.by - pong.r) * Math.min(1, dt * 5);
     }
+    ctx.fillStyle = C.deep;
+    ctx.fillRect(x, y, w, h);
     ctx.fillStyle = C.soft;
-    for (let y = 160; y < 187; y += 4) ctx.fillRect(380, y, 1, 2);
+    for (let yy = y + 3; yy < y + h - 2; yy += 6) ctx.fillRect(x + w / 2, yy, 1, 3);
+    ctx.font = `8px ${PIXEL_FONT}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillStyle = C.bevel;
+    ctx.fillText('3   5', x + w / 2 + 1, y + 4);
     ctx.fillStyle = C.green;
-    ctx.fillRect(362, Math.round(pong.l) - 3, 1, 7);
+    ctx.fillRect(x + 5, Math.round(pong.l) - 6, 2, 12);
     ctx.fillStyle = C.sky;
-    ctx.fillRect(397, Math.round(pong.r) - 3, 1, 7);
+    ctx.fillRect(x + w - 7, Math.round(pong.r) - 6, 2, 12);
     ctx.fillStyle = C.yellow;
-    ctx.fillRect(Math.round(pong.bx), Math.round(pong.by), 2, 2);
+    ctx.fillRect(Math.round(pong.bx), Math.round(pong.by), 3, 3);
   };
 
   const drawDoorHighlight = (door) => {
     const bob = reduceMotion ? 0 : Math.round(Math.sin(clock * 6) * 2);
-    const [bx, by, bw] = door.box;
-    const ax = door.x;
-    const ay = by - 12 + bob;
-    ctx.fillStyle = C.ink;
-    ctx.fillRect(ax - 4, ay, 9, 2);
-    ctx.fillRect(ax - 3, ay + 2, 7, 1);
-    ctx.fillRect(ax - 2, ay + 3, 5, 1);
-    ctx.fillRect(ax - 1, ay + 4, 3, 1);
-    // Light spilling onto the ground in front of the door
+    const [x, y, w, h] = door.box;
+    // Frame lights up in the project's colour
     ctx.fillStyle = door.color;
-    ctx.fillRect(bx + 4, GROUND + 2, bw - 8, 2);
+    ctx.fillRect(x - 6, y - 6, w + 12, 3);
+    ctx.fillRect(x - 6, y + h + 3, w + 12, 3);
+    ctx.fillRect(x - 6, y - 6, 3, h + 12);
+    ctx.fillRect(x + w + 3, y - 6, 3, h + 12);
+    const ay = y - 30 + bob;
+    ctx.fillStyle = C.ink;
+    ctx.fillRect(door.x - 4, ay, 9, 2);
+    ctx.fillRect(door.x - 3, ay + 2, 7, 1);
+    ctx.fillRect(door.x - 2, ay + 3, 5, 1);
+    ctx.fillRect(door.x - 1, ay + 4, 3, 1);
   };
 
   const drawLabel = (door) => {
@@ -489,11 +465,15 @@
   Promise.all([
     loadImage('triends-demo-assets/characters/astronaut_walking.png'),
     loadImage('triends-demo-assets/characters/ginseng_walking.png'),
+    ...doors.map((d) => (d.art ? loadImage(d.art) : null)),
     document.fonts ? Promise.all([document.fonts.load(`8px ${PIXEL_FONT}`), document.fonts.load(`8px ${PIXEL_FONT}`, '단어')]).catch(() => {}) : null
-  ]).then(([astronaut, insamImg]) => {
+  ]).then(([astronaut, insamImg, ...art]) => {
     sprites.astronaut = astronaut;
     sprites.insam = insamImg;
-    paintStage(); // repaint once the pixel font is ready (sign and marquee text)
+    doors.forEach((d, i) => {
+      if (art[i]) d.pic = pixelate(art[i]);
+    });
+    paintStage();
     render();
   });
 
