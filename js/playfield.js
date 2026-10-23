@@ -1,5 +1,7 @@
-/* Home hero playfield: walk the Triends astronaut (Insam follows) into a
-   portal to open a project. Keyboard (WASD / arrows + E) or tap-to-move. */
+/* Home hero playfield: a side-on stage with three hand-placed entrances —
+   Triends' mushroom house, World of Words' hanok gate, and an arcade
+   cabinet. Walk the astronaut (Insam follows) to a door and press ↑ / E,
+   or tap a door twice. */
 (() => {
   const root = document.querySelector('[data-playfield]');
   if (!root) return;
@@ -15,13 +17,34 @@
 
   const W = 480;
   const H = 300;
-  const SPEED = 96;
+  const GROUND = 232;
+  const SPEED = 110;
+  const GRAVITY = 520;
   const PIXEL_FONT = '"Galmuri7", ui-monospace, monospace';
+  // Camera: the stage is painted on a 480x300 sheet; we show the part with the buildings.
+  const VIEW = { x: 40, y: 50, w: 400, h: 250 };
 
-  const portals = [
-    { label: 'TRIENDS', href: 'triends.html', color: '#38b764', ink: '#fff6dc', x: 96, y: 104 },
-    { label: 'WORLD OF WORDS', href: 'world-of-words.html', color: '#ef7d57', ink: '#2b1d2e', x: 240, y: 84 },
-    { label: 'ARCADE', href: 'arcade-games.html', color: '#3b5dc9', ink: '#fff6dc', x: 384, y: 104 }
+  // Site palette (style.css) — the stage is the page inverted: ink ground, cream lines.
+  const C = {
+    ink: '#2b1d2e',
+    deep: '#1c121e',
+    cream: '#fff6dc',
+    bevel: '#e3c991',
+    shadow: '#cdb07a',
+    soft: '#5d4858',
+    red: '#b13e53',
+    orange: '#ef7d57',
+    yellow: '#ffcd75',
+    green: '#38b764',
+    teal: '#257179',
+    blue: '#3b5dc9',
+    sky: '#41a6f6'
+  };
+
+  const doors = [
+    { label: 'TRIENDS', href: 'triends.html', x: 100, color: C.green, text: C.cream, box: [78, 150, 46, 82] },
+    { label: 'WORLD OF WORDS', href: 'world-of-words.html', x: 240, color: C.orange, text: C.ink, box: [196, 146, 88, 86] },
+    { label: 'ARCADE', href: 'arcade-games.html', x: 380, color: C.blue, text: C.cream, box: [350, 136, 60, 96] }
   ];
 
   const DIR_ROW = { down: 0, left: 1, right: 2, up: 3 };
@@ -35,8 +58,8 @@
     });
 
   const sprites = {};
-  const player = { x: 240, y: 236, dir: 'up', moving: false, frameTime: 0 };
-  const insam = { x: 206, y: 250, dir: 'up', moving: false, frameTime: 0 };
+  const player = { x: 170, jump: 0, vy: 0, dir: 'down', moving: false, frameTime: 0, facing: 1 };
+  const insam = { x: 144, jump: 0, vy: 0, dir: 'down', moving: false, frameTime: 0 };
   const keys = new Set();
   let target = null;
   let active = false;
@@ -44,341 +67,294 @@
   let hasMoved = false;
   let startedAt = 0;
   let lastInput = 'keys';
-  let currentPortal = null;
+  let currentDoor = null;
   let visible = true;
   let rafId = null;
   let lastTime = 0;
   let clock = 0;
   let scale = 1;
 
-  /* ---------- Static background (drawn once) ---------- */
+  /* ---------- Static stage (painted once) ---------- */
 
-  const mulberry32 = (seed) => () => {
-    seed |= 0;
-    seed = (seed + 0x6d2b79f5) | 0;
-    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
+  const stage = document.createElement('canvas');
+  stage.width = W;
+  stage.height = H;
 
-  const background = document.createElement('canvas');
-  background.width = W;
-  background.height = H;
-
-  // Palette shared with style.css so the map reads as part of the page.
-  const C = {
-    ink: '#2b1d2e',
-    soft: '#5d4858',
-    paper: '#f6ebcd',
-    speck: '#e6d09f',
-    cream: '#fff6dc',
-    bevel: '#e3c991',
-    green: '#38b764',
-    teal: '#257179',
-    red: '#b13e53',
-    blue: '#3b5dc9'
-  };
-
-  /* A parchment world map drawn in ink: dotted routes, trees, a pond,
-     mushrooms and a compass. Painted once into an offscreen canvas. */
-  const paintBackground = () => {
-    const g = background.getContext('2d');
-    const rand = mulberry32(7);
-    const px = (x, y, w = 1, h = 1) => g.fillRect(Math.round(x), Math.round(y), w, h);
-
-    g.fillStyle = C.paper;
-    g.fillRect(0, 0, W, H);
-    g.fillStyle = C.speck;
-    for (let i = 0; i < 900; i += 1) px(rand() * W, rand() * H);
-
-    // Inner map border
-    g.fillStyle = C.bevel;
-    px(6, 6, W - 12, 1);
-    px(6, H - 7, W - 12, 1);
-    px(6, 6, 1, H - 12);
-    px(W - 7, 6, 1, H - 12);
-
-    // Dotted ink routes from the start point to each portal.
-    g.fillStyle = C.soft;
-    const dots = (x1, y1, x2, y2) => {
-      const len = Math.hypot(x2 - x1, y2 - y1);
-      for (let d = 0; d <= len; d += 6) px(x1 + ((x2 - x1) * d) / len - 1, y1 + ((y2 - y1) * d) / len - 1, 2, 2);
+  const paintStage = () => {
+    const g = stage.getContext('2d');
+    const R = (x, y, w, h, c) => {
+      g.fillStyle = c;
+      g.fillRect(Math.round(x), Math.round(y), w, h);
     };
-    dots(96, 158, 384, 158);
-    dots(240, H - 10, 240, 96);
-    dots(96, 114, 96, 158);
-    dots(384, 114, 384, 158);
-
-    const onRoute = (x, y) =>
-      (Math.abs(y - 158) < 10 && x > 80 && x < 400) ||
-      (Math.abs(x - 240) < 10 && y > 80) ||
-      (Math.abs(x - 96) < 12 && y > 70 && y < 166) ||
-      (Math.abs(x - 384) < 12 && y > 70 && y < 166);
-
-    // Pond
-    const pond = (cx, cy, rx, ry) => {
-      for (let y = -ry; y <= ry; y += 1) {
-        const half = Math.round(rx * Math.sqrt(1 - (y / ry) ** 2));
-        g.fillStyle = C.ink;
-        px(cx - half - 1, cy + y, half * 2 + 2, 1);
-      }
-      for (let y = -ry + 1; y <= ry - 1; y += 1) {
-        const half = Math.round((rx - 1) * Math.sqrt(1 - (y / (ry - 1)) ** 2));
-        g.fillStyle = C.blue;
-        px(cx - half, cy + y, half * 2, 1);
-      }
-      g.fillStyle = C.cream;
-      px(cx - 14, cy - 3, 8, 1);
-      px(cx + 4, cy + 2, 10, 1);
-      px(cx - 4, cy + 5, 6, 1);
+    const outlined = (x, y, w, h, fill) => {
+      R(x - 1, y - 1, w + 2, h + 2, C.cream);
+      R(x, y, w, h, fill);
     };
-    pond(62, 246, 36, 14);
-
-    // Trees: round canopy drawn row by row, ink outline, two greens.
-    const CANOPY = [5, 9, 11, 13, 13, 13, 11, 7];
-    const tree = (x, y) => {
-      const top = y - 3 - CANOPY.length;
-      g.fillStyle = C.ink;
-      px(x - 1, y - 3, 3, 4);
-      CANOPY.forEach((w, r) => px(x - Math.floor(w / 2) - 1, top + r - 1, w + 2, 3));
-      CANOPY.forEach((w, r) => {
-        g.fillStyle = r >= CANOPY.length - 3 ? C.teal : C.green;
-        px(x - Math.floor(w / 2), top + r, w, 1);
-      });
-      g.fillStyle = C.cream;
-      px(x - 3, top + 2, 2, 1);
+    // A shape described as row widths, centred on cx, with a cream outline.
+    const blob = (cx, top, widths, fill) => {
+      widths.forEach((w, i) => R(cx - Math.floor(w / 2) - 1, top + i - 1, w + 2, 3, C.cream));
+      widths.forEach((w, i) => R(cx - Math.floor(w / 2), top + i, w, 1, fill));
     };
-    [[30, 40], [46, 52], [22, 64], [446, 40], [460, 58], [432, 196], [452, 210], [136, 282], [356, 280], [418, 268], [150, 214]].forEach(([x, y]) => tree(x, y));
 
-    // Triends-style mushrooms
-    const mushroom = (x, y) => {
-      g.fillStyle = C.ink;
-      px(x - 5, y - 8, 11, 4);
-      px(x - 4, y - 9, 9, 1);
-      px(x - 2, y - 4, 5, 5);
-      g.fillStyle = C.red;
-      px(x - 4, y - 8, 9, 3);
-      g.fillStyle = C.cream;
-      px(x - 2, y - 7, 1, 1);
-      px(x + 2, y - 6, 1, 1);
-      px(x - 1, y - 4, 3, 4);
+    R(0, 0, W, H, C.ink);
+    R(0, GROUND, W, 2, C.cream);
+
+    /* Triends — mushroom house */
+    outlined(80, 194, 40, 38, C.bevel);
+    R(112, 194, 8, 38, C.shadow);
+    outlined(93, 208, 14, 24, C.teal);
+    R(103, 220, 2, 2, C.cream);
+    outlined(84, 200, 6, 6, C.yellow);
+    R(86, 200, 1, 6, C.ink);
+    R(84, 202, 6, 1, C.ink);
+    const cap = Array.from({ length: 30 }, (_, i) => 2 * Math.round(12 + 26 * Math.sqrt(i / 29)));
+    blob(100, 164, cap, C.red);
+    R(62, 193, 76, 2, C.soft);
+    const spot = (x, y) => {
+      R(x - 1, y, 3, 1, C.cream);
+      R(x - 2, y + 1, 5, 2, C.cream);
+      R(x - 1, y + 3, 3, 1, C.cream);
     };
-    [[178, 112], [306, 116], [330, 222], [118, 196], [470, 126]].forEach(([x, y]) => mushroom(x, y));
+    [[86, 180], [101, 169], [116, 182], [96, 186], [74, 188]].forEach(([x, y]) => spot(x, y));
 
-    // Grass in soft ink
-    g.fillStyle = C.soft;
-    for (let i = 0; i < 90; i += 1) {
-      const x = Math.round(rand() * (W - 24) + 12);
-      const y = Math.round(rand() * (H - 24) + 12);
-      if (onRoute(x, y) || (Math.abs(x - 62) < 44 && Math.abs(y - 246) < 20)) continue;
-      px(x, y, 1, 2);
-      px(x + 2, y - 1, 1, 3);
-      px(x + 4, y, 1, 2);
-    }
-
-    // Compass rose, bottom right
-    const cx = 452;
-    const cy = 246;
-    g.fillStyle = C.ink;
-    px(cx, cy - 12, 1, 25);
-    px(cx - 12, cy, 25, 1);
-    px(cx - 1, cy - 8, 3, 5);
-    g.fillStyle = C.red;
-    px(cx - 1, cy - 11, 3, 3);
-    g.fillStyle = C.ink;
+    /* World of Words — hanok gate */
+    const roof = Array.from({ length: 22 }, (_, i) => 2 * Math.round(20 + 28 * (i / 21) ** 0.8));
+    blob(240, 152, roof, C.soft);
+    for (let x = 204; x <= 276; x += 6) R(x, 158, 1, 14, C.ink);
+    R(222, 150, 36, 2, C.cream);
+    R(190, 170, 3, 2, C.cream); // upturned eaves
+    R(287, 170, 3, 2, C.cream);
+    outlined(204, 176, 72, 8, C.teal);
+    for (let x = 208; x < 274; x += 6) R(x, 179, 2, 2, C.yellow);
+    outlined(212, 185, 7, 47, C.orange);
+    outlined(261, 185, 7, 47, C.orange);
+    outlined(226, 187, 28, 11, C.cream);
     g.font = `8px ${PIXEL_FONT}`;
     g.textAlign = 'center';
-    g.textBaseline = 'alphabetic';
-    g.fillText('N', cx, cy - 15);
+    g.textBaseline = 'middle';
+    g.fillStyle = C.ink;
+    g.fillText('단어', 240, 193);
+
+    /* Arcade — cabinet */
+    outlined(350, 138, 60, 14, C.yellow);
+    g.fillStyle = C.ink;
+    g.fillText('ARCADE', 380, 146);
+    outlined(354, 153, 52, 79, C.blue);
+    R(356, 155, 1, 75, C.sky);
+    outlined(360, 158, 40, 30, C.deep);
+    outlined(356, 193, 48, 10, C.bevel);
+    R(366, 187, 2, 7, C.ink);
+    R(364, 185, 6, 4, C.red);
+    R(381, 196, 4, 3, C.red);
+    R(389, 196, 4, 3, C.yellow);
+    outlined(372, 209, 16, 20, C.ink);
+    R(378, 215, 4, 1, C.yellow);
+    R(378, 221, 4, 1, C.yellow);
   };
 
-  /* ---------- Particles ---------- */
+  /* ---------- Animated details ---------- */
 
-  const rand = mulberry32(42);
-  const sparks = portals.map(() =>
-    Array.from({ length: 6 }, () => ({ ox: rand() * 26 - 13, t: rand(), speed: 0.35 + rand() * 0.4 }))
-  );
+  const GLYPHS = ['あ', 'é', 'ñ', '가'];
+  const cards = GLYPHS.map((glyph, i) => ({ glyph, x: 216 + i * 14, t: i / GLYPHS.length, speed: 0.22 + (i % 2) * 0.06 }));
+  const pong = { bx: 380, by: 172, vx: 34, vy: 22, l: 172, r: 172 };
 
-  /* ---------- Drawing helpers ---------- */
+  const drawDetails = (dt) => {
+    // Sprout on the mushroom roof
+    const sway = reduceMotion ? 0 : Math.round(Math.sin(clock * 2.2));
+    ctx.fillStyle = C.green;
+    ctx.fillRect(100, 156, 1, 8);
+    ctx.fillRect(95 + sway, 154, 5, 3);
+    ctx.fillRect(101 + sway, 152, 5, 3);
 
-  const pixelEllipse = (cx, cy, rx, ry, color) => {
-    ctx.fillStyle = color;
-    for (let y = -ry; y <= ry; y += 1) {
-      const half = Math.round(rx * Math.sqrt(1 - (y / ry) ** 2));
-      ctx.fillRect(Math.round(cx - half), Math.round(cy + y), half * 2, 1);
-    }
-  };
-
-  // Portals are map markers: an ink-outlined pad in the project's colour.
-  const drawPortal = (portal, index) => {
-    const isActive = portal === currentPortal;
-    const pulse = reduceMotion ? 0 : Math.round((Math.sin(clock * 3 + index) + 1) * 1.5);
-
-    if (isActive) pixelEllipse(portal.x, portal.y, 30 + pulse, 12 + Math.round(pulse / 2), C.cream);
-    pixelEllipse(portal.x, portal.y, 25, 10, C.ink);
-    pixelEllipse(portal.x, portal.y, 22, 8, portal.color);
-    pixelEllipse(portal.x, portal.y, 14, 4, C.ink);
-    pixelEllipse(portal.x, portal.y, 12, 3, isActive ? C.cream : portal.color);
-
-    sparks[index].forEach((s) => {
-      const t = (s.t + (reduceMotion ? 0 : clock * s.speed)) % 1;
-      if (t > (isActive ? 1 : 0.6)) return;
-      ctx.fillStyle = t < 0.3 ? portal.color : C.ink;
-      ctx.fillRect(Math.round(portal.x + s.ox * (1 - t * 0.4)), Math.round(portal.y - 4 - t * 40), 2, 2);
-    });
-  };
-
-  // Drawn after the characters so the astronaut never hides a label;
-  // the active label floats above the astronaut's head.
-  const drawPortalLabel = (portal) => {
-    const isActive = portal === currentPortal;
+    // Word cards falling like the Acid Rain game, above the gate
     ctx.font = `8px ${PIXEL_FONT}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const bob = isActive && !reduceMotion ? Math.round(Math.sin(clock * 6) * 2) : 0;
-    const labelY = (isActive ? Math.max(14, Math.round(player.y) - 74) : portal.y - 34) - bob;
-    const width = Math.ceil(ctx.measureText(portal.label).width) + 10;
-    const left = Math.round(portal.x - width / 2);
-    ctx.fillStyle = C.ink;
-    ctx.fillRect(left - 2, labelY - 9, width + 4, 18);
-    ctx.fillStyle = isActive ? portal.color : C.cream;
-    ctx.fillRect(left, labelY - 7, width, 14);
-    ctx.fillStyle = isActive ? portal.ink : C.ink;
-    ctx.fillText(portal.label, portal.x, labelY + 1);
-    if (isActive) {
+    cards.forEach((card) => {
+      const t = reduceMotion ? card.t : (card.t + clock * card.speed) % 1;
+      const y = Math.round(100 + t * 40);
+      if (t > 0.92) return;
+      ctx.fillStyle = C.cream;
+      ctx.fillRect(card.x - 7, y - 5, 14, 11);
       ctx.fillStyle = C.ink;
-      ctx.fillRect(portal.x - 3, labelY + 10, 7, 1);
-      ctx.fillRect(portal.x - 2, labelY + 11, 5, 1);
-      ctx.fillRect(portal.x - 1, labelY + 12, 3, 1);
+      ctx.fillRect(card.x - 6, y - 4, 12, 9);
+      ctx.fillStyle = C.cream;
+      ctx.fillText(card.glyph, card.x, y + 1);
+    });
+
+    // A tiny Pong match on the cabinet screen
+    if (!reduceMotion) {
+      pong.bx += pong.vx * dt;
+      pong.by += pong.vy * dt;
+      if (pong.by < 161 || pong.by > 184) pong.vy *= -1;
+      if (pong.bx < 364 || pong.bx > 395) pong.vx *= -1;
+      pong.l += (pong.by - pong.l) * Math.min(1, dt * 6);
+      pong.r += (pong.by - pong.r) * Math.min(1, dt * 5);
     }
+    ctx.fillStyle = C.soft;
+    for (let y = 160; y < 187; y += 4) ctx.fillRect(380, y, 1, 2);
+    ctx.fillStyle = C.green;
+    ctx.fillRect(362, Math.round(pong.l) - 3, 1, 7);
+    ctx.fillStyle = C.sky;
+    ctx.fillRect(397, Math.round(pong.r) - 3, 1, 7);
+    ctx.fillStyle = C.yellow;
+    ctx.fillRect(Math.round(pong.bx), Math.round(pong.by), 2, 2);
+  };
+
+  const drawDoorHighlight = (door) => {
+    const bob = reduceMotion ? 0 : Math.round(Math.sin(clock * 6) * 2);
+    const [bx, by, bw] = door.box;
+    const ax = door.x;
+    const ay = by - 12 + bob;
+    ctx.fillStyle = C.cream;
+    ctx.fillRect(ax - 4, ay, 9, 2);
+    ctx.fillRect(ax - 3, ay + 2, 7, 1);
+    ctx.fillRect(ax - 2, ay + 3, 5, 1);
+    ctx.fillRect(ax - 1, ay + 4, 3, 1);
+    // Light spilling onto the ground in front of the door
+    ctx.fillStyle = door.color;
+    ctx.fillRect(bx + 4, GROUND + 2, bw - 8, 2);
+  };
+
+  const drawLabel = (door) => {
+    const isActive = door === currentDoor;
+    ctx.font = `8px ${PIXEL_FONT}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const y = GROUND + 22;
+    const width = Math.ceil(ctx.measureText(door.label).width) + 10;
+    const left = Math.round(door.x - width / 2);
+    if (isActive) {
+      ctx.fillStyle = C.cream;
+      ctx.fillRect(left - 1, y - 8, width + 2, 16);
+      ctx.fillStyle = door.color;
+      ctx.fillRect(left, y - 7, width, 14);
+      ctx.fillStyle = door.text;
+    } else {
+      ctx.fillStyle = C.bevel;
+    }
+    ctx.fillText(door.label, door.x, y + 1);
   };
 
   const drawCharacter = (who, img, frameSize, footOffset) => {
-    pixelEllipse(who.x, who.y, 9, 2, C.speck);
-    if (!img) {
-      ctx.fillStyle = C.ink;
-      ctx.fillRect(who.x - 6, who.y - 20, 12, 20);
-      return;
-    }
+    const feet = GROUND - Math.round(who.jump);
+    ctx.fillStyle = C.soft;
+    ctx.fillRect(Math.round(who.x - 8), GROUND - 1, 16, 2);
+    if (!img) return;
     const col = who.moving ? Math.floor(who.frameTime * 8) % 4 : 0;
-    const row = DIR_ROW[who.dir];
     ctx.drawImage(
       img,
       col * frameSize,
-      row * frameSize,
+      DIR_ROW[who.dir] * frameSize,
       frameSize,
       frameSize,
       Math.round(who.x - frameSize / 2),
-      Math.round(who.y - footOffset),
+      Math.round(feet - footOffset),
       frameSize,
       frameSize
     );
   };
 
-  const render = () => {
-    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+  const render = (dt = 0) => {
+    ctx.setTransform(scale, 0, 0, scale, -VIEW.x * scale, -VIEW.y * scale);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(background, 0, 0);
-
-    portals.forEach(drawPortal);
-
-    const actors = [
-      { who: insam, img: sprites.insam, size: 48, foot: 44 },
-      { who: player, img: sprites.astronaut, size: 64, foot: 60 }
-    ].sort((a, b) => a.who.y - b.who.y);
-    actors.forEach((a) => drawCharacter(a.who, a.img, a.size, a.foot));
-
-    portals.forEach(drawPortalLabel);
+    ctx.drawImage(stage, 0, 0);
+    drawDetails(dt);
+    if (currentDoor) drawDoorHighlight(currentDoor);
+    drawCharacter(insam, sprites.insam, 48, 44);
+    drawCharacter(player, sprites.astronaut, 64, 60);
+    doors.forEach(drawLabel);
   };
 
   /* ---------- Simulation ---------- */
 
-  const setDirFromDelta = (who, dx, dy) => {
-    if (Math.abs(dx) > Math.abs(dy)) who.dir = dx > 0 ? 'right' : 'left';
-    else if (dy !== 0) who.dir = dy > 0 ? 'down' : 'up';
+  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+  const physics = (who, dt) => {
+    if (who.jump > 0 || who.vy > 0) {
+      who.vy -= GRAVITY * dt;
+      who.jump = Math.max(0, who.jump + who.vy * dt);
+      if (who.jump === 0) who.vy = 0;
+    }
   };
 
-  const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+  const jump = () => {
+    if (player.jump > 0) return;
+    player.vy = 170;
+    setTimeout(() => {
+      if (insam.jump === 0) insam.vy = 150;
+    }, 120);
+  };
 
   const update = (dt) => {
     let dx = 0;
-    let dy = 0;
-
     if (active && !entering) {
       if (keys.has('left')) dx -= 1;
       if (keys.has('right')) dx += 1;
-      if (keys.has('up')) dy -= 1;
-      if (keys.has('down')) dy += 1;
-
-      if (dx || dy) {
-        target = null;
-      } else if (target) {
-        const tx = target.x - player.x;
-        const ty = target.y - player.y;
-        const dist = Math.hypot(tx, ty);
-        if (dist < 2) target = null;
-        else {
-          dx = tx / dist;
-          dy = ty / dist;
-        }
+      if (dx) target = null;
+      else if (target !== null) {
+        const d = target - player.x;
+        if (Math.abs(d) < 2) target = null;
+        else dx = Math.sign(d);
       }
     }
 
-    const len = Math.hypot(dx, dy);
-    player.moving = len > 0;
+    player.moving = dx !== 0;
     if (player.moving) {
-      dx /= len;
-      dy /= len;
-      player.x = clamp(player.x + dx * SPEED * dt, 18, W - 18);
-      player.y = clamp(player.y + dy * SPEED * dt, 44, H - 6);
-      setDirFromDelta(player, dx, dy);
+      player.x = clamp(player.x + dx * SPEED * dt, VIEW.x + 14, VIEW.x + VIEW.w - 14);
+      player.dir = dx > 0 ? 'right' : 'left';
+      player.facing = dx;
       player.frameTime += dt;
       if (!hasMoved) {
         hasMoved = true;
         window.JB?.unlock('first-steps');
       }
+    } else if (player.jump === 0) {
+      player.dir = 'down';
     }
 
-    // Insam trails behind the astronaut.
-    const fx = player.x - insam.x;
-    const fy = player.y - insam.y;
-    const followDist = Math.hypot(fx, fy);
-    insam.moving = followDist > 30;
+    // Insam trails a step behind the astronaut.
+    const goal = player.x - 26 * player.facing;
+    const gap = goal - insam.x;
+    insam.moving = Math.abs(gap) > 3;
     if (insam.moving) {
-      const step = Math.min(followDist - 30, SPEED * 1.05 * dt);
-      insam.x += (fx / followDist) * step;
-      insam.y += (fy / followDist) * step;
-      setDirFromDelta(insam, fx, fy);
+      insam.x += Math.sign(gap) * Math.min(Math.abs(gap), SPEED * 1.1 * dt);
+      insam.dir = gap > 0 ? 'right' : 'left';
       insam.frameTime += dt;
+    } else {
+      insam.dir = 'down';
     }
 
-    const found = portals.find((p) => Math.hypot((player.x - p.x) / 1.6, player.y - p.y) < 14) || null;
-    if (found !== currentPortal) {
-      currentPortal = found;
+    physics(player, dt);
+    physics(insam, dt);
+
+    const found = doors.find((d) => Math.abs(player.x - d.x) < 16) || null;
+    if (found !== currentDoor) {
+      currentDoor = found;
       updatePrompt();
     }
   };
 
   const updatePrompt = () => {
-    if (!currentPortal || !active) {
+    if (!currentDoor || !active) {
       promptEl.textContent = '';
       return;
     }
-    promptEl.style.setProperty('--prompt-color', currentPortal.color);
+    promptEl.style.setProperty('--prompt-color', currentDoor.color);
     promptEl.innerHTML =
       lastInput === 'pointer'
-        ? `Tap again to enter <strong>${currentPortal.label}</strong>`
-        : `Press <kbd>E</kbd> to enter <strong>${currentPortal.label}</strong>`;
+        ? `Tap again to enter <strong>${currentDoor.label}</strong>`
+        : `Press <kbd>↑</kbd> to enter <strong>${currentDoor.label}</strong>`;
   };
 
-  const enter = (portal) => {
+  const enter = (door) => {
     if (entering) return;
     entering = true;
     window.JB?.unlock('warp');
     if (performance.now() - startedAt < 5000) window.JB?.unlock('speedrun');
     flash.classList.add('is-on');
     setTimeout(() => {
-      window.location.href = portal.href;
+      window.location.href = door.href;
     }, reduceMotion ? 0 : 320);
   };
 
@@ -389,7 +365,7 @@
     lastTime = time;
     clock += dt;
     update(dt);
-    render();
+    render(dt);
     rafId = visible && !document.hidden ? requestAnimationFrame(frame) : null;
   };
 
@@ -400,14 +376,12 @@
     }
   };
 
-  /* ---------- Sizing ---------- */
-
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 3);
     const rect = screen.getBoundingClientRect();
     canvas.width = Math.max(1, Math.round(rect.width * dpr));
     canvas.height = Math.max(1, Math.round(rect.height * dpr));
-    scale = canvas.width / W;
+    scale = canvas.width / VIEW.w;
     render();
   };
 
@@ -415,10 +389,9 @@
 
   const KEY_MAP = {
     ArrowLeft: 'left', a: 'left', A: 'left',
-    ArrowRight: 'right', d: 'right', D: 'right',
-    ArrowUp: 'up', w: 'up', W: 'up',
-    ArrowDown: 'down', s: 'down', S: 'down'
+    ArrowRight: 'right', d: 'right', D: 'right'
   };
+  const ENTER_KEYS = new Set(['ArrowUp', 'w', 'W', 'e', 'E', 'Enter']);
 
   const activate = () => {
     if (!startedAt) startedAt = performance.now();
@@ -440,7 +413,7 @@
   };
 
   startBtn.addEventListener('click', (event) => {
-    lastInput = event.pointerType === 'touch' || event.pointerType === 'pen' ? 'pointer' : lastInput;
+    if (event.pointerType === 'touch' || event.pointerType === 'pen') lastInput = 'pointer';
     activate();
   });
 
@@ -458,9 +431,14 @@
       }
       return;
     }
-    if (event.key === 'e' || event.key === 'E' || event.key === 'Enter' || event.key === ' ') {
+    if (ENTER_KEYS.has(event.key)) {
       event.preventDefault();
-      if (currentPortal) enter(currentPortal);
+      if (currentDoor) enter(currentDoor);
+      return;
+    }
+    if (event.key === ' ') {
+      event.preventDefault();
+      jump();
     }
     if (event.key === 'Escape') canvas.blur();
   });
@@ -473,16 +451,15 @@
   canvas.addEventListener('pointerdown', (event) => {
     if (!active) return;
     const rect = canvas.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * W;
-    const y = ((event.clientY - rect.top) / rect.height) * H;
+    const x = VIEW.x + ((event.clientX - rect.left) / rect.width) * VIEW.w;
+    const y = VIEW.y + ((event.clientY - rect.top) / rect.height) * VIEW.h;
     lastInput = 'pointer';
-
-    const tapped = portals.find((p) => Math.hypot((x - p.x) / 1.6, y - p.y) < 26 || (Math.abs(x - p.x) < 40 && y > p.y - 44 && y < p.y));
-    if (tapped && tapped === currentPortal) {
+    const tapped = doors.find((d) => x > d.box[0] - 6 && x < d.box[0] + d.box[2] + 6 && y > d.box[1] - 16 && y < GROUND + 32);
+    if (tapped && tapped === currentDoor) {
       enter(tapped);
       return;
     }
-    target = tapped ? { x: tapped.x, y: tapped.y } : { x: clamp(x, 18, W - 18), y: clamp(y, 44, H - 6) };
+    target = tapped ? tapped.x : clamp(x, VIEW.x + 14, VIEW.x + VIEW.w - 14);
     updatePrompt();
   });
 
@@ -507,16 +484,16 @@
     }
   });
 
-  paintBackground();
+  paintStage();
 
   Promise.all([
     loadImage('triends-demo-assets/characters/astronaut_walking.png'),
     loadImage('triends-demo-assets/characters/ginseng_walking.png'),
-    document.fonts ? document.fonts.load(`8px ${PIXEL_FONT}`).catch(() => {}) : null
+    document.fonts ? Promise.all([document.fonts.load(`8px ${PIXEL_FONT}`), document.fonts.load(`8px ${PIXEL_FONT}`, '단어')]).catch(() => {}) : null
   ]).then(([astronaut, insamImg]) => {
     sprites.astronaut = astronaut;
     sprites.insam = insamImg;
-    paintBackground(); // repaint once the pixel font is ready (compass label)
+    paintStage(); // repaint once the pixel font is ready (sign and marquee text)
     render();
   });
 

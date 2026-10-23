@@ -46,8 +46,10 @@
   let clock = 0;
   let visible = true;
   let out = false;
+  let ripples = [];
   let leaving = false;
   const recallBtn = document.querySelector('[data-pets-recall]');
+  const figure = canvas.closest('figure') || canvas;
 
   const toWorld = (event) => {
     const rect = canvas.getBoundingClientRect();
@@ -247,6 +249,17 @@
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
     ctx.imageSmoothingEnabled = false;
     drawDesktop();
+    // Rings spreading from where the pets broke out of the screen.
+    ripples = ripples.filter((r) => r.t < 1);
+    ripples.forEach((r) => {
+      r.t += 1 / 40;
+      const rad = Math.round(6 + r.t * 46);
+      ctx.fillStyle = r.t < 0.5 ? '#fff6dc' : '#5d7a7b';
+      for (let a = 0; a < 24; a += 1) {
+        const ang = (a / 24) * Math.PI * 2;
+        ctx.fillRect(Math.round(r.x + Math.cos(ang) * rad), Math.round(r.y + Math.sin(ang) * rad * 0.6), 2, 2);
+      }
+    });
     if (out) {
       ctx.font = `16px ${FONT}`;
       ctx.textAlign = 'center';
@@ -310,16 +323,35 @@
     pointer = toWorld(event);
     if (event.button === 2 || out || leaving || !window.JBPets) return;
     leaving = true;
-    pets.forEach((pet, i) => setTimeout(() => { pet.jumpT = 0; }, i * 90));
+    pets.forEach((pet) => {
+      pet.state = 'rest';
+      pet.dir = 'down';
+      pet.jumpT = 0;
+    });
+    // Release at the top of the hop so the page sprites take over mid-air.
     setTimeout(() => {
       const rect = canvas.getBoundingClientRect();
-      const starts = pets.map((pet) => ({
-        x: rect.left + (pet.x / W) * rect.width,
-        y: rect.top + (pet.y / H) * rect.height
-      }));
+      const k = rect.width / W; // CSS px per canvas px
+      // Land on the window's top edge if it's on screen, otherwise just below it.
+      const landY = rect.top > 70 ? rect.top - 2 : Math.min(rect.bottom + 44, window.innerHeight - 12);
+      const starts = pets.map((pet, i) => {
+        const hop = pet.jumpT >= 0 ? Math.sin((pet.jumpT / 0.45) * Math.PI) * 16 : 0;
+        const x = rect.left + pet.x * k;
+        return {
+          x,
+          y: rect.top + (pet.y - hop) * k,
+          size: Math.round(pet.frame * k),
+          landX: x + (i === 0 ? 30 : -30),
+          landY
+        };
+      });
       leaving = false;
+      figure.classList.remove('is-shaking');
+      void figure.offsetWidth;
+      figure.classList.add('is-shaking');
+      ripples = pets.map((pet) => ({ x: pet.x, y: pet.y - 20, t: 0 }));
       window.JBPets.release(starts);
-    }, 320);
+    }, 200);
   });
 
   const setOut = (value) => {

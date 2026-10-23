@@ -537,7 +537,7 @@ strong {
 .playfield-prompt {
   position: absolute;
   left: 50%;
-  bottom: 16px;
+  top: 16px;
   padding: 6px 12px 8px;
   background: var(--win);
   box-shadow: var(--o4), inset 0 -4px 0 0 var(--bevel);
@@ -1683,6 +1683,31 @@ strong {
 
 .follower.is-waving .follower-bubble {
   display: block;
+}
+
+.follower-dust {
+  position: fixed;
+  z-index: 59;
+  width: 4px;
+  height: 4px;
+  background: var(--shadow);
+  box-shadow: 0 0 0 1px var(--ink);
+  pointer-events: none;
+  animation: dust 0.55s steps(5) forwards;
+}
+
+@keyframes dust {
+  to { transform: translate(var(--dx), var(--dy)); opacity: 0; }
+}
+
+.case-cover.is-shaking {
+  animation: window-shake 0.32s steps(4);
+}
+
+@keyframes window-shake {
+  25% { transform: translate(-3px, 1px); }
+  50% { transform: translate(3px, -1px); }
+  75% { transform: translate(-2px, 0); }
 }
 
 .follower.is-sleeping .follower-zzz {

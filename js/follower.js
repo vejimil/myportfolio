@@ -38,7 +38,7 @@
 
   const paint = (pet, now) => {
     const sheet = now < pet.flowerUntil && pet.kind.flower ? pet.kind.flower : pet.kind.walk;
-    const size = Math.round(sheet.frame * SCALE);
+    const size = pet.entrance ? pet.entrance.size : Math.round(sheet.frame * SCALE);
     const animating = pet.moving || sheet !== pet.kind.walk;
     const col = animating ? Math.floor(pet.frameT * 8) % 4 : 0;
     const row = sheet === pet.kind.walk ? DIR_ROW[pet.dir] : DIR_ROW.down;
@@ -64,6 +64,14 @@
     pets.forEach((pet, i) => {
       pet.frameT += dt;
       pet.moving = false;
+
+      if (pet.entrance) {
+        flyOut(pet, dt, time);
+        paint(pet, time);
+        busy = true;
+        return;
+      }
+
       const leader = i === 0 ? target : pets[i - 1];
 
       if (time >= pet.tumbleUntil && leader && !hiddenByPlayfield && followsPointer) {
@@ -97,6 +105,53 @@
     });
 
     rafId = busy && !document.hidden ? requestAnimationFrame(step) : null;
+  };
+
+  /* Hopping out of the demo window: the pet starts at the size it had on the
+     window's canvas, leaps toward the viewer in a big arc, shrinks to page
+     size and lands just below the window with a puff of dust. */
+  const flyOut = (pet, dt, time) => {
+    const e = pet.entrance;
+    e.t = Math.min(1, e.t + dt / e.dur);
+    const base = Math.round(pet.kind.walk.frame * SCALE);
+    const big = e.fromSize * 1.25;
+    let size;
+    if (e.t < 0.3) {
+      // Pop toward the viewer: grow and rise a little, still over the window.
+      const k = e.t / 0.3;
+      size = e.fromSize + (big - e.fromSize) * k;
+      pet.x = e.fromX;
+      pet.y = e.fromY - k * 30;
+    } else {
+      // Then arc up and over the window frame, shrinking to page size.
+      const k = (e.t - 0.3) / 0.7;
+      const ease = 1 - (1 - k) ** 2;
+      size = big + (base - big) * ease;
+      pet.x = e.fromX + (e.toX - e.fromX) * ease;
+      pet.y = e.fromY - 30 + (e.toY - (e.fromY - 30)) * ease - Math.sin(k * Math.PI) * e.arc;
+    }
+    // Resize in whole-pixel steps so the sprite stays crisp.
+    e.size = Math.max(base, Math.round(size / 4) * 4);
+    pet.dir = 'down';
+    if (e.t >= 1) {
+      pet.entrance = null;
+      pet.lastMoveAt = time;
+      puff(pet.x, pet.y);
+    }
+  };
+
+  const puff = (x, y) => {
+    for (let k = 0; k < 6; k += 1) {
+      const d = document.createElement('span');
+      d.className = 'follower-dust';
+      d.setAttribute('aria-hidden', 'true');
+      d.style.left = `${x}px`;
+      d.style.top = `${y - 4}px`;
+      d.style.setProperty('--dx', `${(k - 2.5) * 9}px`);
+      d.style.setProperty('--dy', `${-4 - (k % 3) * 4}px`);
+      document.body.appendChild(d);
+      setTimeout(() => d.remove(), 600);
+    }
   };
 
   const wake = () => {
@@ -209,11 +264,24 @@
       document.body.appendChild(el);
       const start = starts && starts[i];
       const pet = {
+        entrance: start && start.size && !JB.reduceMotion
+          ? {
+              t: 0,
+              dur: 1 + i * 0.15,
+              fromX: start.x,
+              fromY: start.y,
+              fromSize: start.size,
+              toX: start.landX,
+              toY: start.landY,
+              arc: 70 + i * 16,
+              size: start.size
+            }
+          : null,
         kind,
         el,
         sprite: el.firstElementChild,
-        x: start ? start.x : 60 + i * 30,
-        y: start ? start.y : window.innerHeight - 20,
+        x: start ? (JB.reduceMotion && start.landX ? start.landX : start.x) : 60 + i * 30,
+        y: start ? (JB.reduceMotion && start.landY ? start.landY : start.y) : window.innerHeight - 20,
         dir: 'down',
         moving: false,
         frameT: 0,
