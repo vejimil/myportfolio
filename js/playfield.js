@@ -24,7 +24,7 @@
   // Camera: the stage is painted on a 480x300 sheet; we show the part with the buildings.
   const VIEW = { x: 40, y: 50, w: 400, h: 250 };
 
-  // Site palette (style.css) — the stage is the page inverted: ink ground, cream lines.
+  // Site palette (style.css): cream stage with ink outlines, like every other box on the page.
   const C = {
     ink: '#2b1d2e',
     deep: '#1c121e',
@@ -87,17 +87,17 @@
       g.fillRect(Math.round(x), Math.round(y), w, h);
     };
     const outlined = (x, y, w, h, fill) => {
-      R(x - 1, y - 1, w + 2, h + 2, C.cream);
+      R(x - 1, y - 1, w + 2, h + 2, C.ink);
       R(x, y, w, h, fill);
     };
     // A shape described as row widths, centred on cx, with a cream outline.
     const blob = (cx, top, widths, fill) => {
-      widths.forEach((w, i) => R(cx - Math.floor(w / 2) - 1, top + i - 1, w + 2, 3, C.cream));
+      widths.forEach((w, i) => R(cx - Math.floor(w / 2) - 1, top + i - 1, w + 2, 3, C.ink));
       widths.forEach((w, i) => R(cx - Math.floor(w / 2), top + i, w, 1, fill));
     };
 
-    R(0, 0, W, H, C.ink);
-    R(0, GROUND, W, 2, C.cream);
+    R(0, 0, W, H, C.cream);
+    R(0, GROUND, W, 2, C.ink);
 
     /* Triends — mushroom house */
     outlined(80, 194, 40, 38, C.bevel);
@@ -121,9 +121,9 @@
     const roof = Array.from({ length: 22 }, (_, i) => 2 * Math.round(20 + 28 * (i / 21) ** 0.8));
     blob(240, 152, roof, C.soft);
     for (let x = 204; x <= 276; x += 6) R(x, 158, 1, 14, C.ink);
-    R(222, 150, 36, 2, C.cream);
-    R(190, 170, 3, 2, C.cream); // upturned eaves
-    R(287, 170, 3, 2, C.cream);
+    R(222, 150, 36, 2, C.ink);
+    R(190, 170, 3, 2, C.ink); // upturned eaves
+    R(287, 170, 3, 2, C.ink);
     outlined(204, 176, 72, 8, C.teal);
     for (let x = 208; x < 274; x += 6) R(x, 179, 2, 2, C.yellow);
     outlined(212, 185, 7, 47, C.orange);
@@ -174,11 +174,11 @@
       const t = reduceMotion ? card.t : (card.t + clock * card.speed) % 1;
       const y = Math.round(100 + t * 40);
       if (t > 0.92) return;
-      ctx.fillStyle = C.cream;
-      ctx.fillRect(card.x - 7, y - 5, 14, 11);
       ctx.fillStyle = C.ink;
-      ctx.fillRect(card.x - 6, y - 4, 12, 9);
+      ctx.fillRect(card.x - 7, y - 5, 14, 11);
       ctx.fillStyle = C.cream;
+      ctx.fillRect(card.x - 6, y - 4, 12, 9);
+      ctx.fillStyle = C.ink;
       ctx.fillText(card.glyph, card.x, y + 1);
     });
 
@@ -206,7 +206,7 @@
     const [bx, by, bw] = door.box;
     const ax = door.x;
     const ay = by - 12 + bob;
-    ctx.fillStyle = C.cream;
+    ctx.fillStyle = C.ink;
     ctx.fillRect(ax - 4, ay, 9, 2);
     ctx.fillRect(ax - 3, ay + 2, 7, 1);
     ctx.fillRect(ax - 2, ay + 3, 5, 1);
@@ -225,21 +225,21 @@
     const width = Math.ceil(ctx.measureText(door.label).width) + 10;
     const left = Math.round(door.x - width / 2);
     if (isActive) {
-      ctx.fillStyle = C.cream;
+      ctx.fillStyle = C.ink;
       ctx.fillRect(left - 1, y - 8, width + 2, 16);
       ctx.fillStyle = door.color;
       ctx.fillRect(left, y - 7, width, 14);
       ctx.fillStyle = door.text;
     } else {
-      ctx.fillStyle = C.bevel;
+      ctx.fillStyle = C.soft;
     }
     ctx.fillText(door.label, door.x, y + 1);
   };
 
   const drawCharacter = (who, img, frameSize, footOffset) => {
     const feet = GROUND - Math.round(who.jump);
-    ctx.fillStyle = C.soft;
-    ctx.fillRect(Math.round(who.x - 8), GROUND - 1, 16, 2);
+    ctx.fillStyle = C.bevel;
+    ctx.fillRect(Math.round(who.x - 8), GROUND - 3, 16, 2);
     if (!img) return;
     const col = who.moving ? Math.floor(who.frameTime * 8) % 4 : 0;
     ctx.drawImage(

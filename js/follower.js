@@ -115,26 +115,34 @@
     e.t = Math.min(1, e.t + dt / e.dur);
     const base = Math.round(pet.kind.walk.frame * SCALE);
     const big = e.fromSize * 1.25;
+    const prevX = pet.x;
     let size;
     if (e.t < 0.3) {
-      // Pop toward the viewer: grow and rise a little, still over the window.
+      // Pop toward the viewer: grow smoothly and rise a little, still facing
+      // the way it was looking on the window.
       const k = e.t / 0.3;
-      size = e.fromSize + (big - e.fromSize) * k;
-      pet.x = e.fromX;
-      pet.y = e.fromY - k * 30;
+      const ease = 1 - (1 - k) ** 3;
+      size = e.fromSize + (big - e.fromSize) * ease;
+      pet.x = e.fromX + (e.dir === 'left' ? -1 : e.dir === 'right' ? 1 : 0) * 10 * ease;
+      pet.y = e.fromY - ease * 30;
+      pet.dir = e.dir;
     } else {
       // Then arc up and over the window frame, shrinking to page size.
       const k = (e.t - 0.3) / 0.7;
-      const ease = 1 - (1 - k) ** 2;
+      const ease = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
       size = big + (base - big) * ease;
-      pet.x = e.fromX + (e.toX - e.fromX) * ease;
+      const sx = e.fromX + (e.dir === 'left' ? -10 : e.dir === 'right' ? 10 : 0);
+      pet.x = sx + (e.toX - sx) * ease;
       pet.y = e.fromY - 30 + (e.toY - (e.fromY - 30)) * ease - Math.sin(k * Math.PI) * e.arc;
+      // Turn toward where it's heading once it's clearly moving sideways.
+      const vx = pet.x - prevX;
+      if (Math.abs(vx) > 0.6) pet.dir = vx > 0 ? 'right' : 'left';
     }
-    // Resize in whole-pixel steps so the sprite stays crisp.
-    e.size = Math.max(base, Math.round(size / 4) * 4);
-    pet.dir = 'down';
+    e.size = Math.max(base, Math.round(size));
+    pet.moving = true;
     if (e.t >= 1) {
       pet.entrance = null;
+      pet.moving = false;
       pet.lastMoveAt = time;
       puff(pet.x, pet.y);
     }
@@ -274,7 +282,8 @@
               toX: start.landX,
               toY: start.landY,
               arc: 70 + i * 16,
-              size: start.size
+              size: start.size,
+              dir: start.dir || 'down'
             }
           : null,
         kind,

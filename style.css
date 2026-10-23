@@ -477,7 +477,7 @@ strong {
 .playfield-screen {
   position: relative;
   aspect-ratio: 16 / 10;
-  background: #f6ebcd;
+  background: var(--win);
   box-shadow: 0 0 0 4px var(--ink);
 }
 

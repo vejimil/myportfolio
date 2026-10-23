@@ -323,9 +323,9 @@
     pointer = toWorld(event);
     if (event.button === 2 || out || leaving || !window.JBPets) return;
     leaving = true;
+    // Keep whatever way each pet is facing; they leave the screen looking that way.
     pets.forEach((pet) => {
-      pet.state = 'rest';
-      pet.dir = 'down';
+      if (pet.state === 'tumble') pet.state = 'rest';
       pet.jumpT = 0;
     });
     // Release at the top of the hop so the page sprites take over mid-air.
@@ -341,6 +341,7 @@
           x,
           y: rect.top + (pet.y - hop) * k,
           size: Math.round(pet.frame * k),
+          dir: pet.dir,
           landX: x + (i === 0 ? 30 : -30),
           landY
         };
