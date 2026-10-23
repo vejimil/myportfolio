@@ -19,7 +19,7 @@
 
   // Collectibles are coins for now; swap the icon/name here (and .collectible in CSS)
   // to turn them into characters later.
-  const COLLECTIBLES = ['home', 'triends', 'words', 'arcade', 'profile'];
+  const COLLECTIBLES = ['home', 'triends', 'words', 'arcade', 'profile', 'arties', 'follower'];
   const COLLECTIBLE_NAME = 'Coin';
 
   const SIDE = [

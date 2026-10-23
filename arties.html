@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arties — Jimin Byun</title>
+  <meta name="description" content="Arties: a grant and open-call manager for artists across eight fields. Case study on eligibility matching, legal limits built into the UX, and a Mondrian design system." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://jimin-byun.com/arties.html" />
+  <meta property="og:title" content="Arties — open calls and grants for artists" />
+  <meta property="og:description" content="Product and UX case study by Jimin Byun." />
+  <meta property="og:image" content="https://jimin-byun.com/assets/img/arties-list.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#f2e3bf" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-arties" data-visit="case:arties">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="index.html#games">Games</a>
+        <a href="about.html">Profile</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="case-hero">
+      <div class="wrap">
+        <div class="crumbs pixel">
+          <a href="index.html#bonus">← Bonus stages</a>
+          <span>Bonus 01 / 02</span>
+        </div>
+        <p class="pixel kicker">Solo project · Product &amp; UX</p>
+        <h1 class="display">Arties</h1>
+        <p class="case-sub">A service that helps artists find open calls and grants they actually qualify for — and gives questions, not ghostwriting, on their applications.</p>
+
+        <dl class="case-stats">
+          <div><dt class="pixel">My role</dt><dd>Planning, UX/UI, full-stack development</dd></div>
+          <div><dt class="pixel">For</dt><dd>Artists across 8 fields, from visual art to music and literature</dd></div>
+          <div><dt class="pixel">Built with</dt><dd>Next.js · Supabase · Claude API</dd></div>
+          <div><dt class="pixel">Status</dt><dd>In development, 2026</dd></div>
+        </dl>
+
+        <figure class="case-cover">
+          <img src="assets/img/arties-list.jpg" width="1600" height="1000" alt="Arties open-call list: a Mondrian-style grid of notices, with D-day blocks coloured red, yellow, or blue by how close the deadline is." />
+        </figure>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <article class="case-body">
+        <section class="case-section">
+          <h2><span class="pixel">01</span> The problem</h2>
+          <p>Open calls for artists are <strong>scattered</strong> across each foundation's own website, and the central portal is only where you submit. Every call has different eligibility — where you're registered as a resident, years of practice, past selections — and writing an artist statement is hard. Meanwhile, the 2024 Korean artist survey puts average annual income in fine art at about 6 million won, so paid help is out of reach for most.</p>
+          <p>Existing boards list notices but don't check them against you, and statement feedback is sold as a human service. Nothing tied discovery, eligibility, deadlines, and feedback into one flow.</p>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">02</span> One flow, four steps</h2>
+          <ol class="stages stages-4">
+            <li><b>Collect</b>Notices are gathered by hand; AI drafts a structured summary and a person reviews it before publishing.</li>
+            <li><b>Match</b>A short profile is compared with each call's requirements.</li>
+            <li><b>Remind</b>Saved calls are sorted by deadline so nothing slips by.</li>
+            <li><b>Review</b>Paste a draft and get questions about it, tied to the call's criteria.</li>
+          </ol>
+          <p>Calls can be filtered by field and by what you'd receive — grants, studio space, exhibition opportunities, awards, mentoring, or paid work — and sorted by deadline, fit with your profile, newest, or amount.</p>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">03</span> Designing inside legal limits</h2>
+          <p>Before writing UI, I researched where a service like this crosses legal lines, and turned the answers into <strong>design rules</strong>:</p>
+          <ul>
+            <li><strong>Compare, don't judge.</strong> Eligibility shows as "requirement met / needs checking / not met" and "M of N required conditions met" — never "you can apply" or a chance of selection.</li>
+            <li><strong>Humans verify the facts.</strong> Deadlines and eligibility text are checked by a person, shown with a link to the original notice and the date last confirmed. The service's own commentary is visually separated from the original.</li>
+            <li><strong>Questions, not answers.</strong> The AI review asks things like "Which sentence answers criterion 2?" and never produces text you could paste straight into an application. Every AI output is labelled.</li>
+          </ul>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">04</span> A Mondrian system with one job for colour</h2>
+          <p>The interface uses white planes, thick black lines, and the three primaries — but colour has exactly <strong>one meaning</strong>: how close the deadline is. Red is within 7 days, yellow within 21, blue beyond. Eligibility and review status never use colour; they use ink text and ✓ ? ✕ icons, so the two signals can't be confused.</p>
+          <div class="shots shots-2 figure-block">
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: list on desktop">
+                <img src="assets/img/arties-list.jpg" width="1600" height="1000" alt="Desktop list with deadline-coloured blocks and sort options." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Desktop list</strong>D-day blocks carry the only colour on the page.</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: list on mobile">
+                <img src="assets/img/arties-mobile.jpg" width="780" height="1688" alt="Mobile list with stacked notices and the deadline legend." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Mobile</strong>The same grid collapses into a single readable column.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">05</span> Why I'm building it</h2>
+          <p>It sits exactly where my studies meet my making: aesthetics gives me a way to design what good feedback on an artist statement looks like, and building it myself means those rules end up in the product instead of in a slide deck.<button class="collectible" type="button" data-collectible="arties" aria-label="Hidden coin"></button></p>
+        </section>
+
+        <aside class="callout">
+          <p class="pixel">What I'm learning</p>
+          <p>Deciding what a product must not do is as much design as deciding what it does. The limits shaped the flow, the wording, and even the colour system.</p>
+        </aside>
+      </article>
+
+      <a class="next-level theme-follower" href="desktop-follower.html">
+        <span class="next-level-copy">
+          <span class="pixel">Next bonus →</span>
+          <strong class="display">Desktop Follower</strong>
+          <span>Pixel pets that follow your cursor, each with its own personality.</span>
+        </span>
+        <img src="assets/img/follower-cover.png" width="1280" height="720" alt="" loading="lazy" decoding="async" />
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <a href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">vejimil@snu.ac.kr</a>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
+  <script src="js/follower.js"></script>
+</body>
+</html>

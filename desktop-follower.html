@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Desktop Follower — Jimin Byun</title>
+  <meta name="description" content="Desktop Follower: a macOS menu-bar app where a line of pixel characters follows the cursor, each with its own personality. Case study with a playable web demo." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://jimin-byun.com/desktop-follower.html" />
+  <meta property="og:title" content="Desktop Follower — pixel pets that follow your cursor" />
+  <meta property="og:description" content="Case study and web demo by Jimin Byun." />
+  <meta property="og:image" content="https://jimin-byun.com/assets/img/follower-cover.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#f2e3bf" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@2.40.3/dist/galmuri.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="theme-follower" data-visit="case:follower">
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="index.html#games">Games</a>
+        <a href="about.html">Profile</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="case-hero">
+      <div class="wrap">
+        <div class="crumbs pixel">
+          <a href="index.html#bonus">← Bonus stages</a>
+          <span>Bonus 02 / 02</span>
+        </div>
+        <p class="pixel kicker">Personal project · macOS desktop toy</p>
+        <h1 class="display">Desktop Follower</h1>
+        <p class="case-sub">A macOS menu-bar app where a little line of pixel characters follows your cursor around the screen — each one with its own personality.</p>
+
+        <dl class="case-stats">
+          <div><dt class="pixel">My role</dt><dd>Behaviour design and development, solo</dd></div>
+          <div><dt class="pixel">Platform</dt><dd>macOS menu-bar app, no permissions needed</dd></div>
+          <div><dt class="pixel">Built with</dt><dd>Swift · AppKit</dd></div>
+          <div><dt class="pixel">Year</dt><dd>2026</dd></div>
+        </dl>
+
+        <figure class="case-cover case-cover-canvas" data-hide-follower>
+          <canvas data-flock-demo width="480" height="270" aria-label="Interactive demo: two pixel characters follow your cursor in a line. Click to make them jump, right-click to wave, and flick the cursor fast to make them tumble."></canvas>
+        </figure>
+        <p class="cover-note pixel">↑ Try it: move, click, right-click, or flick your cursor fast.</p>
+      </div>
+    </header>
+
+    <div class="wrap">
+      <article class="case-body">
+        <section class="case-section">
+          <h2><span class="pixel">01</span> A pet, not a cursor trail</h2>
+          <p>I wanted something that felt alive on the desktop rather than a decoration glued to the pointer. So the characters <strong>react</strong> instead of copying: they keep their distance, line up behind each other, turn to look at you, and get distracted when nothing is happening.</p>
+          <p>The real app uses unofficial Chiikawa fan sprites by heelee912, which can't be redistributed — so the demo above shows the <strong>same behaviour</strong> with the astronaut and Insam from Triends.</p>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">02</span> Behaviour as a state machine</h2>
+          <p>Each character runs a small state machine — rest, move, tumble, jump, wave, bored — driven by one shared timer that reads the cursor and ticks every pet.</p>
+          <ul>
+            <li><strong>Cursor moves away:</strong> the characters follow in a line, each one trailing the one in front.</li>
+            <li><strong>Cursor moves nearby:</strong> they turn to look at it, in 16 directions in the app.</li>
+            <li><strong>Cursor flicks very fast:</strong> a moving character can trip and fall over, then gets back up. A 4-second cooldown keeps it funny instead of constant.</li>
+            <li><strong>Left click / right click:</strong> jump / wave.</li>
+            <li><strong>Nothing happens for a while:</strong> each character drifts into its own idle habits.</li>
+          </ul>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">03</span> Personality in numbers</h2>
+          <p>Every character uses the same system with different values: walking speed, how close the cursor has to get before it reacts, how likely it is to fall over, and which idle actions it prefers. Changing a few numbers was enough to make one character feel careful and another one clumsy.</p>
+          <ol class="stages">
+            <li><b>Speed</b>How quickly it catches up when the line stretches.</li>
+            <li><b>Reaction</b>How near the cursor must be before it turns to look.</li>
+            <li><b>Clumsiness</b>Its chance of tumbling on a fast flick.</li>
+          </ol>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">04</span> Small decisions</h2>
+          <p>An early version had the characters gather around open windows, but that needed Accessibility and Finder access. I cut the feature: a desktop toy shouldn't ask for <strong>system permissions</strong>, and the app now needs none. Later tuning made the characters fall over less often — rare enough to be a surprise.</p>
+          <p>Under the hood, a sprite-sheet loader reads 8×11 sheets, detects how many frames each row has from transparency, and applies per-frame timings extracted from the original GIF delays. The menu bar handles hiding, choosing among 11 characters, size, and launch at login.</p>
+        </section>
+
+        <aside class="callout">
+          <p class="pixel">Where else you've seen it</p>
+          <p>The Insam that's been following your cursor around this site is a web cousin of this app — same idea, rebuilt for the browser.</p>
+          <button class="collectible collectible-corner" type="button" data-collectible="follower" aria-label="Hidden coin"></button>
+        </aside>
+      </article>
+
+      <a class="next-level theme-triends" href="triends.html">
+        <span class="next-level-copy">
+          <span class="pixel">New game+ →</span>
+          <strong class="display">Triends</strong>
+          <span>Back to level 01: a co-op light-puzzle adventure.</span>
+        </span>
+        <img src="assets/img/triends-cover.jpg" width="1400" height="788" alt="" loading="lazy" decoding="async" />
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <a href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">vejimil@snu.ac.kr</a>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
+  <script src="js/follower.js"></script>
+  <script src="js/flock-demo.js"></script>
+</body>
+</html>

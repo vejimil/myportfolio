@@ -131,7 +131,7 @@
 
   const onPointerMove = (event) => {
     if (event.pointerType && event.pointerType !== 'mouse') return;
-    const overPlayfield = Boolean(event.target.closest && event.target.closest('[data-playfield]'));
+    const overPlayfield = Boolean(event.target.closest && event.target.closest('[data-playfield], [data-hide-follower]'));
     if (overPlayfield !== hiddenByPlayfield) {
       hiddenByPlayfield = overPlayfield;
       el.classList.toggle('is-hidden', overPlayfield);
