@@ -278,7 +278,7 @@ p {
   top: 0;
   z-index: 40;
   border-bottom: 1px solid var(--line);
-  background: rgba(10, 12, 17, 0.86);
+  background: rgba(10, 12, 17, 0.95);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
@@ -975,6 +975,7 @@ p {
 }
 
 .case-cover {
+  position: relative;
   margin: clamp(32px, 5vw, 48px) 0 0;
   border: 2px solid var(--line);
   border-radius: var(--radius);
@@ -1179,6 +1180,7 @@ p {
 }
 
 .callout {
+  position: relative;
   margin-top: clamp(48px, 7vw, 80px);
   padding: 28px;
   border: 2px solid var(--game);
@@ -1372,6 +1374,33 @@ p {
   position: static;
 }
 
+.ach-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0;
+  padding: 16px 22px 2px;
+  color: var(--coin);
+  font-size: 0.72rem;
+  font-weight: 400;
+}
+
+.ach-group-side {
+  margin-top: 6px;
+  padding-top: 18px;
+  border-top: 2px solid var(--line);
+  color: var(--triends);
+}
+
+.ach-group-side + .ach-list .ach.is-unlocked {
+  background: rgba(79, 224, 176, 0.06);
+}
+
+.ach-group-side + .ach-list .ach.is-unlocked .ach-icon {
+  border-color: var(--triends);
+  background: var(--triends);
+}
+
 .ach-list {
   display: grid;
   gap: 2px;
@@ -1449,6 +1478,23 @@ p {
   color: var(--danger);
 }
 
+.ach-foot .ach-toggle {
+  padding: 6px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.ach-foot .ach-toggle:hover {
+  border-color: var(--triends);
+  color: var(--triends);
+}
+
+.ach-foot .ach-toggle[aria-pressed="false"] {
+  color: var(--dim);
+}
+
 .toast-stack {
   position: fixed;
   right: 20px;
@@ -1499,12 +1545,151 @@ p {
   font-weight: 800;
 }
 
+.toast-side {
+  border-color: var(--triends);
+}
+
+.toast-side .toast-icon {
+  background: var(--triends);
+}
+
+.toast-side .pixel {
+  color: var(--triends);
+}
+
 @keyframes toast-in {
   from { opacity: 0; transform: translateY(24px) scale(0.96); }
 }
 
 @keyframes toast-out {
   to { opacity: 0; transform: translateX(40px); }
+}
+
+/* ---------- Side quests: hidden collectibles ---------- */
+
+.collectible {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' shape-rendering='crispEdges'%3E%3Cpath fill='%23a36f00' d='M3 0h4v1h2v2h1v4H9v2H7v1H3V9H1V7H0V3h1V1h2z'/%3E%3Cpath fill='%23ffcc33' d='M3 1h4v1h1v1h1v4H8v1H7v1H3V8H2V7H1V3h1V2h1z'/%3E%3Cpath fill='%23fff1a8' d='M3 2h2v1H4v2H3V3H2V2z'/%3E%3Cpath fill='%23a36f00' d='M5 3h1v4H5z'/%3E%3C/svg%3E") center / contain no-repeat;
+  image-rendering: pixelated;
+  vertical-align: -4px;
+  cursor: pointer;
+  animation: coin-shine 4s ease-in-out infinite;
+}
+
+.collectible:hover {
+  transform: scale(1.2);
+}
+
+.collectible.is-collected {
+  pointer-events: none;
+  animation: coin-get 0.6s ease-out forwards;
+}
+
+.collectible-corner {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  margin: 0;
+}
+
+@keyframes coin-shine {
+  0%, 86%, 100% { filter: none; }
+  92% { filter: brightness(1.6) drop-shadow(0 0 6px rgba(255, 204, 51, 0.9)); }
+}
+
+@keyframes coin-get {
+  0% { transform: translateY(0) scaleX(1); opacity: 1; }
+  50% { transform: translateY(-18px) scaleX(0.1); }
+  100% { transform: translateY(-34px) scaleX(1); opacity: 0; }
+}
+
+/* ---------- Insam follower ---------- */
+
+.follower {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+.follower.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.follower-sprite {
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.45));
+}
+
+.follower-sprite.is-hopping {
+  animation: hop 0.35s ease-out;
+}
+
+.follower-zzz {
+  position: absolute;
+  top: 4px;
+  right: -6px;
+  color: var(--arcade);
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.follower-zzz span {
+  position: relative;
+  font-size: 1.25em;
+}
+
+.follower-zzz span + span {
+  top: -0.6em;
+  font-size: 1.5em;
+}
+
+.follower.is-sleeping .follower-zzz {
+  animation: zzz 2.4s ease-in-out infinite;
+}
+
+.follower-heart {
+  position: fixed;
+  z-index: 61;
+  width: 16px;
+  height: 14px;
+  color: #ff6f8e;
+  pointer-events: none;
+  animation: heart-up 0.95s ease-out forwards;
+}
+
+.follower-heart svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes hop {
+  40% { transform: translateY(-10px); }
+}
+
+@keyframes zzz {
+  0%, 100% { opacity: 0; transform: translateY(4px); }
+  30%, 70% { opacity: 1; transform: translateY(-4px); }
+}
+
+@keyframes heart-up {
+  0% { opacity: 0; transform: translateY(6px) scale(0.6); }
+  20% { opacity: 1; transform: translateY(0) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-30px) scale(1); }
 }
 
 /* ---------- Standalone game pages ---------- */

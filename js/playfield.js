@@ -42,6 +42,7 @@
   let active = false;
   let entering = false;
   let hasMoved = false;
+  let startedAt = 0;
   let lastInput = 'keys';
   let currentPortal = null;
   let visible = true;
@@ -345,6 +346,7 @@
     if (entering) return;
     entering = true;
     window.JB?.unlock('warp');
+    if (performance.now() - startedAt < 5000) window.JB?.unlock('speedrun');
     flash.classList.add('is-on');
     setTimeout(() => {
       window.location.href = portal.href;
@@ -390,6 +392,7 @@
   };
 
   const activate = () => {
+    if (!startedAt) startedAt = performance.now();
     active = true;
     startBtn.hidden = true;
     canvas.focus({ preventScroll: true });

@@ -1,14 +1,14 @@
-/* Shared behaviour for every page: achievements + HUD, lightbox, card media,
-   the "Continue?" countdown and a small secret. */
+/* Shared behaviour for every page: quests + HUD, hidden collectibles,
+   lightbox, card media and the "Continue?" countdown. */
 (() => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canHover = window.matchMedia('(hover: hover)').matches;
 
   /* ------------------------------------------------------------------
-     Achievements
+     Quests
      ------------------------------------------------------------------ */
 
-  const ACHIEVEMENTS = [
+  const MAIN = [
     { id: 'first-steps', icon: '▶', title: 'First Steps', desc: 'Moved the astronaut on the home screen.', hint: 'The home screen has a playable corner.' },
     { id: 'warp', icon: '◎', title: 'Warp Pad', desc: 'Entered a project through a portal.', hint: 'Walk into one of the glowing pads.' },
     { id: 'player-two', icon: '♥', title: 'Player Two Has Joined', desc: 'Opened one of the playable games.', hint: 'Every project has something to play.' },
@@ -16,21 +16,34 @@
     { id: 'profile', icon: '☺', title: 'Character Select', desc: 'Checked the player profile.', hint: 'Who is P1, anyway?' },
     { id: 'say-hi', icon: '✉', title: 'Insert Coin', desc: 'Reached out by email.', hint: 'Continue?' }
   ];
-  const SECRET = { id: 'old-school', icon: '★', title: 'Old School', desc: '↑ ↑ ↓ ↓ ← → ← → B A. Respect.', secret: true };
-  const ALL = [...ACHIEVEMENTS, SECRET];
+
+  // Collectibles are coins for now; swap the icon/name here (and .collectible in CSS)
+  // to turn them into characters later.
+  const COLLECTIBLES = ['home', 'triends', 'words', 'arcade', 'profile'];
+  const COLLECTIBLE_NAME = 'Coin';
+
+  const SIDE = [
+    { id: 'treasure', icon: '◉', title: 'Treasure Hunter', desc: `Found all ${COLLECTIBLES.length} hidden coins.`, hint: () => `${COLLECTIBLES.length} coins are hiding around the site — ${state.coins.length}/${COLLECTIBLES.length} found.` },
+    { id: 'best-friends', icon: '❀', title: 'Best Friends', desc: 'Gave Insam ten head pats.', hint: () => `Insam likes attention. (${Math.min(state.pets, 10)}/10)` },
+    { id: 'patience', icon: '⧗', title: 'Patience', desc: 'Watched the countdown all the way to zero.', hint: 'Some countdowns are worth waiting for.' },
+    { id: 'speedrun', icon: '»', title: 'Speedrunner', desc: 'Entered a portal within 5 seconds of pressing start.', hint: 'Gotta go fast — right after pressing start.' },
+    { id: 'night-owl', icon: '☾', title: 'Night Owl', desc: 'Visited between midnight and 5 a.m.', hint: 'Come back when everyone else is asleep.' },
+    { id: 'old-school', icon: '★', title: 'Old School', desc: '↑ ↑ ↓ ↓ ← → ← → B A. Respect.', hint: 'A very old code still works here.' }
+  ];
+
+  const ALL = [...MAIN, ...SIDE];
   const CASE_STUDIES = ['triends', 'words', 'arcade'];
   const STORAGE_KEY = 'jb-progress-v1';
 
   const loadState = () => {
+    const fresh = { unlocked: {}, visited: [], coins: [], pets: 0, prefs: {} };
     try {
       const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (parsed && typeof parsed === 'object') {
-        return { unlocked: parsed.unlocked || {}, visited: parsed.visited || [] };
-      }
+      if (parsed && typeof parsed === 'object') return { ...fresh, ...parsed };
     } catch (error) {
       /* storage unavailable: progress lives for this page view only */
     }
-    return { unlocked: {}, visited: [] };
+    return fresh;
   };
 
   const state = loadState();
@@ -43,14 +56,22 @@
     }
   };
 
-  const unlockedCount = () => ACHIEVEMENTS.filter((a) => state.unlocked[a.id]).length;
+  const countDone = (list) => list.filter((q) => state.unlocked[q.id]).length;
 
   const starButtons = document.querySelectorAll('[data-achievements-open]');
 
   const renderCount = () => {
-    const secret = state.unlocked[SECRET.id] ? ' +★' : '';
+    const side = countDone(SIDE);
     document.querySelectorAll('[data-star-count]').forEach((el) => {
-      el.textContent = `${unlockedCount()}/${ACHIEVEMENTS.length}${secret}`;
+      el.textContent = `${countDone(MAIN)}/${MAIN.length}${side ? ` +${side}` : ''}`;
+    });
+  };
+
+  const bumpStars = () => {
+    starButtons.forEach((btn) => {
+      btn.classList.remove('is-bumped');
+      void btn.offsetWidth;
+      btn.classList.add('is-bumped');
     });
   };
 
@@ -61,14 +82,14 @@
   toastStack.setAttribute('aria-live', 'polite');
   document.body.appendChild(toastStack);
 
-  const showToast = (achievement) => {
+  const showToast = ({ icon, label, title, variant = '' }) => {
     const toast = document.createElement('div');
-    toast.className = 'toast';
+    toast.className = `toast ${variant}`.trim();
     toast.innerHTML = `
-      <span class="toast-icon" aria-hidden="true">${achievement.icon}</span>
+      <span class="toast-icon" aria-hidden="true">${icon}</span>
       <span>
-        <span class="pixel">${achievement.secret ? 'Secret unlocked' : 'Achievement unlocked'}</span>
-        <strong>${achievement.title}</strong>
+        <span class="pixel">${label}</span>
+        <strong>${title}</strong>
       </span>`;
     toastStack.appendChild(toast);
     setTimeout(() => {
@@ -79,17 +100,19 @@
   };
 
   const unlock = (id) => {
-    const achievement = ALL.find((a) => a.id === id);
-    if (!achievement || state.unlocked[id]) return;
+    const quest = ALL.find((q) => q.id === id);
+    if (!quest || state.unlocked[id]) return;
     state.unlocked[id] = Date.now();
     saveState();
     renderCount();
-    showToast(achievement);
-    starButtons.forEach((btn) => {
-      btn.classList.remove('is-bumped');
-      void btn.offsetWidth;
-      btn.classList.add('is-bumped');
+    const isSide = SIDE.includes(quest);
+    showToast({
+      icon: quest.icon,
+      label: isSide ? 'Side quest complete' : 'Achievement unlocked',
+      title: quest.title,
+      variant: isSide ? 'toast-side' : ''
     });
+    bumpStars();
   };
 
   const visit = (key) => {
@@ -105,9 +128,24 @@
     }
   };
 
-  window.JB = { unlock };
+  const pet = () => {
+    state.pets += 1;
+    saveState();
+    if (state.pets >= 10) unlock('best-friends');
+    return state.pets;
+  };
 
-  /* Achievement panel */
+  const getPref = (key, fallback) => (key in state.prefs ? state.prefs[key] : fallback);
+
+  const setPref = (key, value) => {
+    state.prefs[key] = value;
+    saveState();
+    document.dispatchEvent(new CustomEvent('jb:prefs', { detail: { key, value } }));
+  };
+
+  window.JB = { unlock, pet, getPref, setPref, reduceMotion };
+
+  /* Quest panel */
   let panel;
 
   const buildPanel = () => {
@@ -120,39 +158,56 @@
     });
   };
 
-  const renderPanel = () => {
-    const rows = ALL.filter((a) => !a.secret || state.unlocked[a.id])
-      .map((a) => {
-        const done = Boolean(state.unlocked[a.id]);
+  const questRows = (list) =>
+    list
+      .map((q) => {
+        const done = Boolean(state.unlocked[q.id]);
+        const hint = typeof q.hint === 'function' ? q.hint() : q.hint;
         return `
           <li class="ach${done ? ' is-unlocked' : ''}">
-            <span class="ach-icon" aria-hidden="true">${done ? a.icon : '?'}</span>
+            <span class="ach-icon" aria-hidden="true">${done ? q.icon : '?'}</span>
             <span>
-              <strong>${done ? a.title : '???'}</strong>
-              <span>${done ? a.desc : `Hint: ${a.hint}`}</span>
-              <span class="sr-only">${done ? '(unlocked)' : '(locked)'}</span>
+              <strong>${done ? q.title : '???'}</strong>
+              <span>${done ? q.desc : `Hint: ${hint}`}</span>
+              <span class="sr-only">${done ? '(complete)' : '(locked)'}</span>
             </span>
           </li>`;
       })
       .join('');
 
+  const renderPanel = () => {
+    const followerOn = getPref('follower', !reduceMotion);
     panel.innerHTML = `
       <div class="ach-head">
-        <h2 id="ach-title">Achievements · ${unlockedCount()}/${ACHIEVEMENTS.length}</h2>
-        <button class="lightbox-close" type="button" data-close aria-label="Close achievements">×</button>
+        <h2 id="ach-title">Quest log</h2>
+        <button class="lightbox-close" type="button" data-close aria-label="Close quest log">×</button>
       </div>
-      <ul class="ach-list">${rows}</ul>
+      <h3 class="ach-group pixel"><span>Main quests</span><span>${countDone(MAIN)}/${MAIN.length}</span></h3>
+      <ul class="ach-list">${questRows(MAIN)}</ul>
+      <h3 class="ach-group ach-group-side pixel"><span>Side quests</span><span>${countDone(SIDE)}/${SIDE.length}</span></h3>
+      <ul class="ach-list">${questRows(SIDE)}</ul>
       <div class="ach-foot">
-        <span class="pixel">${state.unlocked[SECRET.id] ? 'Secret found' : '1 secret hidden'}</span>
+        <button type="button" class="ach-toggle" data-follower-toggle aria-pressed="${followerOn}">Insam follower: ${followerOn ? 'On' : 'Off'}</button>
         <button type="button" data-reset>Reset progress</button>
       </div>`;
 
     panel.querySelector('[data-close]').addEventListener('click', () => panel.close());
+    panel.querySelector('[data-follower-toggle]').addEventListener('click', () => {
+      setPref('follower', !getPref('follower', !reduceMotion));
+      renderPanel();
+      panel.querySelector('[data-follower-toggle]').focus();
+    });
     panel.querySelector('[data-reset]').addEventListener('click', () => {
       state.unlocked = {};
       state.visited = [];
+      state.coins = [];
+      state.pets = 0;
       saveState();
       renderCount();
+      document.querySelectorAll('.collectible').forEach((el) => {
+        el.hidden = false;
+        el.classList.remove('is-collected');
+      });
       renderPanel();
     });
   };
@@ -173,7 +228,10 @@
   renderCount();
   if (document.body.dataset.visit) visit(document.body.dataset.visit);
 
-  /* Secret: Konami code */
+  const hour = new Date().getHours();
+  if (hour >= 0 && hour < 5) unlock('night-owl');
+
+  /* Side quest: Konami code */
   const KONAMI = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
   let konamiIndex = 0;
   document.addEventListener('keydown', (event) => {
@@ -181,8 +239,33 @@
     konamiIndex = key === KONAMI[konamiIndex] ? konamiIndex + 1 : key === KONAMI[0] ? 1 : 0;
     if (konamiIndex === KONAMI.length) {
       konamiIndex = 0;
-      unlock(SECRET.id);
+      unlock('old-school');
     }
+  });
+
+  /* Side quest: hidden collectibles */
+  document.querySelectorAll('.collectible').forEach((item) => {
+    const id = item.dataset.collectible;
+    if (state.coins.includes(id)) {
+      item.hidden = true;
+      return;
+    }
+    item.addEventListener('click', () => {
+      if (state.coins.includes(id)) return;
+      state.coins.push(id);
+      saveState();
+      item.classList.add('is-collected');
+      setTimeout(() => {
+        item.hidden = true;
+      }, reduceMotion ? 0 : 650);
+      showToast({
+        icon: '◉',
+        label: `${COLLECTIBLE_NAME} found · ${state.coins.length}/${COLLECTIBLES.length}`,
+        title: state.coins.length === COLLECTIBLES.length ? 'That was the last one!' : 'Keep looking around…',
+        variant: 'toast-side'
+      });
+      if (COLLECTIBLES.every((c) => state.coins.includes(c))) setTimeout(() => unlock('treasure'), 500);
+    });
   });
 
   /* ------------------------------------------------------------------
@@ -259,16 +342,19 @@
   }
 
   /* ------------------------------------------------------------------
-     "Continue?" countdown
+     "Continue?" countdown (side quest: wait for it to hit zero)
      ------------------------------------------------------------------ */
 
   const countEl = document.querySelector('[data-continue-count]');
   if (countEl && !reduceMotion && 'IntersectionObserver' in window) {
     let timer = null;
     let n = 9;
+    let watched = 0;
     const tick = () => {
       n = n <= 0 ? 9 : n - 1;
+      watched += 1;
       countEl.textContent = n;
+      if (n === 0 && watched >= 9) unlock('patience');
     };
     new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !timer) {
@@ -276,6 +362,7 @@
       } else if (!entry.isIntersecting && timer) {
         clearInterval(timer);
         timer = null;
+        watched = 0;
       }
     }).observe(countEl);
   }
