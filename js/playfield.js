@@ -248,7 +248,7 @@
     ctx.drawImage(stage, 0, 0);
     drawDetails(dt);
     if (currentDoor) drawDoorHighlight(currentDoor);
-    drawCharacter(insam, sprites.insam, 48, 44);
+    if (!leap) drawCharacter(insam, sprites.insam, 48, 44);
     if (leap) drawLeap(dt);
     else drawCharacter(player, sprites.astronaut, 64, 60);
     doors.forEach(drawLabel);
@@ -355,37 +355,51 @@
       return;
     }
     const [x, y, w, h] = door.box;
-    leap = { t: 0, door, fromX: player.x, fromY: GROUND - player.jump, toX: x + w / 2, toY: y + h * 0.7, go, done: false };
+    leap = {
+      el: 0,
+      door,
+      go,
+      done: false,
+      // Insam hops in a beat after the astronaut, landing a little to the side.
+      who: [
+        { img: () => sprites.astronaut, frame: 64, foot: 60, fromX: player.x, fromY: GROUND - player.jump, toX: x + w / 2 + 6, toY: y + h * 0.7, delay: 0 },
+        { img: () => sprites.insam, frame: 48, foot: 44, fromX: insam.x, fromY: GROUND - insam.jump, toX: x + w / 2 - 12, toY: y + h * 0.74, delay: 0.14 }
+      ]
+    };
     player.dir = 'up';
-    if (insam.jump === 0) insam.vy = 150;
   };
 
   const drawLeap = (dt) => {
-    leap.t = Math.min(1, leap.t + dt / LEAP_TIME);
-    const t = leap.t;
-    const u = 1 - (1 - t) ** 2;
-    const fx = leap.fromX + (leap.toX - leap.fromX) * u;
-    const fy = leap.fromY + (leap.toY - leap.fromY) * u - Math.sin(t * Math.PI) * 34;
-    const k = 1 - 0.75 * t * t; // shrink as it flies into the picture
-    const img = sprites.astronaut;
-    if (img && t < 1) {
-      const size = 64 * k;
+    leap.el += dt;
+    const [bx, by, bw, bh] = leap.door.box;
+    let finished = true;
+    // Draw the later jumper first so the astronaut stays in front.
+    [...leap.who].reverse().forEach((j) => {
+      const t = Math.max(0, Math.min(1, (leap.el - j.delay) / LEAP_TIME));
+      if (t < 1) finished = false;
+      const u = 1 - (1 - t) ** 2;
+      const fx = j.fromX + (j.toX - j.fromX) * u;
+      const fy = j.fromY + (j.toY - j.fromY) * u - Math.sin(t * Math.PI) * 34;
+      const size = j.frame * (1 - 0.75 * t * t); // shrink as it flies into the picture
+      const img = j.img();
+      if (!img || t >= 1) return;
       ctx.save();
-      const [bx, by, bw, bh] = leap.door.box;
       // Once over the frame, only the part inside the picture is visible.
       if (t > 0.55) {
         ctx.beginPath();
         ctx.rect(bx, by, bw, bh);
         ctx.clip();
       }
-      ctx.drawImage(img, 0, DIR_ROW.up * 64, 64, 64, fx - size / 2, fy - size * (60 / 64), size, size);
+      const col = t > 0 ? Math.floor(leap.el * 8) % 4 : 0;
+      ctx.drawImage(img, col * j.frame, DIR_ROW.up * j.frame, j.frame, j.frame, fx - size / 2, fy - size * (j.foot / j.frame), size, size);
       ctx.restore();
-    }
-    if (t >= 1 && !leap.done) {
+    });
+    if (finished && !leap.done) {
       leap.done = true;
       leap.go();
     }
   };
+
 
   /* ---------- Loop ---------- */
 
