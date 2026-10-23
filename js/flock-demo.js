@@ -339,7 +339,8 @@
         const x = rect.left + pet.x * k;
         return {
           x,
-          y: rect.top + (pet.y - hop) * k,
+          // Feet line of the canvas sprite (it's drawn `foot` px above its bottom edge).
+          y: rect.top + (pet.y - hop + (pet.frame - pet.foot)) * k,
           size: Math.round(pet.frame * k),
           dir: pet.dir,
           landX: x + (i === 0 ? 30 : -30),

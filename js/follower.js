@@ -38,7 +38,12 @@
 
   const paint = (pet, now) => {
     const sheet = now < pet.flowerUntil && pet.kind.flower ? pet.kind.flower : pet.kind.walk;
-    const size = pet.entrance ? pet.entrance.size : Math.round(sheet.frame * SCALE);
+    if (pet.entrance) {
+      paintFlying(pet, sheet);
+      return;
+    }
+    const size = Math.round(sheet.frame * SCALE);
+    if (pet.sprite.style.transform) pet.sprite.style.transform = '';
     const animating = pet.moving || sheet !== pet.kind.walk;
     const col = animating ? Math.floor(pet.frameT * 8) % 4 : 0;
     const row = sheet === pet.kind.walk ? DIR_ROW[pet.dir] : DIR_ROW.down;
@@ -51,6 +56,23 @@
     pet.el.style.transform = `translate3d(${Math.round(pet.x - size / 2)}px, ${Math.round(pet.y - size)}px, 0)`;
     pet.el.classList.toggle('is-tumbling', now < pet.tumbleUntil);
     pet.el.classList.toggle('is-waving', now < pet.waveUntil);
+  };
+
+  // While flying out, the sprite is drawn once at its biggest size and only
+  // scaled down by a transform, so the pixels don't re-snap every frame.
+  const paintFlying = (pet, sheet) => {
+    const e = pet.entrance;
+    const big = e.maxSize;
+    const col = Math.floor(pet.frameT * 8) % 4;
+    const s = pet.sprite.style;
+    s.width = `${big}px`;
+    s.height = `${big}px`;
+    s.backgroundImage = `url("${sheet.src}")`;
+    s.backgroundSize = `${big * 4}px ${big * 4}px`;
+    s.backgroundPosition = `${-col * big}px ${-DIR_ROW[pet.dir] * big}px`;
+    s.transformOrigin = '50% 100%';
+    s.transform = `scale(${(e.size / big).toFixed(4)})`;
+    pet.el.style.transform = `translate3d(${(pet.x - big / 2).toFixed(2)}px, ${(pet.y - big).toFixed(2)}px, 0)`;
   };
 
   /* ---------- Simulation ---------- */
@@ -110,37 +132,28 @@
   /* Hopping out of the demo window: the pet starts at the size it had on the
      window's canvas, leaps toward the viewer in a big arc, shrinks to page
      size and lands just below the window with a puff of dust. */
+  /* One continuous flight (no pause between phases): a curve that rises
+     out of the window toward the viewer and comes down on the landing spot.
+     Size follows a single smooth curve — it swells first, then settles to
+     page size — and the pet keeps facing the way it was looking. */
   const flyOut = (pet, dt, time) => {
     const e = pet.entrance;
     e.t = Math.min(1, e.t + dt / e.dur);
-    const base = Math.round(pet.kind.walk.frame * SCALE);
-    const big = e.fromSize * 1.25;
+    const t = e.t;
+    const u = 1 - (1 - t) ** 2; // fast start, soft landing
+    const base = pet.kind.walk.frame * SCALE;
+    // Quadratic Bezier: start -> control point above both ends -> landing
+    const cx = (e.fromX + e.toX) / 2 + e.lean;
+    const cy = Math.min(e.fromY, e.toY) - e.arc;
     const prevX = pet.x;
-    let size;
-    if (e.t < 0.3) {
-      // Pop toward the viewer: grow smoothly and rise a little, still facing
-      // the way it was looking on the window.
-      const k = e.t / 0.3;
-      const ease = 1 - (1 - k) ** 3;
-      size = e.fromSize + (big - e.fromSize) * ease;
-      pet.x = e.fromX + (e.dir === 'left' ? -1 : e.dir === 'right' ? 1 : 0) * 10 * ease;
-      pet.y = e.fromY - ease * 30;
-      pet.dir = e.dir;
-    } else {
-      // Then arc up and over the window frame, shrinking to page size.
-      const k = (e.t - 0.3) / 0.7;
-      const ease = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
-      size = big + (base - big) * ease;
-      const sx = e.fromX + (e.dir === 'left' ? -10 : e.dir === 'right' ? 10 : 0);
-      pet.x = sx + (e.toX - sx) * ease;
-      pet.y = e.fromY - 30 + (e.toY - (e.fromY - 30)) * ease - Math.sin(k * Math.PI) * e.arc;
-      // Turn toward where it's heading once it's clearly moving sideways.
-      const vx = pet.x - prevX;
-      if (Math.abs(vx) > 0.6) pet.dir = vx > 0 ? 'right' : 'left';
-    }
-    e.size = Math.max(base, Math.round(size));
+    pet.x = (1 - u) ** 2 * e.fromX + 2 * (1 - u) * u * cx + u ** 2 * e.toX;
+    pet.y = (1 - u) ** 2 * e.fromY + 2 * (1 - u) * u * cy + u ** 2 * e.toY;
+    const settle = t * t * (3 - 2 * t); // smoothstep
+    e.size = (e.fromSize + (base - e.fromSize) * settle) * (1 + 0.28 * Math.sin(Math.PI * Math.min(1, t * 1.6)));
+    const vx = pet.x - prevX;
+    if (t > 0.35 && Math.abs(vx) > 0.8) pet.dir = vx > 0 ? 'right' : 'left';
     pet.moving = true;
-    if (e.t >= 1) {
+    if (t >= 1) {
       pet.entrance = null;
       pet.moving = false;
       pet.lastMoveAt = time;
@@ -275,14 +288,16 @@
         entrance: start && start.size && !JB.reduceMotion
           ? {
               t: 0,
-              dur: 1 + i * 0.15,
+              dur: 1.05 + i * 0.15,
               fromX: start.x,
               fromY: start.y,
               fromSize: start.size,
               toX: start.landX,
               toY: start.landY,
-              arc: 70 + i * 16,
+              arc: 90 + i * 18,
+              lean: start.dir === 'left' ? -40 : start.dir === 'right' ? 40 : 0,
               size: start.size,
+              maxSize: Math.ceil(start.size * 1.3),
               dir: start.dir || 'down'
             }
           : null,
