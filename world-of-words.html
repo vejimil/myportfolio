@@ -3,43 +3,179 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>World of Words — Jimin</title>
-  <meta
-    name="description"
-    content="Detailed page for World of Words from Jimin's portfolio."
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>World of Words — Jimin Byun</title>
+  <meta name="description" content="World of Words: a solo-built vocabulary platform for beginner learners of Japanese, French, and Spanish, with generated quizzes and replayable mini-games." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://jimin-byun.com/world-of-words.html" />
+  <meta property="og:title" content="World of Words — vocabulary study as play" />
+  <meta property="og:description" content="Case study by Jimin Byun. Live at world-of-words.org." />
+  <meta property="og:image" content="https://jimin-byun.com/assets/img/wow-acid-rain-ja.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0a0c11" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Silkscreen&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="project-detail" data-project-id="world-of-words">
-  <div class="page-shell">
-    <header class="site-header">
-      <a href="index.html" class="brand" aria-label="Go to home">
-        <span class="brand-word">JIMIN</span>
-      </a>
+<body class="theme-words" data-visit="case:words">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="index.html#projects">Projects</a>
-        <a href="about.html">About Me</a>
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="index.html#games">Games</a>
+        <a href="about.html">Profile</a>
         <a href="index.html#contact">Contact</a>
       </nav>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-        <span></span><span></span><span></span>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
       </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="case-hero">
+      <div class="wrap">
+        <div class="crumbs pixel">
+          <a href="index.html#games">← All games</a>
+          <span>Level 02 / 03</span>
+        </div>
+        <p class="pixel kicker">Solo project · Language learning</p>
+        <h1 class="display">World of Words</h1>
+        <p class="case-sub">A vocabulary platform for beginners that turns word study into generated quizzes and replayable mini-games — designed to feel active, not like a digital word list.</p>
+        <div class="btn-row">
+          <a class="btn btn-game" href="https://www.world-of-words.org" target="_blank" rel="noopener" data-ach="player-two"><span class="btn-icon" aria-hidden="true">▶</span> Visit the live site ↗</a>
+        </div>
+
+        <dl class="case-stats">
+          <div><dt class="pixel">My role</dt><dd>Everything: planning, UX/UI, frontend, content system</dd></div>
+          <div><dt class="pixel">Languages</dt><dd>Japanese · French · Spanish, up to about A2</dd></div>
+          <div><dt class="pixel">Built with</dt><dd>HTML · CSS · JavaScript</dd></div>
+          <div><dt class="pixel">Platform</dt><dd>Desktop and mobile web</dd></div>
+        </dl>
+
+        <figure class="case-cover">
+          <img src="assets/img/wow-acid-rain-ja.jpg" width="1600" height="886" alt="The Acid Rain mini-game: Japanese vocabulary cards drift over a pixel-art village at sunset while answer buttons wait below." />
+        </figure>
+      </div>
     </header>
 
-    <main id="project-detail-root" class="detail-page-root" data-project-id="world-of-words">
-      <!-- Rendered by script.js -->
-    </main>
+    <div class="wrap">
+      <article class="case-body">
+        <section class="case-section">
+          <h2><span class="pixel">01</span> The problem</h2>
+          <p>This started with a frustration I kept running into while studying languages. Most vocabulary tools are useful, but they still feel like <strong>digital word lists</strong>: the same fixed question order, flat word–meaning pairs, and little sense of momentum.</p>
+          <p>They also create awkward translations when linguistically distant languages are forced into one direct pairing. So I treated World of Words as a <strong>system design problem</strong>: generate questions from word sets, choose more natural language pairings, and make review feel clearer and more replayable.</p>
+        </section>
 
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Jimin.</p>
-    </footer>
-  </div>
+        <section class="case-section">
+          <h2><span class="pixel">02</span> Design responses</h2>
+          <ul>
+            <li><strong>Generated, not fixed.</strong> Questions are drawn randomly from vocabulary sets instead of repeating one sheet.</li>
+            <li><strong>Exam-like where it helps.</strong> Japanese items can follow a JLPT-style format, so practice feels closer to real exam exposure.</li>
+            <li><strong>Natural pairings.</strong> Korean–Japanese, English–French, and English–Spanish, instead of one source language for everything.</li>
+            <li><strong>A learning loop, not an ending.</strong> Immediate feedback, a score screen, and a review of missed words keep momentum going.</li>
+          </ul>
 
-  <script src="script.js"></script>
+          <div class="shots shots-3 wide figure-block">
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: quiz setup">
+                <img src="assets/img/wow-quiz-setup.png" width="1672" height="926" alt="Quiz setup page with language selection and quiz settings." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Quick start</strong>A simple setup screen so beginners can start without feeling overwhelmed.</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: question screen">
+                <img src="assets/img/wow-quiz-question.png" width="1672" height="926" alt="French quiz question with multiple-choice answers and immediate feedback." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Clear questions</strong>Legibility, instant response, and a steady rhythm over visual clutter.</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: results screen">
+                <img src="assets/img/wow-quiz-result.png" width="1672" height="926" alt="Result screen with the score and the list of missed vocabulary." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Review-friendly results</strong>Weak words are easy to revisit — the end screen is part of the loop.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">03</span> Turning review into a game</h2>
+          <p>The mini-games were inspired by typing games, but redesigned around <strong>meaning recognition</strong> instead of keyboard speed. I switched from typing to dragging or clicking for smoother play and less fatigue, so the challenge stays on comprehension, recognition speed, and attention.</p>
+          <p>The game section carries a stronger visual identity, and small characters like <strong>Nihongorae</strong> add warmth — while the product as a whole stays controlled enough to remain a practical study tool.</p>
+
+          <div class="shots shots-2 wide figure-block">
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: game mode menu">
+                <img src="assets/img/wow-game-menu.jpg" width="1600" height="886" alt="Game mode main screen with language selection buttons." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Game mode entry</strong>Its own identity, still clearly tied to the learning purpose.</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: Spanish game">
+                <img src="assets/img/wow-acid-rain-es.jpg" width="1600" height="886" alt="Spanish vocabulary game with floating definition cards and answer choices." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Playable study</strong>Repetition that feels more like play than drill.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">04</span> Built for spare moments</h2>
+          <p>I expected people to use this in short bursts — commuting, waiting, filling a small gap in the day. So both the quiz and the games work on phones: hierarchy, tap-target size, readability, and feedback were all tuned for small screens, and the mini-games were re-laid out for vertical play.</p>
+
+          <div class="shots shots-2 keep-2 figure-block">
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: mobile quiz">
+                <img src="assets/img/wow-mobile-quiz.jpg" width="841" height="1400" alt="Japanese vocabulary quiz on a phone in portrait orientation." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Mobile quiz</strong>Readable and tappable one-handed.</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: mobile game">
+                <img src="assets/img/wow-mobile-game.jpg" width="841" height="1400" alt="Acid Rain mini-game on a phone in portrait orientation." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Vertical game mode</strong>A quick session without losing clarity.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">05</span> Solo, with AI as a tool</h2>
+          <p>I handled planning, design, development, and content structure myself. I used AI tools to speed up exploration and support implementation — but the direction, system design, content judgment, debugging, and final decisions were mine. The important part wasn't generating output; it was <strong>deciding what fit the product and fixing what didn't</strong>.</p>
+        </section>
+
+        <aside class="callout">
+          <p class="pixel">Why it matters to me</p>
+          <p>I built this during mandatory military service, in a limited environment and largely on my own. It became proof that I can keep learning under constraints and carry an idea far enough to make it real — and keep it live.</p>
+        </aside>
+      </article>
+
+      <a class="next-level theme-arcade" href="arcade-games.html">
+        <span class="next-level-copy">
+          <span class="pixel">Next level →</span>
+          <strong class="display">Arcade Games</strong>
+          <span>Two-player games tuned by real player feedback.</span>
+        </span>
+        <img src="assets/img/space-duel-poster.jpg" width="1191" height="782" alt="" loading="lazy" decoding="async" />
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <a href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">vejimil@snu.ac.kr</a>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
 </body>
 </html>

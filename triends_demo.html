@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Triends Demo — Jimin</title>
+  <title>Triends Demo — Jimin Byun</title>
   <meta name="description" content="Playable Triends demo from Jimin's portfolio." />
-  <link rel="icon" href="data:," />
+  <meta name="theme-color" content="#0a0c11" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Silkscreen&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <style>
     .triends-demo-page .game-layout {
@@ -35,13 +36,10 @@
       position: relative;
       padding: 0;
       background: #000;
-      border: 0;
-      border-radius: 24px;
       overflow: hidden;
       display: flex;
       justify-content: center;
       align-items: flex-start;
-      box-shadow: 0 28px 64px rgba(12, 10, 8, 0.2);
     }
 
     #triends-demo-game {
@@ -109,33 +107,33 @@
       }
     }
 
-    @media (max-width: 720px) {
-      .triends-canvas-wrap {
-        border-radius: 18px;
-      }
-    }
   </style>
 </head>
-<body>
-  <div class="page-shell">
-    <header class="site-header">
-      <a href="index.html" class="brand" aria-label="Go to home">
-        <span class="brand-word">JIMIN</span>
-      </a>
+<body class="theme-triends" data-visit="game">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="index.html#projects">Projects</a>
-        <a href="about.html">About Me</a>
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="index.html#games">Games</a>
+        <a href="about.html">Profile</a>
         <a href="index.html#contact">Contact</a>
       </nav>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-        <span></span><span></span><span></span>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
       </button>
-    </header>
+    </div>
+  </header>
 
-    <main class="game-page triends-demo-page">
-      <div class="game-page-shell">
+
+    <main id="main" class="game-page triends-demo-page">
+      <div class="wrap game-page-shell">
         <section class="game-topbar">
           <div>
             <span class="game-kicker">Playable Game</span>
@@ -146,10 +144,11 @@
             </p>
           </div>
           <div class="game-actions">
-            <a class="btn btn-secondary" href="triends.html">Back to Triends</a>
+            <a class="btn" href="triends.html">← Triends case study</a>
           </div>
         </section>
 
+        <p class="game-mobile-note pixel">This game needs a keyboard — try it on a laptop or desktop.</p>
         <div class="game-layout">
           <section class="game-canvas-card">
             <h2>Play</h2>
@@ -237,12 +236,14 @@
     </main>
 
     <footer class="site-footer">
-      <p>© <span id="year"></span> Jimin.</p>
-    </footer>
-  </div>
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <a href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">vejimil@snu.ac.kr</a>
+    </div>
+  </footer>
 
   <script defer src="triends-demo-assets/vendor/phaser.min.js"></script>
   <script defer src="triends-demo.js"></script>
-  <script defer src="script.js"></script>
+  <script defer src="js/site.js"></script>
 </body>
 </html>

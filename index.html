@@ -3,103 +3,248 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jimin — Portfolio</title>
-  <meta
-    name="description"
-    content="Jimin's portfolio — interactive projects, arcade games, and thoughtful digital experiences."
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Jimin Byun — Game &amp; UX Designer</title>
+  <meta name="description" content="Jimin Byun designs games and interactive experiences: a co-op puzzle adventure, a language-learning game platform, and two-player arcade games — all playable in the browser." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://jimin-byun.com/" />
+  <meta property="og:title" content="Jimin Byun — Game &amp; UX Designer" />
+  <meta property="og:description" content="Three projects. All playable in your browser." />
+  <meta property="og:image" content="https://jimin-byun.com/assets/img/og.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0a0c11" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Silkscreen&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="home">
-  <div class="page-shell">
-    <header class="site-header">
-      <a href="index.html" class="brand" aria-label="Go to home">
-        <span class="brand-word">JIMIN</span>
-      </a>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="#projects">Projects</a>
-        <a href="#about">About Me</a>
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="#games">Games</a>
+        <a href="about.html">Profile</a>
         <a href="#contact">Contact</a>
       </nav>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-        <span></span><span></span><span></span>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
       </button>
-    </header>
+    </div>
+  </header>
 
-    <main>
-      <section class="hero section reveal">
-        <h1>Hello, I’m <span class="name-accent">Jimin</span></h1>
-        <p class="hero-role">Curiosity, effort, and growth at the heart of playful design.</p>
-        <p class="hero-script">Drawn to learning, refining, and creating better experiences <span class="no-break">over time</span>.</p>
-
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#projects">Projects</a>
-          <a class="btn btn-secondary" href="about.html">About Me</a>
-          <a class="btn btn-secondary" href="Jimin_Byun_Resume.pdf" target="_blank" rel="noopener noreferrer">Resume</a>
-        </div>
-      </section>
-
-      <section id="projects" class="section reveal">
-        <div class="section-head compact-head">
-          <div>
-            <p class="section-label">PROJECTS</p>
-            <h2>What I’ve Built</h2>
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <p class="pixel kicker">Player 1 · Ready</p>
+          <h1 class="display">Jimin<br />Byun</h1>
+          <p class="hero-role">Game &amp; UX designer. <span>I build what I design.</span></p>
+          <p class="hero-lede">
+            I design small systems people want to play again — co-op puzzles, language games, and two-player arcade duels.
+            I study aesthetics, clothing &amp; textiles, and industrial design at Seoul National University.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="#games"><span class="btn-icon" aria-hidden="true">▶</span> Play my games</a>
+            <a class="btn" href="Jimin_Byun_Resume.pdf" target="_blank" rel="noopener">Resume <span class="btn-icon" aria-hidden="true">↗</span></a>
           </div>
         </div>
 
-        <div id="projects-grid" class="projects-grid" aria-live="polite"></div>
-      </section>
-
-      <section id="about" class="section reveal">
-        <div class="section-head compact-head">
-          <div>
-            <p class="section-label">ABOUT ME</p>
-            <h2>The Person Behind the Projects</h2>
+        <div class="playfield" data-playfield>
+          <div class="playfield-bar pixel" aria-hidden="true">
+            <span><strong>Stage 1-1</strong> · Pick a portal</span>
+            <span class="only-keys">WASD / ↑↓←→ · E</span>
+            <span class="only-touch">Tap to move</span>
+          </div>
+          <div class="playfield-screen">
+            <canvas tabindex="0" aria-label="Mini game: walk the Triends astronaut into a portal to open a project. Use arrow keys or WASD to move and E to enter, or tap to move." width="480" height="300"></canvas>
+            <button class="playfield-start" type="button" data-playfield-start>
+              <span class="playfield-start-title" data-playfield-start-label><span class="blink">▶</span> Press start</span>
+              <span class="playfield-start-sub pixel">Walk into a portal to open a project</span>
+            </button>
+            <p class="playfield-prompt pixel" data-playfield-prompt aria-live="polite"></p>
+            <div class="playfield-flash" aria-hidden="true"></div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div id="about-preview" class="about-preview" aria-live="polite"></div>
-
-      </section>
-
-      <section id="contact" class="section contact-section reveal">
-        <div class="section-head compact-head">
-          <div>
-            <p class="section-label">CONTACT</p>
-            <h2>Open to collaboration, internships, and good conversations.</h2>
-          </div>
+    <!-- Games -->
+    <section class="section" id="games" aria-labelledby="games-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="pixel kicker">Select a game</p>
+          <h2 id="games-title">Three projects. All playable.</h2>
+          <p>Each one has a case study on how it was designed — and something you can play right now, in this browser.</p>
         </div>
 
-        <div class="contact-grid">
-          <article class="project-card contact-panel contact-single-card">
-            <div class="card-top">
-              <div class="card-heading">
-                <span class="card-label">REACH OUT</span>
-                <h3>Games, learning tools, fashion, music, or new ideas.</h3>
+        <div class="games-grid">
+          <article class="game-card theme-triends" data-hover-video="assets/video/triends-light.mp4">
+            <div class="game-card-media">
+              <img src="assets/img/triends-cover.jpg" width="1400" height="788" alt="Triends key art: the astronaut and Insam, a sprout-like companion, on a glowing alien planet." loading="lazy" decoding="async" />
+              <span class="game-card-badge pixel">Co-op · 2P</span>
+              <span class="game-card-level pixel">Lv 01</span>
+            </div>
+            <div class="game-card-body">
+              <h3>Triends</h3>
+              <p class="game-card-copy">A two-player adventure where an astronaut's tools and a plant's powers only work together.</p>
+              <dl class="stats">
+                <div><dt class="pixel">Role</dt><dd>Puzzle &amp; character design, dev</dd></div>
+                <div><dt class="pixel">Team</dt><dd>2 people · Phaser</dd></div>
+              </dl>
+              <div class="game-card-actions">
+                <a class="btn btn-game btn-sm" href="triends_demo.html"><span class="btn-icon" aria-hidden="true">▶</span> Play demo</a>
+                <a class="btn btn-sm stretched" href="triends.html" aria-label="Triends case study">Case study →</a>
               </div>
             </div>
-            <p class="project-copy">
-              I’d love to hear from people working on interactive products, playful systems, or thoughtful digital experiences. I’m also always happy to talk about games, fashion, music, and ideas that connect different fields.
-            </p>
-            <div class="contact-links">
-              <a class="contact-chip" href="mailto:vejimil@snu.ac.kr" aria-label="Email Jimin">Email</a>
-              <a class="contact-chip" href="Jimin_Byun_Resume.pdf" target="_blank" rel="noopener noreferrer" aria-label="View Jimin's resume">Resume</a>
+          </article>
+
+          <article class="game-card theme-words">
+            <div class="game-card-media">
+              <img src="assets/img/wow-acid-rain-ja.jpg" width="1600" height="886" alt="World of Words 'Acid Rain' mini-game: Japanese vocabulary cards fall over a pixel-art sunset village." loading="lazy" decoding="async" />
+              <img class="media-alt" src="assets/img/wow-acid-rain-es.jpg" width="1600" height="886" alt="" loading="lazy" decoding="async" />
+              <span class="game-card-badge pixel">Live · Web</span>
+              <span class="game-card-level pixel">Lv 02</span>
+            </div>
+            <div class="game-card-body">
+              <h3>World of Words</h3>
+              <p class="game-card-copy">A vocabulary platform for beginners that turns word study into quizzes and replayable mini-games.</p>
+              <dl class="stats">
+                <div><dt class="pixel">Role</dt><dd>Solo · design &amp; frontend</dd></div>
+                <div><dt class="pixel">Languages</dt><dd>Japanese · French · Spanish</dd></div>
+              </dl>
+              <div class="game-card-actions">
+                <a class="btn btn-game btn-sm" href="https://www.world-of-words.org" target="_blank" rel="noopener" data-ach="player-two"><span class="btn-icon" aria-hidden="true">▶</span> Play live ↗</a>
+                <a class="btn btn-sm stretched" href="world-of-words.html" aria-label="World of Words case study">Case study →</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="game-card theme-arcade">
+            <div class="game-card-media">
+              <canvas data-attract-pong width="320" height="200" aria-label="Attract-mode animation of Ping-Pong Smash with two computer players."></canvas>
+              <span class="game-card-badge pixel">Versus · 2P</span>
+              <span class="game-card-level pixel">Lv 03</span>
+            </div>
+            <div class="game-card-body">
+              <h3>Arcade Games</h3>
+              <p class="game-card-copy">Two local-multiplayer games built offline and tuned by the people who actually played them.</p>
+              <dl class="stats">
+                <div><dt class="pixel">Role</dt><dd>Design, code, balancing</dd></div>
+                <div><dt class="pixel">Built</dt><dd>Python → JS web port</dd></div>
+              </dl>
+              <div class="game-card-actions">
+                <a class="btn btn-game btn-sm" href="ping-pong-smash.html"><span class="btn-icon" aria-hidden="true">▶</span> Play Pong</a>
+                <a class="btn btn-sm stretched" href="arcade-games.html" aria-label="Arcade Games case study">Case study →</a>
+              </div>
             </div>
           </article>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Jimin.</p>
-    </footer>
-  </div>
+    <!-- Player profile -->
+    <section class="section" id="profile" aria-labelledby="profile-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="pixel kicker">Player profile</p>
+          <h2 id="profile-title">The person holding the controller.</h2>
+        </div>
 
-  <script src="script.js"></script>
+        <div class="sheet">
+          <div class="panel">
+            <div class="panel-title pixel"><span>Character</span><span>P1</span></div>
+            <dl class="id-rows">
+              <div><dt class="pixel">Class</dt><dd>Game &amp; UX Designer</dd></div>
+              <div><dt class="pixel">Guild</dt><dd>Seoul National University</dd></div>
+              <div><dt class="pixel">Studies</dt><dd>Aesthetics · Clothing &amp; Textiles · Industrial Design</dd></div>
+              <div><dt class="pixel">Main quest</dt><dd>Make things clear enough to use easily, and warm enough to remember.</dd></div>
+              <div>
+                <dt class="pixel">Skills</dt>
+                <dd>
+                  <ul class="chips">
+                    <li>Game design</li>
+                    <li>Level design</li>
+                    <li>UX / UI</li>
+                    <li>HTML · CSS · JS</li>
+                    <li>Phaser</li>
+                    <li>Python</li>
+                    <li>Pixel art</li>
+                  </ul>
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="panel">
+            <div class="panel-title pixel"><span>Quest log</span><span>Side quests · Complete</span></div>
+            <ul class="quest-log">
+              <li class="quest">
+                <span class="quest-check" aria-hidden="true">✓</span>
+                <div>
+                  <h3>Fashion show, from zero</h3>
+                  <p>Joined my school's graduation fashion show before I knew garment construction. Asked the professor for a chance, finished three looks, and became planning team lead.</p>
+                </div>
+              </li>
+              <li class="quest">
+                <span class="quest-check" aria-hidden="true">✓</span>
+                <div>
+                  <h3>Fun on a tight budget</h3>
+                  <p>Planned games for a university festival with very little money — including human curling with wheeled tubs and careful safety prep.</p>
+                </div>
+              </li>
+              <li class="quest">
+                <span class="quest-check" aria-hidden="true">✓</span>
+                <div>
+                  <h3>Built under constraints</h3>
+                  <p>Made the projects above during mandatory military service, with limited devices, limited network access, and a lot of persistence.</p>
+                </div>
+              </li>
+            </ul>
+            <p class="sheet-foot"><a class="text-link" href="about.html">Open full profile →</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact" aria-labelledby="contact-title">
+      <div class="wrap">
+        <div class="continue">
+          <p class="pixel kicker">Contact</p>
+          <h2 id="contact-title" class="display">Continue? <span class="continue-count" data-continue-count aria-hidden="true">9</span></h2>
+          <p>I'm open to game design, UX, and interaction design internships — and always happy to talk about games, fashion, music, or ideas that connect them.</p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="mailto:vejimil@snu.ac.kr" data-ach="say-hi"><span class="btn-icon" aria-hidden="true">✉</span> Insert coin — email me</a>
+            <a class="btn" href="Jimin_Byun_Resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+            <a class="btn" href="https://github.com/vejimil" target="_blank" rel="noopener">GitHub ↗</a>
+          </div>
+          <div class="copy-mail">
+            <span>vejimil@snu.ac.kr</span>
+            <button type="button" data-copy="vejimil@snu.ac.kr" data-ach="say-hi">Copy</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <span class="pixel">Tip: ↑ ↑ ↓ ↓ ← → ← → B A</span>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
+  <script src="js/playfield.js"></script>
+  <script src="js/attract-pong.js"></script>
 </body>
 </html>

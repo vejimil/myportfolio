@@ -3,43 +3,167 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Triends — Jimin</title>
-  <meta
-    name="description"
-    content="Detailed page for Triends from Jimin's portfolio."
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Triends — Jimin Byun</title>
+  <meta name="description" content="Triends: a two-player co-op adventure built in Phaser. Case study on cooperative light-puzzle design, pixel character work, and turning AI drafts into finished sprites." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://jimin-byun.com/triends.html" />
+  <meta property="og:title" content="Triends — a co-op light-puzzle adventure" />
+  <meta property="og:description" content="Case study and playable demo by Jimin Byun." />
+  <meta property="og:image" content="https://jimin-byun.com/assets/img/triends-cover.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0a0c11" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Silkscreen&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="project-detail" data-project-id="triends">
-  <div class="page-shell">
-    <header class="site-header">
-      <a href="index.html" class="brand" aria-label="Go to home">
-        <span class="brand-word">JIMIN</span>
-      </a>
+<body class="theme-triends" data-visit="case:triends">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="index.html#projects">Projects</a>
-        <a href="about.html">About Me</a>
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="index.html#games">Games</a>
+        <a href="about.html">Profile</a>
         <a href="index.html#contact">Contact</a>
       </nav>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-        <span></span><span></span><span></span>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
       </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="case-hero">
+      <div class="wrap">
+        <div class="crumbs pixel">
+          <a href="index.html#games">← All games</a>
+          <span>Level 01 / 03</span>
+        </div>
+        <p class="pixel kicker">Team project · Co-op adventure</p>
+        <h1 class="display">Triends</h1>
+        <p class="case-sub">A two-player 2D adventure where an astronaut's tools and a plant companion's powers only work when they're used together.</p>
+        <div class="btn-row">
+          <a class="btn btn-game" href="triends_demo.html"><span class="btn-icon" aria-hidden="true">▶</span> Play the demo</a>
+        </div>
+
+        <dl class="case-stats">
+          <div><dt class="pixel">My role</dt><dd>Planning, character direction, light-puzzle design, implementation</dd></div>
+          <div><dt class="pixel">Team</dt><dd>2 people</dd></div>
+          <div><dt class="pixel">Built with</dt><dd>Phaser · AI-assisted assets + manual pixel editing</dd></div>
+          <div><dt class="pixel">Context</dt><dd>GameAIfy asset contest, during military service</dd></div>
+        </dl>
+
+        <figure class="case-cover">
+          <img src="assets/img/triends-cover.jpg" width="1400" height="788" alt="Triends key art: the astronaut and Insam stand together among glowing mushrooms and alien creatures." />
+        </figure>
+      </div>
     </header>
 
-    <main id="project-detail-root" class="detail-page-root" data-project-id="triends">
-      <!-- Rendered by script.js -->
-    </main>
+    <div class="wrap">
+      <article class="case-body">
+        <section class="case-section">
+          <h2><span class="pixel">01</span> The idea: contrast, not copies</h2>
+          <p>Triends follows an astronaut and <strong>Insam</strong>, a plant-like companion, crossing a hostile planet together. The core design rule was contrast: one character uses technology, the other uses plant abilities, and progress depends on <strong>coordination rather than duplicated actions</strong>.</p>
+          <p>We made it as a two-person team for a contest around the AI asset tool GameAIfy, while serving in the military. Production time was limited, so we had to be selective — a small prototype where character identity, puzzle logic, and readability all support each other.</p>
+        </section>
 
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Jimin.</p>
-    </footer>
-  </div>
+        <section class="case-section">
+          <h2><span class="pixel">02</span> Testing the contrast early</h2>
+          <p>The grey-box prototype answered one question: does the contrast actually work in play? Not just whether two characters could coexist, but whether their abilities created <strong>meaningful cooperation</strong>, readable interactions, and a world that felt mechanically consistent.</p>
+          <figure class="shot figure-block">
+            <div class="shot-frame">
+              <video src="assets/video/triends-prototype.mp4" poster="assets/img/triends-prototype-poster.jpg" muted loop playsinline controls preload="none" aria-label="Early grey-box prototype of Triends with the astronaut and Insam moving between placeholder blocks."></video>
+            </div>
+            <figcaption>Early prototype — placeholder blocks, real characters, testing movement and interaction first.</figcaption>
+          </figure>
+        </section>
 
-  <script src="script.js"></script>
+        <section class="case-section">
+          <h2><span class="pixel">03</span> Designing the light puzzle</h2>
+          <p>I designed the light-puzzle section around one simple fantasy: Insam transforms into a sunflower and emits light, while the astronaut redirects and splits that light with a mirror.</p>
+          <p>The goal wasn't just to make it harder over time — it was to build a learning curve that felt <strong>fair, readable, and satisfying</strong> as the mechanic deepened. The level teaches it in three stages:</p>
+          <ol class="stages">
+            <li><b>Stage 1</b>Basic light routing — learn that light travels and can be aimed.</li>
+            <li><b>Stage 2</b>Beam splitting — the mirror turns one beam into two.</li>
+            <li><b>Stage 3</b>Tight coordination — both players must understand their own role.</li>
+          </ol>
+          <figure class="shot figure-block">
+            <div class="shot-frame">
+              <video src="assets/video/triends-light.mp4" poster="assets/img/triends-light-poster.jpg" muted loop playsinline controls preload="none" aria-label="Light-puzzle gameplay: the sunflower form emits light that is routed toward purple flowers."></video>
+            </div>
+            <figcaption>The sunflower form fires light; routing it through the stage opens the way forward.</figcaption>
+          </figure>
+          <div class="inline-play">
+            <a class="btn btn-game" href="triends_demo.html"><span class="btn-icon" aria-hidden="true">▶</span> Play this section</a>
+            <span class="pixel">Two players · one keyboard</span>
+          </div>
+        </section>
+
+        <section class="case-section">
+          <h2><span class="pixel">04</span> AI as rough material, not the result</h2>
+          <p>AI tools gave us quick starting points, but the results weren't usable as final assets. I treated them as rough material and refined sprites <strong>frame by frame</strong> through manual pixel editing until the characters felt readable, intentional, and consistent in motion.</p>
+          <p>The plant animation needed different judgment from the human one: petals, stem, and leaves had to move enough to feel alive without becoming noisy during play.</p>
+
+          <div class="shots shots-2 shots-uniform wide figure-block">
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: manual pixel editing">
+                <img src="assets/img/triends-pixel-edit.jpg" width="810" height="810" alt="Close-up of manual pixel editing on the astronaut sprite." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Manual pixel editing</strong>Refining the AI draft dot by dot until silhouette and motion read clearly.</figcaption>
+            </figure>
+            <figure class="shot">
+              <button class="zoom" type="button" aria-label="Enlarge: reference study">
+                <img src="assets/img/triends-reference.jpg" width="480" height="640" alt="Reference sheet of readable four-direction pixel characters." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Reference study</strong>How does a tiny figure stay readable from the front, back, and sides?</figcaption>
+            </figure>
+            <figure class="shot shot-pixel">
+              <button class="zoom" type="button" aria-label="Enlarge: astronaut sprite sheet">
+                <img src="assets/img/triends-character-sheet.png" width="256" height="256" alt="Astronaut sprite sheet with front, side, back, and mirror-carrying poses." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Astronaut sheet</strong>Poses, proportions, and mirror-carrying frames refined by hand.</figcaption>
+            </figure>
+            <figure class="shot shot-pixel">
+              <button class="zoom" type="button" aria-label="Enlarge: sunflower animation sheet">
+                <img src="assets/img/triends-sunflower.png" width="256" height="256" alt="Sunflower animation sheet with multiple plant frames." loading="lazy" decoding="async" />
+              </button>
+              <figcaption><strong>Sunflower animation</strong>Alive enough to feel organic, calm enough to stay readable mid-puzzle.</figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <aside class="callout">
+          <p class="pixel">What I learned</p>
+          <p>Animation is gameplay readability, and a level is guided player learning — not just obstacle placement. Most of all, I learned how much I enjoy projects where concept, interaction, and implementation all have to hold each other up.</p>
+        </aside>
+      </article>
+
+      <a class="next-level theme-words" href="world-of-words.html">
+        <span class="next-level-copy">
+          <span class="pixel">Next level →</span>
+          <strong class="display">World of Words</strong>
+          <span>A language-learning platform with replayable mini-games.</span>
+        </span>
+        <img src="assets/img/wow-acid-rain-ja.jpg" width="1600" height="886" alt="" loading="lazy" decoding="async" />
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <a href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">vejimil@snu.ac.kr</a>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
 </body>
 </html>

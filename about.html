@@ -3,43 +3,137 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>About Me — Jimin</title>
-  <meta
-    name="description"
-    content="About Jimin — background, experiences, values, and interests."
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Profile — Jimin Byun</title>
+  <meta name="description" content="About Jimin Byun: a cross-disciplinary designer at Seoul National University shaped by games, fashion, languages, and hands-on making." />
+  <meta property="og:type" content="profile" />
+  <meta property="og:url" content="https://jimin-byun.com/about.html" />
+  <meta property="og:title" content="Jimin Byun — Player profile" />
+  <meta property="og:description" content="Games, fashion, curiosity, and hands-on making." />
+  <meta property="og:image" content="https://jimin-byun.com/assets/img/og.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0a0c11" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Silkscreen&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="about-detail">
-  <div class="page-shell">
-    <header class="site-header">
-      <a href="index.html" class="brand" aria-label="Go to home">
-        <span class="brand-word">JIMIN</span>
-      </a>
+<body data-visit="profile">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="index.html#projects">Projects</a>
-        <a href="about.html">About Me</a>
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="index.html#games">Games</a>
+        <a href="about.html" aria-current="page">Profile</a>
         <a href="index.html#contact">Contact</a>
       </nav>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-        <span></span><span></span><span></span>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
       </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="case-hero">
+      <div class="wrap">
+        <div class="crumbs pixel">
+          <a href="index.html">← Home</a>
+          <span>Player profile</span>
+        </div>
+        <p class="pixel kicker">Character select</p>
+        <h1 class="display">Jimin Byun</h1>
+        <p class="case-sub">A cross-disciplinary designer shaped by games, fashion, curiosity, and hands-on making.</p>
+      </div>
     </header>
 
-    <main id="about-detail-root" class="detail-page-root">
-      <!-- Rendered by script.js -->
-    </main>
+    <div class="wrap section">
+      <div class="about-grid">
+        <aside class="panel" aria-label="Character sheet">
+          <div class="panel-title pixel"><span>Character</span><span>P1</span></div>
+          <dl class="id-rows">
+            <div><dt class="pixel">Class</dt><dd>Game &amp; UX Designer</dd></div>
+            <div><dt class="pixel">Guild</dt><dd>Seoul National University</dd></div>
+            <div><dt class="pixel">Studies</dt><dd>Aesthetics · Clothing &amp; Textiles · Industrial Design</dd></div>
+            <div>
+              <dt class="pixel">Inventory</dt>
+              <dd>
+                <ul class="chips">
+                  <li>Games</li>
+                  <li>Fashion</li>
+                  <li>Languages</li>
+                  <li>Music</li>
+                </ul>
+              </dd>
+            </div>
+            <div><dt class="pixel">Main quest</dt><dd>Work that feels thoughtful, alive, and generous — clear enough to use easily, warm enough to remember.</dd></div>
+          </dl>
+          <div class="btn-row sheet-foot">
+            <a class="btn btn-primary btn-sm" href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">✉ Email</a>
+            <a class="btn btn-sm" href="Jimin_Byun_Resume.pdf" target="_blank" rel="noopener">Resume ↗</a>
+          </div>
+        </aside>
 
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Jimin.</p>
-    </footer>
-  </div>
+        <article class="case-body">
+          <section class="case-section">
+            <h2><span class="pixel">01</span> Origin story</h2>
+            <p>I've loved games since I was very young — from Nintendo to PlayStation to PC — and they've stayed close ever since. They shaped how I think, not only about play, but about how <strong>emotion, structure, rhythm, and interaction</strong> are designed.</p>
+            <p>That naturally led me toward interactive design. But I'm just as energized by fashion, foreign languages, and music. Moving between different interests changes how I see beauty, people, and experience.</p>
+          </section>
 
-  <script src="script.js"></script>
+          <section class="case-section">
+            <h2><span class="pixel">02</span> Side quests</h2>
+            <p>A lot of my growth has come from stepping into spaces I wasn't fully ready for and deciding to learn by doing.</p>
+
+            <h3>Stepping into fashion</h3>
+            <p>I joined my school's graduation fashion show before I knew how to make clothes. Instead of waiting until I felt ready, I contacted the professor directly and asked for a chance. Through steady effort I completed <strong>three looks</strong> and later became <strong>planning team leader</strong>. It taught me that interest only becomes meaningful when it's carried by action, discipline, and responsibility.</p>
+
+            <h3>Designing fun on a tight budget</h3>
+            <p>I helped plan a university festival, working on games and events with a limited budget. I got interested in creating raw, immediate fun from simple ideas — like <strong>human curling</strong> with wheeled tubs and carefully prepared safety measures. Memorable experiences don't need scale or expensive technology; they come from understanding people, energy, rules, and surprise.</p>
+
+            <h3>Small acts that matter</h3>
+            <p>I've also spent small pockets of time volunteering at meal services and donating meal vouchers. Quiet work, but meaningful — the way we speak, listen, and treat people shapes collaboration as much as technical skill does.</p>
+          </section>
+
+          <section class="case-section">
+            <h2><span class="pixel">03</span> How I play (with a team)</h2>
+            <ul>
+              <li><strong>Carry it through.</strong> When something is mine, I want to understand it properly and finish it to a standard I'm proud of.</li>
+              <li><strong>Go deep.</strong> I study enough to do the work well, not just enough to finish it.</li>
+              <li><strong>Listen first.</strong> I try to learn my teammates' fields and approach collaboration with respect. Good teamwork starts from listening well, not speaking first.</li>
+            </ul>
+          </section>
+
+          <section class="case-section">
+            <h2><span class="pixel">04</span> What keeps me curious</h2>
+            <p>Fashion, languages, music, and games aren't separate interests to me — together they're the energy that keeps me moving. I care about happiness in everyday life and try to be kind to the people around me. If one thoughtful word can make someone's day lighter, I think that matters, and I want both the things I make and the way I work to carry that warmth.</p>
+          </section>
+
+          <div class="callout theme-words">
+            <p class="pixel">Ready, player two?</p>
+            <p>See what I've built — every project has something you can play.</p>
+            <div class="btn-row sheet-foot">
+              <a class="btn btn-primary" href="index.html#games"><span class="btn-icon" aria-hidden="true">▶</span> Select a game</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <a href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">vejimil@snu.ac.kr</a>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
 </body>
 </html>

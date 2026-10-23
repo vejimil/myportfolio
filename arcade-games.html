@@ -3,43 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arcade Games — Jimin</title>
-  <meta
-    name="description"
-    content="Detailed page for Arcade Games from Jimin's portfolio."
-  />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Arcade Games — Jimin Byun</title>
+  <meta name="description" content="Ping-Pong Smash and Space Duel: two-player arcade games built in a restricted offline environment, tuned through real player feedback, and ported to the browser." />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://jimin-byun.com/arcade-games.html" />
+  <meta property="og:title" content="Arcade Games — two-player games, tuned by players" />
+  <meta property="og:description" content="Case study by Jimin Byun. Both games are playable in the browser." />
+  <meta property="og:image" content="https://jimin-byun.com/assets/img/space-duel-poster.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#0a0c11" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Silkscreen&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body data-page="project-detail" data-project-id="arcade-games">
-  <div class="page-shell">
-    <header class="site-header">
-      <a href="index.html" class="brand" aria-label="Go to home">
-        <span class="brand-word">JIMIN</span>
-      </a>
+<body class="theme-arcade" data-visit="case:arcade">
+  <a class="skip-link" href="#main">Skip to content</a>
 
-      <nav class="main-nav" aria-label="Primary navigation">
-        <a href="index.html#projects">Projects</a>
-        <a href="about.html">About Me</a>
+  <header class="hud">
+    <div class="wrap hud-inner">
+      <a class="hud-brand" href="index.html" aria-label="Jimin Byun — home">
+        <span class="hud-p1">P1</span>
+        <span class="hud-name">Jimin Byun</span>
+      </a>
+      <nav class="hud-nav" aria-label="Primary">
+        <a href="index.html#games">Games</a>
+        <a href="about.html">Profile</a>
         <a href="index.html#contact">Contact</a>
       </nav>
-
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open menu">
-        <span></span><span></span><span></span>
+      <button class="hud-stars" type="button" data-achievements-open aria-haspopup="dialog">
+        <span class="hud-stars-icon" aria-hidden="true">★</span>
+        <span data-star-count>0/6</span>
+        <span class="sr-only">achievements unlocked — open list</span>
       </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <header class="case-hero">
+      <div class="wrap">
+        <div class="crumbs pixel">
+          <a href="index.html#games">← All games</a>
+          <span>Level 03 / 03</span>
+        </div>
+        <p class="pixel kicker">Personal project · Local multiplayer</p>
+        <h1 class="display">Arcade Games</h1>
+        <p class="case-sub">Two-player games built for quick, shared fun in an offline environment — then tuned by the people who actually played them. Now playable in your browser.</p>
+        <div class="btn-row">
+          <a class="btn btn-game" href="ping-pong-smash.html"><span class="btn-icon" aria-hidden="true">▶</span> Play Ping-Pong Smash</a>
+          <a class="btn btn-game" href="space-duel.html"><span class="btn-icon" aria-hidden="true">▶</span> Play Space Duel</a>
+        </div>
+
+        <dl class="case-stats">
+          <div><dt class="pixel">My role</dt><dd>Game design, gameplay programming, balance tuning</dd></div>
+          <div><dt class="pixel">Players</dt><dd>2, sharing one keyboard and one screen</dd></div>
+          <div><dt class="pixel">Built with</dt><dd>Python originals · JavaScript web ports</dd></div>
+          <div><dt class="pixel">Context</dt><dd>Offline, limited devices, during military service</dd></div>
+        </dl>
+
+        <figure class="case-cover case-cover-canvas">
+          <canvas data-attract-pong width="320" height="180" aria-label="Attract-mode animation of Ping-Pong Smash with two computer players."></canvas>
+        </figure>
+      </div>
     </header>
 
-    <main id="project-detail-root" class="detail-page-root" data-project-id="arcade-games">
-      <!-- Rendered by script.js -->
-    </main>
+    <div class="wrap">
+      <article class="case-body">
+        <section class="case-section">
+          <h2><span class="pixel">01</span> Designing inside constraints</h2>
+          <p>With limited phone use and network access, I wanted to make games that could still create <strong>shared fun</strong>: compact two-player games for one screen, quick to set up, understood in seconds.</p>
+          <p>The limitation became a design lens. Starting from classic game structures and simple forms, I explored what makes a small game feel exciting — pace, impact, variation, readability, and the sense that <strong>every input matters</strong>.</p>
+          <ul>
+            <li>Easy to start and easy to read on a single screen</li>
+            <li>Familiar classic-game foundations, reshaped with new mechanics and tuning</li>
+            <li>Timing, feedback, and pacing to build stronger game feel</li>
+            <li>Iteration driven by how players reacted, not only by theory</li>
+          </ul>
+        </section>
 
-    <footer class="site-footer">
-      <p>© <span id="year"></span> Jimin.</p>
-    </footer>
-  </div>
+        <section class="case-section">
+          <h2><span class="pixel">02</span> Ping-Pong Smash</h2>
+          <p>Ping-Pong Smash started from Pong, reinterpreted with a faster rhythm. Since many people now consume short, fast-paced media, a more immediate tempo felt right for short local sessions.</p>
+          <p>The key addition is a <strong>timed smash</strong>: hit it while the ball is approaching and rallies gain speed, tension, and physical satisfaction. It created moments of reaction, risk, and momentum shift — and I kept tuning the timing window and responsiveness through player feedback.</p>
+          <figure class="shot figure-block">
+            <div class="shot-frame">
+              <video src="assets/video/ping-pong-smash.mp4" poster="assets/img/ping-pong-poster.jpg" muted loop playsinline controls preload="none" aria-label="Ping-Pong Smash gameplay recording."></video>
+            </div>
+            <figcaption>Original version gameplay. First to 7, win by 2, with deuce.</figcaption>
+          </figure>
+          <div class="inline-play">
+            <a class="btn btn-game" href="ping-pong-smash.html"><span class="btn-icon" aria-hidden="true">▶</span> Play Ping-Pong Smash</a>
+          </div>
+        </section>
 
-  <script src="script.js"></script>
+        <section class="case-section">
+          <h2><span class="pixel">03</span> Space Duel</h2>
+          <p>Space Duel began with a simpler question: <strong>how much game can grow from basic geometric shapes?</strong> I started with minimal forms and gradually built a combat loop around movement, shooting, health, items, and match variation.</p>
+          <p>As players reacted, I kept expanding the system — including a level-based bullet transformation, so rounds evolve over time instead of staying flat.</p>
+          <figure class="shot figure-block">
+            <div class="shot-frame">
+              <video src="assets/video/space-duel.mp4" poster="assets/img/space-duel-poster.jpg" muted loop playsinline controls preload="none" aria-label="Space Duel gameplay recording."></video>
+            </div>
+            <figcaption>Pickups heal, boost, stun, or level up your bullet pattern.</figcaption>
+          </figure>
+          <div class="inline-play">
+            <a class="btn btn-game" href="space-duel.html"><span class="btn-icon" aria-hidden="true">▶</span> Play Space Duel</a>
+          </div>
+        </section>
+
+        <aside class="callout">
+          <p class="pixel">What I learned</p>
+          <p>Fun rarely comes from one idea alone. It emerges through rhythm, readability, feedback, variation — and repeated tuning based on how people actually play.</p>
+        </aside>
+      </article>
+
+      <a class="next-level theme-triends" href="triends.html">
+        <span class="next-level-copy">
+          <span class="pixel">New game+ →</span>
+          <strong class="display">Triends</strong>
+          <span>Back to level 01: a co-op light-puzzle adventure.</span>
+        </span>
+        <img src="assets/img/triends-cover.jpg" width="1400" height="788" alt="" loading="lazy" decoding="async" />
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Jimin Byun · Designed and built by hand.</span>
+      <a href="mailto:vejimil@snu.ac.kr" data-ach="say-hi">vejimil@snu.ac.kr</a>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
+  <script src="js/attract-pong.js"></script>
 </body>
 </html>
