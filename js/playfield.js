@@ -51,10 +51,15 @@
 
   const DIR_ROW = { down: 0, left: 1, right: 2, up: 3 };
 
+  // Resolve only once the image is decoded: drawing a just-loaded but
+  // undecoded image onto a canvas can silently produce a blank picture.
   const loadImage = (src) =>
     new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => resolve(img);
+      img.onload = () => {
+        const ready = img.decode ? img.decode().catch(() => {}) : Promise.resolve();
+        ready.then(() => resolve(img));
+      };
       img.onerror = () => resolve(null);
       img.src = src;
     });
@@ -109,18 +114,24 @@
     };
 
     R(0, 0, W, H, C.cream);
-    // Wainscot line and floor
-    R(0, 196, W, 1, C.bevel);
     R(0, GROUND, W, 2, C.ink);
 
     doors.forEach((door) => {
       const [x, y, w, h] = door.box;
-      // String and nail
-      for (let i = 0; i < 14; i += 1) {
-        R(door.x - 14 + i, y - 8 - Math.min(i, 14 - i) * 0.6, 1, 1, C.soft);
-        R(door.x + i, y - 8 - Math.min(i + 14, 14 - i) * 0.6 + 8.4, 1, 1, C.soft);
+      // String from both top corners of the frame up to a single nail.
+      const nailY = y - 22;
+      const hookL = x + 14;
+      const hookR = x + w - 14;
+      const top = y - 7;
+      const steps = Math.max(1, Math.round(door.x - hookL));
+      for (let i = 0; i <= steps; i += 1) {
+        const k = i / steps;
+        const sy = top + (nailY + 1 - top) * k;
+        R(hookL + (door.x - hookL) * k, sy, 1, 1, C.soft);
+        R(hookR + (door.x - hookR) * k, sy, 1, 1, C.soft);
       }
-      R(door.x - 1, y - 18, 3, 3, C.ink);
+      R(door.x - 1, nailY - 1, 3, 3, C.ink);
+      R(door.x, nailY - 1, 1, 1, C.bevel);
       // Frame: ink outline, wooden moulding, cream mat
       R(x - 7, y - 7, w + 14, h + 14, C.ink);
       R(x - 6, y - 6, w + 12, h + 12, C.yellow);
@@ -238,7 +249,8 @@
     drawDetails(dt);
     if (currentDoor) drawDoorHighlight(currentDoor);
     drawCharacter(insam, sprites.insam, 48, 44);
-    drawCharacter(player, sprites.astronaut, 64, 60);
+    if (leap) drawLeap(dt);
+    else drawCharacter(player, sprites.astronaut, 64, 60);
     doors.forEach(drawLabel);
   };
 
@@ -323,15 +335,56 @@
         : `Press <kbd>↑</kbd> to enter <strong>${currentDoor.label}</strong>`;
   };
 
+  // Entering: the astronaut leaps up into the picture, shrinking as it goes
+  // "into" the frame, then the screen flashes and the page opens.
+  let leap = null;
+  const LEAP_TIME = 0.55;
   const enter = (door) => {
     if (entering) return;
     entering = true;
     window.JB?.unlock('warp');
     if (performance.now() - startedAt < 5000) window.JB?.unlock('speedrun');
-    flash.classList.add('is-on');
-    setTimeout(() => {
-      window.location.href = door.href;
-    }, reduceMotion ? 0 : 320);
+    const go = () => {
+      flash.classList.add('is-on');
+      setTimeout(() => {
+        window.location.href = door.href;
+      }, reduceMotion ? 0 : 260);
+    };
+    if (reduceMotion) {
+      go();
+      return;
+    }
+    const [x, y, w, h] = door.box;
+    leap = { t: 0, door, fromX: player.x, fromY: GROUND - player.jump, toX: x + w / 2, toY: y + h * 0.7, go, done: false };
+    player.dir = 'up';
+    if (insam.jump === 0) insam.vy = 150;
+  };
+
+  const drawLeap = (dt) => {
+    leap.t = Math.min(1, leap.t + dt / LEAP_TIME);
+    const t = leap.t;
+    const u = 1 - (1 - t) ** 2;
+    const fx = leap.fromX + (leap.toX - leap.fromX) * u;
+    const fy = leap.fromY + (leap.toY - leap.fromY) * u - Math.sin(t * Math.PI) * 34;
+    const k = 1 - 0.75 * t * t; // shrink as it flies into the picture
+    const img = sprites.astronaut;
+    if (img && t < 1) {
+      const size = 64 * k;
+      ctx.save();
+      const [bx, by, bw, bh] = leap.door.box;
+      // Once over the frame, only the part inside the picture is visible.
+      if (t > 0.55) {
+        ctx.beginPath();
+        ctx.rect(bx, by, bw, bh);
+        ctx.clip();
+      }
+      ctx.drawImage(img, 0, DIR_ROW.up * 64, 64, 64, fx - size / 2, fy - size * (60 / 64), size, size);
+      ctx.restore();
+    }
+    if (t >= 1 && !leap.done) {
+      leap.done = true;
+      leap.go();
+    }
   };
 
   /* ---------- Loop ---------- */
@@ -456,26 +509,40 @@
     // Coming back via the browser's back button restores this page from cache.
     if (event.persisted) {
       entering = false;
+      leap = null;
       flash.classList.remove('is-on');
     }
   });
 
   paintStage();
 
-  Promise.all([
-    loadImage('triends-demo-assets/characters/astronaut_walking.png'),
-    loadImage('triends-demo-assets/characters/ginseng_walking.png'),
-    ...doors.map((d) => (d.art ? loadImage(d.art) : null)),
-    document.fonts ? Promise.all([document.fonts.load(`8px ${PIXEL_FONT}`), document.fonts.load(`8px ${PIXEL_FONT}`, '단어')]).catch(() => {}) : null
-  ]).then(([astronaut, insamImg, ...art]) => {
-    sprites.astronaut = astronaut;
-    sprites.insam = insamImg;
-    doors.forEach((d, i) => {
-      if (art[i]) d.pic = pixelate(art[i]);
-    });
-    paintStage();
+  // Each asset paints as soon as it arrives; nothing waits on anything else.
+  loadImage('triends-demo-assets/characters/astronaut_walking.png').then((img) => {
+    sprites.astronaut = img;
     render();
   });
+  loadImage('triends-demo-assets/characters/ginseng_walking.png').then((img) => {
+    sprites.insam = img;
+    render();
+  });
+  doors.forEach((d) => {
+    if (!d.art) return;
+    loadImage(d.art).then((img) => {
+      if (!img) return;
+      const apply = (tries) => {
+        d.pic = pixelate(img);
+        const c = d.pic.getContext('2d').getImageData(d.pic.width >> 1, d.pic.height >> 1, 1, 1).data;
+        if (c[3] === 0 && tries > 0) {
+          requestAnimationFrame(() => apply(tries - 1));
+          return;
+        }
+        paintStage();
+        render();
+      };
+      apply(5);
+    });
+  });
+  if (document.fonts) document.fonts.load(`8px ${PIXEL_FONT}`).then(() => render()).catch(() => {});
 
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(screen);
   else window.addEventListener('resize', resize);

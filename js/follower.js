@@ -145,13 +145,11 @@
     // Quadratic Bezier: start -> control point above both ends -> landing
     const cx = (e.fromX + e.toX) / 2 + e.lean;
     const cy = Math.min(e.fromY, e.toY) - e.arc;
-    const prevX = pet.x;
     pet.x = (1 - u) ** 2 * e.fromX + 2 * (1 - u) * u * cx + u ** 2 * e.toX;
     pet.y = (1 - u) ** 2 * e.fromY + 2 * (1 - u) * u * cy + u ** 2 * e.toY;
     const settle = t * t * (3 - 2 * t); // smoothstep
     e.size = (e.fromSize + (base - e.fromSize) * settle) * (1 + 0.28 * Math.sin(Math.PI * Math.min(1, t * 1.6)));
-    const vx = pet.x - prevX;
-    if (t > 0.35 && Math.abs(vx) > 0.8) pet.dir = vx > 0 ? 'right' : 'left';
+    pet.dir = e.dir; // keep looking the same way for the whole flight
     pet.moving = true;
     if (t >= 1) {
       pet.entrance = null;
